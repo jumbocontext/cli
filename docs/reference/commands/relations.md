@@ -11,7 +11,16 @@ Add, list, traverse, find paths through, audit, and remove relationships between
 
 ## jumbo relation add
 
-Add a relationship between two entities.
+Add a relationship between two entities. If an earlier relation with the same source type and ID, target type and ID, and relationship type was removed, adding again creates a new relation with a new ID and the supplied description and strength. The removed relation keeps its original metadata and event history.
+
+Existing non-removed relations retain the usual duplicate behavior: add returns the existing ID without changing metadata or lifecycle status. To replace guidance on an active relation, remove it first, then add the new connection:
+
+```bash
+jumbo relation remove --id <oldRelationId>
+jumbo relation add --from-type goal --from-id <goalId> --to-type invariant --to-id <invariantId> --type must-respect --description "Respect this constraint within the goal scope" --format json
+```
+
+The response contains the new relation ID. Omitted strength becomes `null`, as for any new relation. Use `jumbo relations list --entity-type goal --entity-id <goalId> --status all` to inspect current and removed links. Remove superseded links, such as obsolete `constrained-by` links, explicitly so only the intended guidance contributes to live context.
 
 ### Synopsis
 
