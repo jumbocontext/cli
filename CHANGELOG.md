@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Adding relations after removal**: Adding the same connection again creates a new relation with the supplied guidance while preserving the removed relation and its event history.
+
 ## [3.23.0] - 2026-09-06
 
 ### Added

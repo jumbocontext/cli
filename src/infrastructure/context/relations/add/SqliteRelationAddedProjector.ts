@@ -17,10 +17,11 @@ export class SqliteRelationAddedProjector implements IRelationAddedProjector, IR
 
   async applyRelationAdded(event: RelationAddedEvent): Promise<void> {
     const stmt = this.db.prepare(`
-      INSERT OR REPLACE INTO relation_views (
+      INSERT INTO relation_views (
         relationId, fromEntityType, fromEntityId, toEntityType, toEntityId,
         relationType, strength, description, status, version, createdAt, updatedAt
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(relationId) DO NOTHING
     `);
 
     stmt.run(
@@ -53,6 +54,7 @@ export class SqliteRelationAddedProjector implements IRelationAddedProjector, IR
         AND toEntityType = ?
         AND toEntityId = ?
         AND relationType = ?
+        AND status != 'removed'
     `).get(fromEntityType, fromEntityId, toEntityType, toEntityId, relationType) as Record<string, unknown> | undefined;
 
     return row ? this.mapRowToView(row) : null;
