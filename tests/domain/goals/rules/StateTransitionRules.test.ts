@@ -85,6 +85,16 @@ describe("StateTransitionRules", () => {
       expect(result.errors[0]).toContain("Cannot refine goal in doing status");
     });
 
+    it("should fail when status is postponed", () => {
+      const rule = new CanRefineRule();
+      const state = createGoalState({ status: GoalStatus.POSTPONED });
+      const result = rule.validate(state);
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContain(
+        "Cannot refine goal in postponed status. Goal must be in defined status."
+      );
+    });
+
     it("should fail when status is completed", () => {
       const rule = new CanRefineRule();
       const state = createGoalState({ status: GoalStatus.COMPLETED });

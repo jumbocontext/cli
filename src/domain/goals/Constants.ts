@@ -13,6 +13,7 @@ export const GoalEventType = {
   UNBLOCKED: 'GoalUnblockedEvent',
   PAUSED: 'GoalPausedEvent',
   POSTPONED: 'GoalPostponedEvent',
+  REINSTATED: 'GoalReinstatedEvent',
   RESUMED: 'GoalResumedEvent',
   COMPLETED: 'GoalCompletedEvent',
   RESET: 'GoalResetEvent',
@@ -85,6 +86,7 @@ export const GoalErrorMessages = {
   ALREADY_TODO: 'Goal is already in defined status',
   CANNOT_PAUSE_IN_STATUS: 'Cannot pause goal in {status} status. Goal must be in doing status.',
   CANNOT_POSTPONE_IN_STATUS: 'Cannot postpone goal in {status} status. Goal must be in defined status.',
+  CANNOT_REINSTATE_IN_STATUS: 'Cannot reinstate goal in {status} status. Goal must be in postponed status.',
   CANNOT_RESUME_IN_STATUS: 'Cannot resume goal in {status} status. Goal must be paused.',
   // Embedded context: file path errors
   FILE_PATH_TOO_LONG: 'File path must be less than {max} characters',

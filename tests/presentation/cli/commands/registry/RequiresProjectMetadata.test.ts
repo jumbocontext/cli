@@ -69,4 +69,11 @@ describe("requiresProject metadata", () => {
     expect(command).toBeDefined();
     expect(command?.metadata.requiresProject).toBe(true);
   });
+
+  it("registers goal reinstate as explicitly project-scoped", () => {
+    const command = commands.find((c) => c.path === "goal reinstate");
+
+    expect(command).toBeDefined();
+    expect(command?.metadata.requiresProject).toBe(true);
+  });
 });

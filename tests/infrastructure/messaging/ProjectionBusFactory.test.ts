@@ -77,7 +77,7 @@ describe("ProjectionBusFactory", () => {
     expect(row.status).toBe(ComponentStatus.DEPRECATED);
   });
 
-  it("rebuilds postponed goal state from GoalPostponedEvent", async () => {
+  it("rebuilds reinstated goal state from its complete event history", async () => {
     const bus = new ProjectionBusFactory().create(db);
 
     await bus.publish({
@@ -101,9 +101,16 @@ describe("ProjectionBusFactory", () => {
       timestamp: "2026-09-11T10:00:00.000Z",
       payload: { status: GoalStatus.POSTPONED },
     } as BaseEvent);
+    await bus.publish({
+      type: GoalEventType.REINSTATED,
+      aggregateId: "goal-postponed",
+      version: 3,
+      timestamp: "2026-09-11T11:00:00.000Z",
+      payload: { status: GoalStatus.TODO },
+    } as BaseEvent);
 
     expect(db.prepare("SELECT status, version FROM goal_views WHERE goalId = ?").get("goal-postponed"))
-      .toEqual({ status: GoalStatus.POSTPONED, version: 2 });
+      .toEqual({ status: GoalStatus.TODO, version: 3 });
   });
 
   it("creates an event bus that rebuilds the global search index from memory events", async () => {

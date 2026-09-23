@@ -58,7 +58,13 @@ Postpone defined work that should remain recorded but should not be selected by 
 jumbo goal postpone --id goal_abc123
 ```
 
-The goal remains visible in CLI lists and the TUI under the `postponed` status. Postponement is a one-way transition; create or update another defined goal when the work becomes relevant again.
+The goal remains visible in CLI lists and the TUI under the `postponed` status. When the work becomes relevant again, return it to `defined` status and renewed refinement eligibility:
+
+```bash
+jumbo goal reinstate --id goal_abc123
+```
+
+Only postponed goals can be reinstated. Automatic refinement continues to exclude postponed goals until this explicit transition occurs.
 
 ### Prerequisite goals
 

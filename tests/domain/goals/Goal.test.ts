@@ -152,11 +152,14 @@ describe("Goal Aggregate", () => {
     it("should throw error if too many success criteria", () => {
       // Arrange
       const goal = Goal.create("goal_123");
-      const tooManyCriteria = Array.from({ length: 51 }, (_, i) => `Criterion ${i}`);
+      const tooManyCriteria = Array.from(
+        { length: GoalLimits.MAX_SUCCESS_CRITERIA + 1 },
+        (_, i) => `Criterion ${i}`
+      );
 
       // Act & Assert
       expect(() => goal.add("Test goal", "My objective", tooManyCriteria)).toThrow(
-        "Cannot have more than 50 success criteria"
+        `Cannot have more than ${GoalLimits.MAX_SUCCESS_CRITERIA} success criteria`
       );
     });
 
@@ -594,11 +597,14 @@ describe("Goal Aggregate", () => {
       // Arrange
       const goal = Goal.create("goal_123");
       goal.add("Original goal", "Original objective", ["Criterion 1"]);
-      const tooManyCriteria = Array.from({ length: 51 }, (_, i) => `Criterion ${i}`);
+      const tooManyCriteria = Array.from(
+        { length: GoalLimits.MAX_SUCCESS_CRITERIA + 1 },
+        (_, i) => `Criterion ${i}`
+      );
 
       // Act & Assert
       expect(() => goal.update(undefined, undefined, tooManyCriteria)).toThrow(
-        "Cannot have more than 50 success criteria"
+        `Cannot have more than ${GoalLimits.MAX_SUCCESS_CRITERIA} success criteria`
       );
     });
 

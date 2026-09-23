@@ -31,6 +31,7 @@ import { SqliteGoalBlockedProjector } from "../context/goals/block/SqliteGoalBlo
 import { SqliteGoalUnblockedProjector } from "../context/goals/unblock/SqliteGoalUnblockedProjector.js";
 import { SqliteGoalPausedProjector } from "../context/goals/pause/SqliteGoalPausedProjector.js";
 import { SqliteGoalPostponedProjector } from "../context/goals/postpone/SqliteGoalPostponedProjector.js";
+import { SqliteGoalReinstatedProjector } from "../context/goals/reinstate/SqliteGoalReinstatedProjector.js";
 import { SqliteGoalResumedProjector } from "../context/goals/resume/SqliteGoalResumedProjector.js";
 import { SqliteGoalCompletedProjector } from "../context/goals/complete/SqliteGoalCompletedProjector.js";
 import { SqliteGoalRefinedProjector } from "../context/goals/refine/SqliteGoalRefinedProjector.js";
@@ -156,6 +157,7 @@ import type { GoalCompletedEvent } from "../../domain/goals/complete/GoalComplet
 import type { GoalStatusMigratedEvent } from "../../domain/goals/migrate/GoalStatusMigratedEvent.js";
 import type { GoalPausedEvent } from "../../domain/goals/pause/GoalPausedEvent.js";
 import type { GoalPostponedEvent } from "../../domain/goals/postpone/GoalPostponedEvent.js";
+import type { GoalReinstatedEvent } from "../../domain/goals/reinstate/GoalReinstatedEvent.js";
 import type { GoalQualifiedEvent } from "../../domain/goals/qualify/GoalQualifiedEvent.js";
 import type { GoalRefinedEvent } from "../../domain/goals/refine/GoalRefinedEvent.js";
 import type { GoalRefinementStartedEvent } from "../../domain/goals/refine/GoalRefinementStartedEvent.js";
@@ -228,6 +230,7 @@ export class ProjectionBusFactory {
     const goalUnblockedProjector = new SqliteGoalUnblockedProjector(db);
     const goalPausedProjector = new SqliteGoalPausedProjector(db);
     const goalPostponedProjector = new SqliteGoalPostponedProjector(db);
+    const goalReinstatedProjector = new SqliteGoalReinstatedProjector(db);
     const goalResumedProjector = new SqliteGoalResumedProjector(db);
     const goalCompletedProjector = new SqliteGoalCompletedProjector(db);
     const goalRefinedProjector = new SqliteGoalRefinedProjector(db);
@@ -250,6 +253,7 @@ export class ProjectionBusFactory {
     on<GoalUnblockedEvent>(bus, GoalEventType.UNBLOCKED, (e) => goalUnblockedProjector.applyGoalUnblocked(e));
     on<GoalPausedEvent>(bus, GoalEventType.PAUSED, (e) => goalPausedProjector.applyGoalPaused(e));
     on<GoalPostponedEvent>(bus, GoalEventType.POSTPONED, (e) => goalPostponedProjector.applyGoalPostponed(e));
+    on<GoalReinstatedEvent>(bus, GoalEventType.REINSTATED, (e) => goalReinstatedProjector.applyGoalReinstated(e));
     on<GoalResumedEvent>(bus, GoalEventType.RESUMED, (e) => goalResumedProjector.applyGoalResumed(e));
     on<GoalCompletedEvent>(bus, GoalEventType.COMPLETED, (e) => goalCompletedProjector.applyGoalCompleted(e));
     on<GoalRefinedEvent>(bus, GoalEventType.REFINED, (e) => goalRefinedProjector.applyGoalRefined(e));

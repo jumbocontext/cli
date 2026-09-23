@@ -142,4 +142,14 @@ describe("Command Compliance", () => {
     expect(command?.metadata.requiredOptions?.map((option) => option.flags)).toEqual(["-i, --id <id>"]);
     expect(command?.metadata.description).toContain("automatic work streams");
   });
+
+  test("goal reinstate is project-scoped with a required id and renewed refinement help", () => {
+    const command = commands.find((candidate) => candidate.path === "goal reinstate");
+
+    expect(command).toBeDefined();
+    expect(command?.metadata.requiresProject).toBe(true);
+    expect(command?.metadata.requiredOptions?.map((option) => option.flags)).toEqual(["-i, --id <id>"]);
+    expect(command?.metadata.description).toContain("postponed goal as defined");
+    expect(command?.metadata.description).toContain("eligible for refinement");
+  });
 });

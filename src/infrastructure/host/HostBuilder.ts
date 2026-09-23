@@ -63,6 +63,7 @@ import { FsGoalBlockedEventStore } from "../context/goals/block/FsGoalBlockedEve
 import { FsGoalUnblockedEventStore } from "../context/goals/unblock/FsGoalUnblockedEventStore.js";
 import { FsGoalPausedEventStore } from "../context/goals/pause/FsGoalPausedEventStore.js";
 import { FsGoalPostponedEventStore } from "../context/goals/postpone/FsGoalPostponedEventStore.js";
+import { FsGoalReinstatedEventStore } from "../context/goals/reinstate/FsGoalReinstatedEventStore.js";
 import { FsGoalResumedEventStore } from "../context/goals/resume/FsGoalResumedEventStore.js";
 import { FsGoalCompletedEventStore } from "../context/goals/complete/FsGoalCompletedEventStore.js";
 import { FsGoalCodifyingStartedEventStore } from "../context/goals/codify/FsGoalCodifyingStartedEventStore.js";
@@ -198,6 +199,7 @@ import { SqliteGoalBlockedProjector } from "../context/goals/block/SqliteGoalBlo
 import { SqliteGoalUnblockedProjector } from "../context/goals/unblock/SqliteGoalUnblockedProjector.js";
 import { SqliteGoalPausedProjector } from "../context/goals/pause/SqliteGoalPausedProjector.js";
 import { SqliteGoalPostponedProjector } from "../context/goals/postpone/SqliteGoalPostponedProjector.js";
+import { SqliteGoalReinstatedProjector } from "../context/goals/reinstate/SqliteGoalReinstatedProjector.js";
 import { SqliteGoalResumedProjector } from "../context/goals/resume/SqliteGoalResumedProjector.js";
 import { SqliteGoalCompletedProjector } from "../context/goals/complete/SqliteGoalCompletedProjector.js";
 import { SqliteGoalRefinedProjector } from "../context/goals/refine/SqliteGoalRefinedProjector.js";
@@ -316,6 +318,7 @@ import { GoalBlockedEventHandler } from "../../application/context/goals/block/G
 import { GoalUnblockedEventHandler } from "../../application/context/goals/unblock/GoalUnblockedEventHandler.js";
 import { GoalPausedEventHandler } from "../../application/context/goals/pause/GoalPausedEventHandler.js";
 import { GoalPostponedEventHandler } from "../../application/context/goals/postpone/GoalPostponedEventHandler.js";
+import { GoalReinstatedEventHandler } from "../../application/context/goals/reinstate/GoalReinstatedEventHandler.js";
 import { GoalEventType } from "../../domain/goals/Constants.js";
 import { GoalResumedEventHandler } from "../../application/context/goals/resume/GoalResumedEventHandler.js";
 import { GoalCompletedEventHandler } from "../../application/context/goals/complete/GoalCompletedEventHandler.js";
@@ -517,6 +520,11 @@ import { PauseGoalController } from "../../application/context/goals/pause/Pause
 import { PostponeGoalCommandHandler } from "../../application/context/goals/postpone/PostponeGoalCommandHandler.js";
 import { LocalPostponeGoalGateway } from "../../application/context/goals/postpone/LocalPostponeGoalGateway.js";
 import { PostponeGoalController } from "../../application/context/goals/postpone/PostponeGoalController.js";
+
+// ReinstateGoal Controller-Gateway
+import { ReinstateGoalCommandHandler } from "../../application/context/goals/reinstate/ReinstateGoalCommandHandler.js";
+import { LocalReinstateGoalGateway } from "../../application/context/goals/reinstate/LocalReinstateGoalGateway.js";
+import { ReinstateGoalController } from "../../application/context/goals/reinstate/ReinstateGoalController.js";
 
 // GetGoals Controller-Gateway
 import { GetGoalsController } from "../../application/context/goals/get/GetGoalsController.js";
@@ -732,6 +740,7 @@ export class HostBuilder {
     const goalUnblockedEventStore = new FsGoalUnblockedEventStore(this.rootDir, logger);
     const goalPausedEventStore = new FsGoalPausedEventStore(this.rootDir, logger);
     const goalPostponedEventStore = new FsGoalPostponedEventStore(this.rootDir, logger);
+    const goalReinstatedEventStore = new FsGoalReinstatedEventStore(this.rootDir, logger);
     const goalResumedEventStore = new FsGoalResumedEventStore(this.rootDir, logger);
     const goalCompletedEventStore = new FsGoalCompletedEventStore(this.rootDir, logger);
     const goalRefinedEventStore = new FsGoalRefinedEventStore(this.rootDir, logger);
@@ -818,6 +827,7 @@ export class HostBuilder {
     const goalUnblockedProjector = new SqliteGoalUnblockedProjector(this.db);
     const goalPausedProjector = new SqliteGoalPausedProjector(this.db);
     const goalPostponedProjector = new SqliteGoalPostponedProjector(this.db);
+    const goalReinstatedProjector = new SqliteGoalReinstatedProjector(this.db);
     const goalResumedProjector = new SqliteGoalResumedProjector(this.db);
     const goalCompletedProjector = new SqliteGoalCompletedProjector(this.db);
     const goalRefinedProjector = new SqliteGoalRefinedProjector(this.db);
@@ -1229,6 +1239,16 @@ const audiencePainContextReader = new SqliteAudiencePainContextReader(this.db);
     );
     const postponeGoalGateway = new LocalPostponeGoalGateway(postponeGoalCommandHandler);
     const postponeGoalController = new PostponeGoalController(postponeGoalGateway);
+
+    // ReinstateGoal Controller
+    const reinstateGoalCommandHandler = new ReinstateGoalCommandHandler(
+      goalReinstatedEventStore,
+      goalReinstatedEventStore,
+      goalViewReader,
+      eventBus
+    );
+    const reinstateGoalGateway = new LocalReinstateGoalGateway(reinstateGoalCommandHandler);
+    const reinstateGoalController = new ReinstateGoalController(reinstateGoalGateway);
 
     // RemoveGoal Controller
     const removeGoalCommandHandler = new RemoveGoalCommandHandler(
@@ -1889,6 +1909,7 @@ const audiencePainContextReader = new SqliteAudiencePainContextReader(this.db);
     const goalUnblockedEventHandler = new GoalUnblockedEventHandler(goalUnblockedProjector);
     const goalPausedEventHandler = new GoalPausedEventHandler(goalPausedProjector);
     const goalPostponedEventHandler = new GoalPostponedEventHandler(goalPostponedProjector);
+    const goalReinstatedEventHandler = new GoalReinstatedEventHandler(goalReinstatedProjector);
     const goalResumedEventHandler = new GoalResumedEventHandler(goalResumedProjector);
     const goalCompletedEventHandler = new GoalCompletedEventHandler(goalCompletedProjector);
     const goalRefinedEventHandler = new GoalRefinedEventHandler(goalRefinedProjector);
@@ -2026,6 +2047,7 @@ const audiencePainContextReader = new SqliteAudiencePainContextReader(this.db);
     eventBus.subscribe("GoalUnblockedEvent", goalUnblockedEventHandler);
     eventBus.subscribe("GoalPausedEvent", goalPausedEventHandler);
     eventBus.subscribe(GoalEventType.POSTPONED, goalPostponedEventHandler);
+    eventBus.subscribe(GoalEventType.REINSTATED, goalReinstatedEventHandler);
     eventBus.subscribe("GoalResumedEvent", goalResumedEventHandler);
     eventBus.subscribe("GoalCompletedEvent", goalCompletedEventHandler);
     eventBus.subscribe("GoalRefinedEvent", goalRefinedEventHandler);
@@ -2163,6 +2185,7 @@ const audiencePainContextReader = new SqliteAudiencePainContextReader(this.db);
       goalUnblockedEventStore,
       goalPausedEventStore,
       goalPostponedEventStore,
+      goalReinstatedEventStore,
       goalResumedEventStore,
       goalCompletedEventStore,
       goalRefinedEventStore,
@@ -2189,6 +2212,7 @@ const audiencePainContextReader = new SqliteAudiencePainContextReader(this.db);
       goalUnblockedProjector,
       goalPausedProjector,
       goalPostponedProjector,
+      goalReinstatedProjector,
       goalResumedProjector,
       goalCompletedProjector,
       goalRefinedProjector,
@@ -2227,6 +2251,7 @@ const audiencePainContextReader = new SqliteAudiencePainContextReader(this.db);
       showGoalController,
       pauseGoalController,
       postponeGoalController,
+      reinstateGoalController,
       resumeGoalController,
       refineGoalController,
       removeGoalController,

@@ -2,7 +2,7 @@ import { BaseAggregate, AggregateState } from "../BaseAggregate.js";
 import { UUID } from "../BaseEvent.js";
 import { GoalId } from "./GoalId.js";
 import { ValidationRuleSet } from "../validation/ValidationRule.js";
-import { GoalEvent, GoalAddedEvent, GoalRefinedEvent, GoalStartedEvent, GoalUpdatedEvent, GoalBlockedEvent, GoalUnblockedEvent, GoalCompletedEvent, GoalResetEvent, GoalRemovedEvent, GoalPausedEvent, GoalPostponedEvent, GoalResumedEvent, GoalProgressUpdatedEvent, GoalSubmittedForReviewEvent, GoalQualifiedEvent, GoalRefinementStartedEvent, GoalCommittedEvent, GoalRejectedEvent, GoalSubmittedEvent, GoalCodifyingStartedEvent, GoalClosedEvent, GoalApprovedEvent, GoalStatusMigratedEvent } from "./EventIndex.js";
+import { GoalEvent, GoalAddedEvent, GoalRefinedEvent, GoalStartedEvent, GoalUpdatedEvent, GoalBlockedEvent, GoalUnblockedEvent, GoalCompletedEvent, GoalResetEvent, GoalRemovedEvent, GoalPausedEvent, GoalPostponedEvent, GoalReinstatedEvent, GoalResumedEvent, GoalProgressUpdatedEvent, GoalSubmittedForReviewEvent, GoalQualifiedEvent, GoalRefinementStartedEvent, GoalCommittedEvent, GoalRejectedEvent, GoalSubmittedEvent, GoalCodifyingStartedEvent, GoalClosedEvent, GoalApprovedEvent, GoalStatusMigratedEvent } from "./EventIndex.js";
 import { GoalEventType, GoalStatus, GoalStatusType, WAITING_STATES, IN_PROGRESS_STATES, TERMINAL_STATES, DETERMINISTIC_RESET_TARGETS } from "./Constants.js";
 import { GoalPausedReasonsType } from "./GoalPausedReasons.js";
 import { OBJECTIVE_RULES } from "./rules/ObjectiveRules.js";
@@ -31,6 +31,7 @@ import { CanSubmitRule } from "./rules/CanSubmitRule.js";
 import { CanCodifyRule } from "./rules/CanCodifyRule.js";
 import { CanCloseRule } from "./rules/CanCloseRule.js";
 import { CanPostponeRule } from "./rules/CanPostponeRule.js";
+import { CanReinstateRule } from "./rules/CanReinstateRule.js";
 
 // Domain state: business properties + aggregate metadata
 export interface GoalState extends AggregateState {
@@ -181,6 +182,13 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
 
       case GoalEventType.POSTPONED: {
         const e = event as GoalPostponedEvent;
+        state.status = e.payload.status;
+        state.version = e.version;
+        break;
+      }
+
+      case GoalEventType.REINSTATED: {
+        const e = event as GoalReinstatedEvent;
         state.status = e.payload.status;
         state.version = e.version;
         break;
@@ -709,6 +717,23 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
       { status: GoalStatus.POSTPONED },
       Goal.apply
     ) as GoalPostponedEvent;
+  }
+
+  /**
+   * Reinstates a postponed goal so it can enter refinement again.
+   * Transitions status from "postponed" to "defined".
+   *
+   * @returns GoalReinstatedEvent
+   * @throws Error if the goal is not in 'postponed' status
+   */
+  reinstate(): GoalReinstatedEvent {
+    ValidationRuleSet.ensure(this.state, [new CanReinstateRule()]);
+
+    return this.makeEvent(
+      GoalEventType.REINSTATED,
+      { status: GoalStatus.TODO },
+      Goal.apply
+    ) as GoalReinstatedEvent;
   }
 
   /**

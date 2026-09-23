@@ -103,8 +103,34 @@ Postpone a defined goal so it remains visible without entering automatic work-se
 ```
 
 :::note
-Postponed goals remain available in goal lists and TUI filters. There is no reverse transition from `postponed` to `defined`.
+Postponed goals remain available in goal lists and TUI filters. Use `jumbo goal reinstate` when the work should become eligible for refinement again.
 :::
+
+---
+
+## jumbo goal reinstate
+
+Return a postponed goal to `defined` status so it becomes eligible for refinement again.
+
+### Synopsis
+
+```bash
+> jumbo goal reinstate --id <goalId>
+```
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `-i, --id <goalId>` | ID of the postponed goal to reinstate (required) |
+
+### Examples
+
+```bash
+> jumbo goal reinstate --id goal_abc123
+```
+
+Only postponed goals can be reinstated. Other source statuses are rejected without changing the goal.
 
 ---
 

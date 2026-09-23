@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **Goal postponement**: Added `jumbo goal postpone --id <goalId>` to move a defined goal to `postponed`. Postponed goals remain visible in CLI and TUI goal views but are excluded from automatic work selection.
+- **Goal reinstatement**: Added `jumbo goal reinstate --id <goalId>` to return a postponed goal to `defined` status and make it eligible for refinement again.
 
 ### Fixed
 

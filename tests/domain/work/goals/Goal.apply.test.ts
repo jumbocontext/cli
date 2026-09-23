@@ -4,7 +4,7 @@
  */
 
 import { Goal, GoalState } from "../../../../src/domain/goals/Goal";
-import { GoalAddedEvent, GoalRefinedEvent, GoalStartedEvent, GoalCompletedEvent, GoalPausedEvent, GoalPostponedEvent, GoalResumedEvent, GoalSubmittedForReviewEvent, GoalQualifiedEvent } from "../../../../src/domain/goals/EventIndex";
+import { GoalAddedEvent, GoalRefinedEvent, GoalStartedEvent, GoalCompletedEvent, GoalPausedEvent, GoalPostponedEvent, GoalReinstatedEvent, GoalResumedEvent, GoalSubmittedForReviewEvent, GoalQualifiedEvent } from "../../../../src/domain/goals/EventIndex";
 import { GoalEventType, GoalStatus } from "../../../../src/domain/goals/Constants";
 
 function createEmptyGoalState(id: string): GoalState {
@@ -347,6 +347,30 @@ describe("Goal", () => {
       expect(state.version).toBe(2);
       expect(state.title).toBe("Later work");
       expect(state.objective).toBe("Keep visible without automatic selection");
+    });
+  });
+
+  describe("apply() - GoalReinstatedEvent", () => {
+    it("applies defined status and version without changing goal details", () => {
+      const state = createEmptyGoalState("goal_123");
+      state.title = "Later work";
+      state.objective = "Return to refinement";
+      state.status = GoalStatus.POSTPONED;
+      state.version = 2;
+      const event: GoalReinstatedEvent = {
+        type: GoalEventType.REINSTATED,
+        aggregateId: "goal_123",
+        version: 3,
+        timestamp: "2026-09-11T11:00:00.000Z",
+        payload: { status: GoalStatus.TODO },
+      };
+
+      Goal.apply(state, event);
+
+      expect(state.status).toBe(GoalStatus.TODO);
+      expect(state.version).toBe(3);
+      expect(state.title).toBe("Later work");
+      expect(state.objective).toBe("Return to refinement");
     });
   });
 
