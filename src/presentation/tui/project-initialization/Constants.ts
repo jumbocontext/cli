@@ -149,6 +149,7 @@ export const InitFlowConfirmationGroupLabel = {
   antigravity: "Antigravity",
   copilot: "Copilot",
   cursor: "Cursor",
+  opencode: "OpenCode",
   vibe: "Vibe",
 } as const;
 

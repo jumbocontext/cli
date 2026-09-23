@@ -28,6 +28,7 @@ import { CopilotConfigurer } from "./CopilotConfigurer.js";
 import { VibeConfigurer } from "./VibeConfigurer.js";
 import { CodexConfigurer } from "./CodexConfigurer.js";
 import { CursorConfigurer } from "./CursorConfigurer.js";
+import { OpenCodeConfigurer } from "./OpenCodeConfigurer.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -53,6 +54,7 @@ export class AgentFileProtocol implements IAgentFileProtocol {
       new VibeConfigurer(),
       new CodexConfigurer(templateSkillsRoot),
       new CursorConfigurer(),
+      new OpenCodeConfigurer(),
     ];
   }
 

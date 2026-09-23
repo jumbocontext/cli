@@ -63,8 +63,9 @@ Jumbo creates or updates several files outside `.jumbo/` to integrate with AI co
 | `.agents/jumbo/antigravity-hook.mjs` | Antigravity hook runner that returns documented JSON hook envelopes |
 | `.github/hooks/hooks.json` | GitHub Copilot hooks for session start |
 | `.cursor/hooks.json` | Cursor hook for session start |
+| `.opencode/plugins/jumbo.js` | OpenCode plugin that pauses active Jumbo work before compaction, preserves goal context, and resumes afterward |
 
-These hooks load the session router when an agent session begins and preserve work state before supported lifecycle events.
+These hooks load the session router when an agent session begins and preserve work state before supported lifecycle events. OpenCode discovers its project plugin automatically, so Jumbo does not modify `opencode.json` or unrelated files under `.opencode/plugins`.
 
 **Managed skills:**
 

@@ -176,3 +176,6 @@ tui-goals-*
 
 # Cursor
 .cursor/*
+
+# OpenCode
+.opencode/*

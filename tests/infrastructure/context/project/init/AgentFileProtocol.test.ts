@@ -39,6 +39,7 @@ describe("AgentFileProtocol", () => {
         { id: "vibe", name: "Vibe" },
         { id: "codex", name: "Codex" },
         { id: "cursor", name: "Cursor" },
+        { id: "opencode", name: "OpenCode" },
       ]);
     });
   });
@@ -189,6 +190,7 @@ describe("AgentFileProtocol", () => {
       expect(await fs.pathExists(path.join(tmpDir, "GEMINI.md"))).toBe(false);
       expect(await fs.pathExists(path.join(tmpDir, ".agents", "hooks.json"))).toBe(false);
       expect(await fs.pathExists(path.join(tmpDir, ".gemini", "settings.json"))).toBe(false);
+      expect(await fs.pathExists(path.join(tmpDir, ".opencode", "plugins", "jumbo.js"))).toBe(false);
 
       expect(await fs.pathExists(path.join(tmpDir, ".claude", "skills", "my-skill", "SKILL.md"))).toBe(true);
       expect(await fs.pathExists(path.join(tmpDir, ".agents", "skills", "my-skill", "SKILL.md"))).toBe(true);
@@ -450,6 +452,9 @@ describe("AgentFileProtocol", () => {
       const cursorHooksPath = path.join(tmpDir, ".cursor", "hooks.json");
       const cursorHooksExists = await fs.pathExists(cursorHooksPath);
       expect(cursorHooksExists).toBe(true);
+
+      const openCodePluginPath = path.join(tmpDir, ".opencode", "plugins", "jumbo.js");
+      expect(await fs.pathExists(openCodePluginPath)).toBe(true);
     });
 
     it("should create .github/hooks/hooks.json with SessionStart hook", async () => {
@@ -857,6 +862,24 @@ describe("AgentFileProtocol", () => {
           expect.objectContaining({ path: ".claude/settings.json" }),
           expect.objectContaining({ path: ".claude/skills/my-skill" }),
           expect.objectContaining({ path: ".vibe/skills/my-skill" }),
+        ])
+      );
+    });
+
+    it("should include the OpenCode plugin only when OpenCode is selected", async () => {
+      const changes = await protocol.getPlannedFileChanges(tmpDir, ["opencode"]);
+
+      expect(changes).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ path: "JUMBO.md" }),
+          expect.objectContaining({ path: "AGENTS.md" }),
+          expect.objectContaining({ path: ".opencode/plugins/jumbo.js" }),
+        ])
+      );
+      expect(changes).not.toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ path: ".codex/hooks.json" }),
+          expect.objectContaining({ path: ".cursor/hooks.json" }),
         ])
       );
     });
