@@ -7,13 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.25.0] - 2026-09-23
+
 ### Added
 
 - **OpenCode compaction lifecycle**: Project initialization can install a managed OpenCode plugin that pauses active Jumbo work before compaction, contributes the goal identity and objective to compacted context, and resumes work after successful compaction without modifying unrelated OpenCode configuration.
-
-### Fixed
-
-- **Existing Codex compaction hooks**: `jumbo evolve --yes` refreshes stale managed Codex pause hooks to use quiet text output while preserving unrelated hooks and JSONC content.
 
 ## [3.24.0] - 2026-09-23
 
