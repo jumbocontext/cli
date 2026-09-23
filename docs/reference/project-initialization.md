@@ -91,6 +91,7 @@ Jumbo configures hooks for popular AI coding assistants:
 | **GitHub Copilot** | `.github/copilot-instructions.md`, `.github/hooks/hooks.json`, and `.agents/skills` |
 | **Antigravity CLI** | `GEMINI.md`, `.agents/hooks.json`, `.agents/jumbo/antigravity-hook.mjs`, and `.agents/skills` |
 | **Cursor** | `.cursor/rules/jumbo.mdc` and `.cursor/hooks.json` |
+| **OpenCode** | `.opencode/plugins/jumbo.js` and `.agents/skills` |
 | **Vibe** | `.vibe/skills` |
 | **All agents** | `JUMBO.md` and `AGENTS.md` |
 
@@ -99,6 +100,8 @@ Interactive init only creates the agent-specific files and managed skill directo
 Managed instruction files are bootstrap-only. `JUMBO.md` tells agents to follow Jumbo command prompts and to run `jumbo session start` only when a Jumbo command has not already routed the task. Reference files point to `JUMBO.md`; command discovery, workflow details, context maintenance, and correction capture live in managed skills and Jumbo command output.
 
 Jumbo-owned markdown files and JSON hook/settings fragments are loaded from `assets/agent-files`. Managed skills are copied from `assets/skills`, with additive initialization preserving existing user-created skills and repair refreshing Jumbo-managed skill directories.
+
+For OpenCode, Jumbo installs a project-local plugin without creating or changing `opencode.json`. Before OpenCode compacts a session, the plugin runs `jumbo work pause --format json --quiet` in the project directory and adds the active goal ID and objective to the compaction context. After successful compaction, it runs `jumbo work resume --format text --quiet`. The resume hook runs only when that plugin instance paused an active goal. Repair and `jumbo evolve --yes` refresh only `.opencode/plugins/jumbo.js`; unrelated OpenCode plugins and configuration remain untouched. Compatibility was verified against OpenCode 1.18.31; later versions require revalidation if the experimental compaction hook API changes.
 
 For Codex, Jumbo uses the repository skill directory `.agents/skills` and keeps `.codex` for documented Codex hooks/configuration. During repair and evolve, obsolete Jumbo-managed skill copies under `.codex/skills` are removed only when they exactly match the current managed templates; customized skills and extra user files are preserved.
 

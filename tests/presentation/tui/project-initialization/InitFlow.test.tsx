@@ -435,6 +435,7 @@ describe("InitFlow", () => {
     const availableAgents = [
       { id: "claude", name: "Claude" },
       { id: "codex", name: "Codex" },
+      { id: "opencode", name: "OpenCode" },
     ] as const;
     const actionControllers = {
       planProjectInitController: {
@@ -481,13 +482,13 @@ describe("InitFlow", () => {
 
     expect(actionControllers.planProjectInitController.handle).toHaveBeenNthCalledWith(2, {
       projectRoot: process.cwd(),
-      selectedAgentIds: ["claude", "codex"],
+      selectedAgentIds: ["claude", "codex", "opencode"],
     });
     expect(actionControllers.initializeProjectController.handle).toHaveBeenCalledWith({
       name: "MyProject",
       purpose: undefined,
       projectRoot: process.cwd(),
-      selectedAgentIds: ["claude", "codex"],
+      selectedAgentIds: ["claude", "codex", "opencode"],
     });
   }, 10000);
 
@@ -495,6 +496,7 @@ describe("InitFlow", () => {
     const availableAgents = [
       { id: "claude", name: "Claude" },
       { id: "codex", name: "Codex" },
+      { id: "opencode", name: "OpenCode" },
     ] as const;
     const actionControllers = {
       planProjectInitController: {
@@ -534,6 +536,7 @@ describe("InitFlow", () => {
     expect(lastFrame()).toContain("Agents");
     expect(lastFrame()).toContain("▸ [x] Claude (claude)");
     expect(lastFrame()).toContain("[x] Codex (codex)");
+    expect(lastFrame()).toContain("[x] OpenCode (opencode)");
     expect(lastFrame()).toContain("7/8");
     expect(lastFrame()).not.toContain("1/1");
 
@@ -551,13 +554,13 @@ describe("InitFlow", () => {
 
     expect(actionControllers.planProjectInitController.handle).toHaveBeenNthCalledWith(2, {
       projectRoot: process.cwd(),
-      selectedAgentIds: ["codex"],
+      selectedAgentIds: ["codex", "opencode"],
     });
     expect(actionControllers.initializeProjectController.handle).toHaveBeenCalledWith({
       name: "MyProject",
       purpose: undefined,
       projectRoot: process.cwd(),
-      selectedAgentIds: ["codex"],
+      selectedAgentIds: ["codex", "opencode"],
     });
   });
 });

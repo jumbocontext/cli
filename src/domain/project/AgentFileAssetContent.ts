@@ -24,6 +24,13 @@ export class AgentFileAssetContent {
     return JSON.parse(content) as T;
   }
 
+  static readScript(fileName: string): string {
+    return this.withTrailingNewline(
+      readFileSync(path.join(assetRoot, "scripts", fileName), "utf-8")
+        .replace(/\r\n/g, "\n")
+    );
+  }
+
   static extractSection(content: string, marker: string): string {
     const markerIndex = content.indexOf(marker);
     if (markerIndex === -1) {
