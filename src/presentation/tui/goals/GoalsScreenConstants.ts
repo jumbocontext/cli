@@ -5,6 +5,7 @@ export const GOAL_STATUS_FILTER_ALL = "all";
 export const GOAL_STATUS_FILTERS = [
   GOAL_STATUS_FILTER_ALL,
   GoalStatus.TODO,
+  GoalStatus.POSTPONED,
   GoalStatus.IN_REFINEMENT,
   GoalStatus.REFINED,
   GoalStatus.DOING,

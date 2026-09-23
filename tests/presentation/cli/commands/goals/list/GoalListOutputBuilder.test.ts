@@ -31,7 +31,7 @@ describe("GoalListOutputBuilder", () => {
       const expectedStatuses = [
         "approved", "in-review", "submitted", "paused", "doing",
         "blocked", "unblocked", "rejected", "in-refinement", "codifying",
-        "refined", "defined"
+        "refined", "defined", "postponed"
       ];
       for (const status of expectedStatuses) {
         expect(STATUS_ORDER).toHaveProperty(status);
@@ -146,6 +146,16 @@ describe("GoalListOutputBuilder", () => {
       const output = builder.buildActiveGoalsList(goals).toHumanReadable();
       expect(output).toContain("[SUBMITTED]");
       expect(output).toContain("g_submitted");
+    });
+
+    it("should render postponed goals under a dedicated heading", () => {
+      const output = builder.buildActiveGoalsList([
+        makeGoal({ goalId: "g_postponed", status: "postponed", objective: "Later work" }),
+      ]).toHumanReadable();
+
+      expect(output).toContain("[POSTPONED]");
+      expect(output).toContain("g_postponed");
+      expect(output).toContain("Later work");
     });
 
     it("should drop redundant status prefix from per-goal lines", () => {

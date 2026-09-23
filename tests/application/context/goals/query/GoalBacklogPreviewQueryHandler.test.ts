@@ -92,6 +92,7 @@ describe("GoalBacklogPreviewQueryHandler", () => {
     const reader: jest.Mocked<IGoalStatusReader> = {
       findAll: jest.fn().mockResolvedValue([
         goal("paused", GoalStatus.PAUSED, "2026-01-01T00:00:00.000Z"),
+        goal("postponed", GoalStatus.POSTPONED, "2026-01-01T00:00:00.000Z"),
         goal("submitted", GoalStatus.SUBMITTED, "2026-01-01T00:00:00.000Z"),
         goal("unblocked", GoalStatus.UNBLOCKED, "2026-01-01T00:00:00.000Z"),
         goal("done", GoalStatus.DONE, "2026-01-01T00:00:00.000Z"),

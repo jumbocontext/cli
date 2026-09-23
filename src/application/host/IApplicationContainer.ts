@@ -46,6 +46,9 @@ import { IGoalBlockedProjector } from "../context/goals/block/IGoalBlockedProjec
 import { IGoalUnblockedProjector } from "../context/goals/unblock/IGoalUnblockedProjector.js";
 import { IGoalPausedProjector } from "../context/goals/pause/IGoalPausedProjector.js";
 import { IGoalPauseReader } from "../context/goals/pause/IGoalPauseReader.js";
+import { IGoalPostponedProjector } from "../context/goals/postpone/IGoalPostponedProjector.js";
+import { IGoalReinstatedProjector } from "../context/goals/reinstate/IGoalReinstatedProjector.js";
+import { IGetGoalViewReader } from "../context/goals/get/IGetGoalViewReader.js";
 import { IGoalResumedProjector } from "../context/goals/resume/IGoalResumedProjector.js";
 import { IGoalCompletedProjector } from "../context/goals/complete/IGoalCompletedProjector.js";
 import { IGoalCompleteReader } from "../context/goals/complete/IGoalCompleteReader.js";
@@ -82,6 +85,8 @@ import { UnblockGoalController } from "../context/goals/unblock/UnblockGoalContr
 import { GetGoalsController } from "../context/goals/get/GetGoalsController.js";
 import { ShowGoalController } from "../context/goals/get/ShowGoalController.js";
 import { PauseGoalController } from "../context/goals/pause/PauseGoalController.js";
+import { PostponeGoalController } from "../context/goals/postpone/PostponeGoalController.js";
+import { ReinstateGoalController } from "../context/goals/reinstate/ReinstateGoalController.js";
 import { ResumeGoalController } from "../context/goals/resume/ResumeGoalController.js";
 import { RemoveGoalController } from "../context/goals/remove/RemoveGoalController.js";
 import { UpdateGoalController } from "../context/goals/update/UpdateGoalController.js";
@@ -272,6 +277,10 @@ import { IGoalUnblockedEventWriter } from "../context/goals/unblock/IGoalUnblock
 import { IGoalUnblockedEventReader } from "../context/goals/unblock/IGoalUnblockedEventReader.js";
 import { IGoalPausedEventWriter } from "../context/goals/pause/IGoalPausedEventWriter.js";
 import { IGoalPausedEventReader } from "../context/goals/pause/IGoalPausedEventReader.js";
+import { IGoalPostponedEventWriter } from "../context/goals/postpone/IGoalPostponedEventWriter.js";
+import { IGoalPostponedEventReader } from "../context/goals/postpone/IGoalPostponedEventReader.js";
+import { IGoalReinstatedEventWriter } from "../context/goals/reinstate/IGoalReinstatedEventWriter.js";
+import { IGoalReinstatedEventReader } from "../context/goals/reinstate/IGoalReinstatedEventReader.js";
 import { IGoalResumedEventWriter } from "../context/goals/resume/IGoalResumedEventWriter.js";
 import { IGoalResumedEventReader } from "../context/goals/resume/IGoalResumedEventReader.js";
 import { IGoalCompletedEventWriter } from "../context/goals/complete/IGoalCompletedEventWriter.js";
@@ -392,6 +401,8 @@ export interface IApplicationContainer {
   goalBlockedEventStore: IGoalBlockedEventWriter & IGoalBlockedEventReader;
   goalUnblockedEventStore: IGoalUnblockedEventWriter & IGoalUnblockedEventReader;
   goalPausedEventStore: IGoalPausedEventWriter & IGoalPausedEventReader;
+  goalPostponedEventStore: IGoalPostponedEventWriter & IGoalPostponedEventReader;
+  goalReinstatedEventStore: IGoalReinstatedEventWriter & IGoalReinstatedEventReader;
   goalResumedEventStore: IGoalResumedEventWriter & IGoalResumedEventReader;
   goalCompletedEventStore: IGoalCompletedEventWriter & IGoalCompletedEventReader;
   goalRefinedEventStore: IGoalRefineEventWriter & IGoalRefineEventReader;
@@ -418,6 +429,8 @@ export interface IApplicationContainer {
   goalBlockedProjector: IGoalBlockedProjector;
   goalUnblockedProjector: IGoalUnblockedProjector;
   goalPausedProjector: IGoalPausedProjector & IGoalReader & IGoalPauseReader;
+  goalPostponedProjector: IGoalPostponedProjector;
+  goalReinstatedProjector: IGoalReinstatedProjector;
   goalResumedProjector: IGoalResumedProjector & IGoalReader;
   goalCompletedProjector: IGoalCompletedProjector & IGoalCompleteReader;
   goalRefinedProjector: IGoalRefinedProjector & IGoalRefineReader;
@@ -430,6 +443,7 @@ export interface IApplicationContainer {
   goalContextAssembler: IGoalContextAssembler;
   goalContextQueryHandler: GoalContextQueryHandler;
   goalBacklogPreviewQueryHandler: GoalBacklogPreviewQueryHandler;
+  goalViewReader: IGetGoalViewReader;
   goalStatusReader: IGoalStatusReader;
   // Session Controllers
   sessionStartController: SessionStartController;
@@ -456,6 +470,8 @@ export interface IApplicationContainer {
   getGoalsController: GetGoalsController;
   showGoalController: ShowGoalController;
   pauseGoalController: PauseGoalController;
+  postponeGoalController: PostponeGoalController;
+  reinstateGoalController: ReinstateGoalController;
   resumeGoalController: ResumeGoalController;
   refineGoalController: RefineGoalController;
   removeGoalController: RemoveGoalController;

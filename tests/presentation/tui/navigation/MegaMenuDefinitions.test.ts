@@ -44,6 +44,7 @@ describe("MegaMenuDefinitions", () => {
     expect(goalsSection.children[0].children?.map((item) => item.goalStatusFilter)).toEqual([
       MEGA_MENU_GOAL_STATUS_FILTERS.defined,
       MEGA_MENU_GOAL_STATUS_FILTERS.refined,
+      MEGA_MENU_GOAL_STATUS_FILTERS.postponed,
     ]);
     expect(goalsSection.children[1].children?.map((item) => item.goalStatusFilter)).toEqual([
       MEGA_MENU_GOAL_STATUS_FILTERS.doing,
@@ -108,6 +109,7 @@ describe("MegaMenuDefinitions", () => {
     expect(goalsSection.children[0].children?.map((item) => item.key)).toEqual([
       GoalStatus.TODO,
       GoalStatus.REFINED,
+      GoalStatus.POSTPONED,
     ]);
     expect(goalsSection.children[1].children?.map((item) => item.key)).toEqual([
       GoalStatus.DOING,

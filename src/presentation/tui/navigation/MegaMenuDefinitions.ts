@@ -36,10 +36,11 @@ const MEGA_MENU_PRESENTATION_KEYS = {
 } as const;
 
 export const MEGA_MENU_GOAL_STATUS_FILTERS = {
-  backlog: [GoalStatus.TODO, GoalStatus.REFINED],
+  backlog: [GoalStatus.TODO, GoalStatus.POSTPONED, GoalStatus.REFINED],
   active: [GoalStatus.DOING, GoalStatus.BLOCKED, GoalStatus.INREVIEW],
   archive: [GoalStatus.DONE],
   defined: [GoalStatus.TODO],
+  postponed: [GoalStatus.POSTPONED],
   refined: [GoalStatus.REFINED],
   doing: [GoalStatus.DOING],
   blocked: [GoalStatus.BLOCKED],
@@ -78,6 +79,12 @@ export const MEGA_MENU_SECTIONS: readonly MegaMenuSection[] = [
             label: "Refined",
             screenKey: "goals",
             goalStatusFilter: MEGA_MENU_GOAL_STATUS_FILTERS.refined,
+          },
+          {
+            key: GoalStatus.POSTPONED,
+            label: "Postponed",
+            screenKey: "goals",
+            goalStatusFilter: MEGA_MENU_GOAL_STATUS_FILTERS.postponed,
           },
         ],
       },

@@ -54,6 +54,24 @@ describe("RefinerProcessManager", () => {
     }));
   });
 
+  it("selects only defined goals and never queries the postponed status", async () => {
+    const manager = new RefinerProcessManager(
+      goalStatusReader,
+      goalReader,
+      claimPolicy as unknown as GoalClaimPolicy,
+      { workerId: "worker_1" },
+      refineGoalController as unknown as RefineGoalController,
+      agentGateway,
+      telemetryClient,
+    );
+
+    await manager.selectEligibleGoals();
+
+    expect(goalStatusReader.findByStatus).toHaveBeenCalledTimes(1);
+    expect(goalStatusReader.findByStatus).toHaveBeenCalledWith(GoalStatus.TODO);
+    expect(goalStatusReader.findByStatus).not.toHaveBeenCalledWith(GoalStatus.POSTPONED);
+  });
+
   it("emits a structured foraging event when no goals are eligible", async () => {
     goalStatusReader.findByStatus.mockResolvedValue([]);
     const events: unknown[] = [];

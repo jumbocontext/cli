@@ -50,7 +50,9 @@ import { goalCodify, metadata as goalCodifyMeta } from '../../commands/goals/cod
 import { goalCommit, metadata as goalCommitMeta } from '../../commands/goals/commit/goal.commit.js';
 import { goalsList, metadata as goalsListMeta } from '../../commands/goals/list/goals.list.js';
 import { goalPause, metadata as goalPauseMeta } from '../../commands/goals/pause/goal.pause.js';
+import { goalPostpone, metadata as goalPostponeMeta } from '../../commands/goals/postpone/goal.postpone.js';
 import { goalRefine, metadata as goalRefineMeta } from '../../commands/goals/refine/goal.refine.js';
+import { goalReinstate, metadata as goalReinstateMeta } from '../../commands/goals/reinstate/goal.reinstate.js';
 import { goalReject, metadata as goalRejectMeta } from '../../commands/goals/reject/goal.reject.js';
 import { goalRemove, metadata as goalRemoveMeta } from '../../commands/goals/remove/goal.remove.js';
 import { goalReset, metadata as goalResetMeta } from '../../commands/goals/reset/goal.reset.js';
@@ -309,9 +311,19 @@ export const commands: RegisteredCommand[] = [
     handler: goalPause
   },
   {
+    path: 'goal postpone',
+    metadata: goalPostponeMeta,
+    handler: goalPostpone
+  },
+  {
     path: 'goal refine',
     metadata: goalRefineMeta,
     handler: goalRefine
+  },
+  {
+    path: 'goal reinstate',
+    metadata: goalReinstateMeta,
+    handler: goalReinstate
   },
   {
     path: 'goal reject',

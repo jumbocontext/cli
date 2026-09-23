@@ -62,4 +62,18 @@ describe("requiresProject metadata", () => {
     expect(paths).toContain("goal approve");
     expect(paths).not.toContain("goal qualify");
   });
+
+  it("registers goal postpone as explicitly project-scoped", () => {
+    const command = commands.find((c) => c.path === "goal postpone");
+
+    expect(command).toBeDefined();
+    expect(command?.metadata.requiresProject).toBe(true);
+  });
+
+  it("registers goal reinstate as explicitly project-scoped", () => {
+    const command = commands.find((c) => c.path === "goal reinstate");
+
+    expect(command).toBeDefined();
+    expect(command?.metadata.requiresProject).toBe(true);
+  });
 });

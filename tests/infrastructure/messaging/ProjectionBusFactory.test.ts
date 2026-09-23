@@ -13,6 +13,7 @@ import { InvariantEventType } from "../../../src/domain/invariants/Constants";
 import { EntityType, RelationEventType, RelationStatus } from "../../../src/domain/relations/Constants";
 import os from "os";
 import { BaseEvent } from "../../../src/domain/BaseEvent";
+import { GoalEventType, GoalStatus } from "../../../src/domain/goals/Constants";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -74,6 +75,42 @@ describe("ProjectionBusFactory", () => {
     expect(rows).toHaveLength(1);
     const row = rows[0] as { status: string };
     expect(row.status).toBe(ComponentStatus.DEPRECATED);
+  });
+
+  it("rebuilds reinstated goal state from its complete event history", async () => {
+    const bus = new ProjectionBusFactory().create(db);
+
+    await bus.publish({
+      type: GoalEventType.ADDED,
+      aggregateId: "goal-postponed",
+      version: 1,
+      timestamp: "2026-09-11T09:00:00.000Z",
+      payload: {
+        title: "Later work",
+        objective: "Keep this goal visible",
+        successCriteria: ["It remains listed"],
+        scopeIn: [],
+        scopeOut: [],
+        status: GoalStatus.TODO,
+      },
+    } as BaseEvent);
+    await bus.publish({
+      type: GoalEventType.POSTPONED,
+      aggregateId: "goal-postponed",
+      version: 2,
+      timestamp: "2026-09-11T10:00:00.000Z",
+      payload: { status: GoalStatus.POSTPONED },
+    } as BaseEvent);
+    await bus.publish({
+      type: GoalEventType.REINSTATED,
+      aggregateId: "goal-postponed",
+      version: 3,
+      timestamp: "2026-09-11T11:00:00.000Z",
+      payload: { status: GoalStatus.TODO },
+    } as BaseEvent);
+
+    expect(db.prepare("SELECT status, version FROM goal_views WHERE goalId = ?").get("goal-postponed"))
+      .toEqual({ status: GoalStatus.TODO, version: 3 });
   });
 
   it("creates an event bus that rebuilds the global search index from memory events", async () => {

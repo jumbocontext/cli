@@ -12,6 +12,8 @@ export const GoalEventType = {
   BLOCKED: 'GoalBlockedEvent',
   UNBLOCKED: 'GoalUnblockedEvent',
   PAUSED: 'GoalPausedEvent',
+  POSTPONED: 'GoalPostponedEvent',
+  REINSTATED: 'GoalReinstatedEvent',
   RESUMED: 'GoalResumedEvent',
   COMPLETED: 'GoalCompletedEvent',
   RESET: 'GoalResetEvent',
@@ -38,6 +40,7 @@ export const GoalStatus = {
   DOING: 'doing',
   BLOCKED: 'blocked',
   PAUSED: 'paused',
+  POSTPONED: 'postponed',
   COMPLETED: 'done',
   INREVIEW: 'in-review',
   QUALIFIED: 'approved',
@@ -82,6 +85,8 @@ export const GoalErrorMessages = {
   CANNOT_RESET_BLOCKED: 'Cannot reset a blocked goal. Unblock it first to preserve blocker context.',
   ALREADY_TODO: 'Goal is already in defined status',
   CANNOT_PAUSE_IN_STATUS: 'Cannot pause goal in {status} status. Goal must be in doing status.',
+  CANNOT_POSTPONE_IN_STATUS: 'Cannot postpone goal in {status} status. Goal must be in defined status.',
+  CANNOT_REINSTATE_IN_STATUS: 'Cannot reinstate goal in {status} status. Goal must be in postponed status.',
   CANNOT_RESUME_IN_STATUS: 'Cannot resume goal in {status} status. Goal must be paused.',
   // Embedded context: file path errors
   FILE_PATH_TOO_LONG: 'File path must be less than {max} characters',
@@ -109,7 +114,7 @@ export const GoalLimits = {
   TITLE_MAX_LENGTH: 60,
   OBJECTIVE_MAX_LENGTH: 1500,
   SUCCESS_CRITERION_MAX_LENGTH: 1000,
-  MAX_SUCCESS_CRITERIA: 50,
+  MAX_SUCCESS_CRITERIA: 100,
   SCOPE_ITEM_MAX_LENGTH: 200,
   MAX_SCOPE_ITEMS: 100,
   NOTE_MAX_LENGTH: 500,
@@ -126,6 +131,7 @@ export const WAITING_STATES: ReadonlySet<GoalStatusType> = new Set([
   GoalStatus.SUBMITTED,
   GoalStatus.QUALIFIED,
   GoalStatus.PAUSED,
+  GoalStatus.POSTPONED,
   GoalStatus.BLOCKED,
 ] as GoalStatusType[]);
 

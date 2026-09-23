@@ -47,6 +47,17 @@ describe("LocalGetGoalsGateway", () => {
     expect(response.goals.map(g => g.goalId)).toEqual(["g1", "g3"]);
   });
 
+  it("keeps postponed goals visible in the default listing", async () => {
+    mockReader.findAll.mockResolvedValue([
+      makeGoal({ goalId: "postponed", status: "postponed" }),
+      makeGoal({ goalId: "completed", status: "done" }),
+    ]);
+
+    const response = await gateway.getGoals({});
+
+    expect(response.goals.map((goal) => goal.goalId)).toEqual(["postponed"]);
+  });
+
   it("should filter by specified statuses", async () => {
     const allGoals = [
       makeGoal({ goalId: "g1", status: "doing" }),
