@@ -4,7 +4,7 @@
  */
 
 import { Goal, GoalState } from "../../../../src/domain/goals/Goal";
-import { GoalAddedEvent, GoalRefinedEvent, GoalStartedEvent, GoalCompletedEvent, GoalPausedEvent, GoalResumedEvent, GoalSubmittedForReviewEvent, GoalQualifiedEvent } from "../../../../src/domain/goals/EventIndex";
+import { GoalAddedEvent, GoalRefinedEvent, GoalStartedEvent, GoalCompletedEvent, GoalPausedEvent, GoalPostponedEvent, GoalResumedEvent, GoalSubmittedForReviewEvent, GoalQualifiedEvent } from "../../../../src/domain/goals/EventIndex";
 import { GoalEventType, GoalStatus } from "../../../../src/domain/goals/Constants";
 
 function createEmptyGoalState(id: string): GoalState {
@@ -324,6 +324,29 @@ describe("Goal", () => {
       expect(state.status).toBe(GoalStatus.PAUSED);
       expect(state.note).toBeUndefined();
       expect(state.version).toBe(3);
+    });
+  });
+
+  describe("apply() - GoalPostponedEvent", () => {
+    it("applies postponed status and version without changing goal details", () => {
+      const state = createEmptyGoalState("goal_123");
+      state.title = "Later work";
+      state.objective = "Keep visible without automatic selection";
+      state.version = 1;
+      const event: GoalPostponedEvent = {
+        type: GoalEventType.POSTPONED,
+        aggregateId: "goal_123",
+        version: 2,
+        timestamp: "2026-09-11T10:00:00.000Z",
+        payload: { status: GoalStatus.POSTPONED },
+      };
+
+      Goal.apply(state, event);
+
+      expect(state.status).toBe(GoalStatus.POSTPONED);
+      expect(state.version).toBe(2);
+      expect(state.title).toBe("Later work");
+      expect(state.objective).toBe("Keep visible without automatic selection");
     });
   });
 

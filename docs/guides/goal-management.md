@@ -50,6 +50,16 @@ Keep goals small and focused. Keep objectives specific — "Implement JWT auth" 
 
 See [goal add reference](../reference/commands/goal.md) for the full list of options.
 
+### Postponing defined goals
+
+Postpone defined work that should remain recorded but should not be selected by automatic work streams:
+
+```bash
+jumbo goal postpone --id goal_abc123
+```
+
+The goal remains visible in CLI lists and the TUI under the `postponed` status. Postponement is a one-way transition; create or update another defined goal when the work becomes relevant again.
+
 ### Prerequisite goals
 
 Goals can declare prerequisites that must be completed before they can start:
@@ -189,7 +199,7 @@ jumbo goals list --status doing
 jumbo goals list --status doing,blocked
 ```
 
-Valid status filters: `defined`, `doing`, `blocked`, `paused`, `refined`, `in-refinement`, `in-review`, `approved`, `done`.
+Valid status filters: `defined`, `postponed`, `doing`, `blocked`, `paused`, `refined`, `in-refinement`, `in-review`, `approved`, `done`.
 
 ---
 

@@ -8,6 +8,7 @@ const VALID_STATUSES: readonly string[] = Object.values(GoalStatus);
 
 const DEFAULT_STATUSES: readonly GoalStatusType[] = [
   GoalStatus.TODO,
+  GoalStatus.POSTPONED,
   GoalStatus.REFINED,
   GoalStatus.DOING,
   GoalStatus.BLOCKED,

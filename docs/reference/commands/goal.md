@@ -80,6 +80,34 @@ Start refinement of a goal — displays details and transitions to `in-refinemen
 
 ---
 
+## jumbo goal postpone
+
+Postpone a defined goal so it remains visible without entering automatic work-selection streams. This transitions the goal from `defined` to `postponed`.
+
+### Synopsis
+
+```bash
+> jumbo goal postpone --id <goalId>
+```
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `-i, --id <goalId>` | ID of the defined goal to postpone (required) |
+
+### Examples
+
+```bash
+> jumbo goal postpone --id goal_abc123
+```
+
+:::note
+Postponed goals remain available in goal lists and TUI filters. There is no reverse transition from `postponed` to `defined`.
+:::
+
+---
+
 ## jumbo goal commit
 
 Commit a goal after refinement is complete — transitions from `in-refinement` to `refined`.

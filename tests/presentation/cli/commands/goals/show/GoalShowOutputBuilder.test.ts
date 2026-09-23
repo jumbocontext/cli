@@ -269,7 +269,7 @@ describe("GoalShowOutputBuilder", () => {
     });
 
     it("should format all status types with semantic indicators", () => {
-      const statuses = ["doing", "refined", "in-review", "rejected", "blocked", "done"];
+      const statuses = ["doing", "refined", "in-review", "rejected", "blocked", "postponed", "done"];
 
       for (const status of statuses) {
         const view = makeContextualView({ status: status as GoalView["status"] });

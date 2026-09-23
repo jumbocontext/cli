@@ -21,7 +21,8 @@ export const STATUS_ORDER: Readonly<Record<string, number>> = {
   "in-refinement": 8,
   "codifying": 9,
   "refined": 10,
-  "defined": 11
+  "defined": 11,
+  "postponed": 12
 };
 
 /**
@@ -39,7 +40,8 @@ const STATUS_HEADINGS: Readonly<Record<string, string>> = {
   "in-refinement": "[IN-REFINEMENT]",
   "codifying": "[CODIFYING]",
   "refined": "[REFINED]",
-  "defined": "[DEFINED]"
+  "defined": "[DEFINED]",
+  "postponed": "[POSTPONED]"
 };
 
 /**

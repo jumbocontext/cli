@@ -571,6 +571,24 @@ describe("GoalsScreen", () => {
     }
   });
 
+  it("renders postponed goals and accepts a postponed navigation filter", async () => {
+    const handledRequests: GetGoalsRequest[] = [];
+    const { lastFrame, unmount } = renderGoalsScreen({
+      statusFilter: [GoalStatus.POSTPONED],
+      goals: [createGoal({
+        goalId: "goal_postponed",
+        title: "Deferred goal",
+        status: GoalStatus.POSTPONED,
+      })],
+      handledRequests,
+    });
+
+    const frame = stripAnsi(await waitForFrame(lastFrame, "Deferred goal"));
+    expect(frame).toContain("postponed");
+    expect(handledRequests).toContainEqual({ statuses: [GoalStatus.POSTPONED] });
+    unmount();
+  });
+
   it("opens the goal authoring wizard from the goals screen", async () => {
     const { lastFrame, stdin, unmount } = renderGoalsScreen();
 

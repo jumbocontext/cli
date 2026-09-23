@@ -109,6 +109,7 @@ interface GoalsScreenProps {
 
 const STATUS_COLORS: Record<GoalStatusType, string> = {
   [GoalStatus.TODO]: SemanticColors.muted,
+  [GoalStatus.POSTPONED]: SemanticColors.warning,
   [GoalStatus.REFINED]: SemanticColors.info,
   [GoalStatus.DOING]: SemanticColors.success,
   [GoalStatus.BLOCKED]: SemanticColors.error,

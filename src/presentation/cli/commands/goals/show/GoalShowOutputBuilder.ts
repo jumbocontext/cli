@@ -12,6 +12,7 @@ const STATUS_DISPLAY: Record<string, { symbol: string; color: (s: string) => str
   doing:       { symbol: Symbols.filledCircle, color: Colors.success,  label: "In Progress" },
   blocked:     { symbol: Symbols.cross,        color: Colors.error,    label: "Blocked" },
   defined:     { symbol: Symbols.dot,          color: Colors.muted,    label: "Planned" },
+  postponed:   { symbol: Symbols.dot,          color: Colors.warning,  label: "Postponed" },
   done:        { symbol: Symbols.check,        color: Colors.success,  label: "Completed" },
   refined:     { symbol: Symbols.check,        color: Colors.accent,   label: "Ready to Start" },
   paused:      { symbol: Symbols.dot,          color: Colors.warning,  label: "Paused" },
