@@ -13,7 +13,7 @@ interface CatalogRow {
 const SELECT_BY_ENTITY_TYPE: Record<EntityTypeValue, string> = {
   [EntityType.SESSION]: `SELECT 'session' entityType, sessionId entityId, status lifecycleState, 1 isCurrent FROM session_views`,
   [EntityType.GOAL]: `SELECT 'goal' entityType, goalId entityId, status lifecycleState, 1 isCurrent FROM goal_views`,
-  [EntityType.DECISION]: `SELECT 'decision' entityType, decisionId entityId, status lifecycleState, 1 isCurrent FROM decision_views`,
+  [EntityType.DECISION]: `SELECT 'decision' entityType, decisionId entityId, status lifecycleState, status <> 'removed' isCurrent FROM decision_views`,
   [EntityType.ARCHITECTURE]: `SELECT 'architecture' entityType, architectureId entityId, CASE deprecated WHEN 1 THEN 'deprecated' ELSE 'active' END lifecycleState, 1 isCurrent FROM architecture_views`,
   [EntityType.COMPONENT]: `SELECT 'component' entityType, componentId entityId, status lifecycleState, status <> 'removed' isCurrent FROM component_views`,
   [EntityType.DEPENDENCY]: `SELECT 'dependency' entityType, dependencyId entityId, status lifecycleState, status <> 'removed' isCurrent FROM dependency_views`,

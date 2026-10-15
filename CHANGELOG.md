@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Decision removal backend**: Added irreversible event-sourced removal with relation pruning and replay-safe projections. Removed decisions retain historical query access but disappear from global search; the CLI command is separate work.
+
 ## [3.25.0] - 2026-09-23
 
 ### Added

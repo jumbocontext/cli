@@ -67,6 +67,8 @@ import { SqliteDependencyUpdatedProjector } from "../context/dependencies/update
 import { SqliteDependencyRemovedProjector } from "../context/dependencies/remove/SqliteDependencyRemovedProjector.js";
 
 // Decision projectors
+import { SqliteDecisionRemovedProjector } from "../context/decisions/remove/SqliteDecisionRemovedProjector.js";
+import type { DecisionRemovedEvent } from "../../domain/decisions/remove/DecisionRemovedEvent.js";
 import { SqliteDecisionAddedProjector } from "../context/decisions/add/SqliteDecisionAddedProjector.js";
 import { SqliteDecisionUpdatedProjector } from "../context/decisions/update/SqliteDecisionUpdatedProjector.js";
 import { SqliteDecisionReversedProjector } from "../context/decisions/reverse/SqliteDecisionReversedProjector.js";
@@ -302,6 +304,8 @@ export class ProjectionBusFactory {
     on<DependencyRemovedEvent>(bus, DependencyEventType.REMOVED, (e) => dependencyRemovedProjector.applyDependencyRemoved(e));
 
     // Decision projections (projection-only — no cascades)
+    const decisionRemovedProjector = new SqliteDecisionRemovedProjector(db);
+    on<DecisionRemovedEvent>(bus, DecisionEventType.REMOVED, (e) => decisionRemovedProjector.applyDecisionRemoved(e));
     const decisionAddedProjector = new SqliteDecisionAddedProjector(db);
     const decisionUpdatedProjector = new SqliteDecisionUpdatedProjector(db);
     const decisionReversedProjector = new SqliteDecisionReversedProjector(db);

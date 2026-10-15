@@ -7,6 +7,12 @@ sidebar:
 
 Record, update, supersede, reverse, and restore architectural decisions (ADRs).
 
+### Removed decision history
+
+The application backend supports irreversible decision removal; a `jumbo decision remove` CLI command is not yet available. Removal preserves decision fields and event history, prunes incoming and outgoing relations (including deactivated relations), and removes the decision from global search. Removed decisions cannot be updated, reversed, superseded, or restored.
+
+Unfiltered and `all` decision queries retain removed history, including ID lookups; the backend also supports explicit `removed` status filtering. Project statistics continue counting only active decisions. Database and search-index rebuilds preserve this behavior without repeating live relation-pruning cascades.
+
 ---
 
 ## jumbo decision add

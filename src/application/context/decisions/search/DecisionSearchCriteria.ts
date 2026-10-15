@@ -4,7 +4,7 @@
  * All fields are optional. When multiple fields are specified,
  * they are combined with AND logic.
  *
- * - status: exact match, or all for all decisions
+ * - status: exact match (including removed), or omitted/all for all historical decisions
  * - title: substring match, or wildcard with * (e.g. Output*, *Boundary)
  * - query: substring match across decision text fields (supports * wildcards)
  */

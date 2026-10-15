@@ -1,4 +1,6 @@
 import Database from "better-sqlite3";
+import { DecisionStatus } from "../../../../../src/domain/decisions/Constants.js";
+import type { DecisionView } from "../../../../../src/application/context/decisions/DecisionView.js";
 import { SqliteDecisionViewReader } from "../../../../../src/infrastructure/context/decisions/get/SqliteDecisionViewReader";
 
 describe("SqliteDecisionViewReader", () => {
@@ -40,7 +42,7 @@ describe("SqliteDecisionViewReader", () => {
       rationale?: string | null;
       alternatives?: string[];
       consequences?: string | null;
-      status?: "active" | "reversed" | "superseded";
+      status?: DecisionView["status"];
       supersededBy?: string | null;
       reversalReason?: string | null;
       reversedAt?: string | null;
@@ -79,6 +81,21 @@ describe("SqliteDecisionViewReader", () => {
       createdAt
     );
   }
+
+  it("retains removed history in all/ID/search queries and supports explicit status filters", async () => {
+    insertDecision("dec_active", "Shared choice", "2025-01-01T00:00:00Z");
+    insertDecision("dec_removed", "Shared choice", "2025-01-02T00:00:00Z", { status: DecisionStatus.REMOVED });
+    const allIds = ["dec_removed", "dec_active"];
+    expect((await reader.findAll()).map(decision => decision.decisionId)).toEqual(allIds);
+    expect((await reader.findAll("all")).map(decision => decision.decisionId)).toEqual(allIds);
+    expect((await reader.findAll(DecisionStatus.REMOVED)).map(decision => decision.decisionId)).toEqual(["dec_removed"]);
+    expect((await reader.findAll(DecisionStatus.ACTIVE)).map(decision => decision.decisionId)).toEqual(["dec_active"]);
+    expect((await reader.findByIds([...allIds, "missing"])).map(decision => decision.decisionId)).toEqual(allIds);
+    expect((await reader.search({ query: "Shared" })).map(decision => decision.decisionId)).toEqual(allIds);
+    expect((await reader.search({ status: "all" })).map(decision => decision.decisionId)).toEqual(allIds);
+    expect((await reader.search({ status: DecisionStatus.REMOVED, title: "Shared", query: "choice" })).map(decision => decision.decisionId)).toEqual(["dec_removed"]);
+    expect((await reader.search({ status: DecisionStatus.ACTIVE })).map(decision => decision.decisionId)).toEqual(["dec_active"]);
+  });
 
   describe("findByIds", () => {
     it("should return empty array for empty input", async () => {
