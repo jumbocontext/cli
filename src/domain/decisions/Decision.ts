@@ -1,5 +1,6 @@
 import { BaseAggregate, AggregateState } from "../BaseAggregate.js";
 import { UUID, ISO8601 } from "../BaseEvent.js";
+import type { DecisionRemovedEvent } from "./remove/DecisionRemovedEvent.js";
 import { DecisionId } from "./DecisionId.js";
 import { ValidationRuleSet } from "../validation/ValidationRule.js";
 import { DecisionEvent, DecisionAddedEvent, DecisionUpdatedEvent, DecisionReversedEvent, DecisionSupersededEvent, DecisionRestoredEvent } from "./EventIndex.js";
@@ -72,6 +73,11 @@ export class Decision extends BaseAggregate<DecisionState, DecisionEvent> {
         state.status = DecisionStatus.SUPERSEDED;
         state.supersededBy = e.payload.supersededBy;
         state.version = e.version;
+        break;
+      }
+      case DecisionEventType.REMOVED: {
+        state.status = DecisionStatus.REMOVED;
+        state.version = event.version;
         break;
       }
       case DecisionEventType.RESTORED: {
@@ -177,6 +183,7 @@ export class Decision extends BaseAggregate<DecisionState, DecisionEvent> {
     alternatives?: string[],
     consequences?: string
   ): DecisionUpdatedEvent {
+    this.ensureNotRemoved();
     // State validation
     if (this.state.status !== DecisionStatus.ACTIVE) {
       throw new Error(DecisionErrorMessages.CANNOT_MODIFY_INACTIVE);
@@ -207,6 +214,7 @@ export class Decision extends BaseAggregate<DecisionState, DecisionEvent> {
    * Marks the decision as no longer applicable.
    */
   reverse(reason: string): DecisionReversedEvent {
+    this.ensureNotRemoved();
     // State validation - can only reverse active decisions
     if (this.state.status === DecisionStatus.REVERSED) {
       throw new Error(DecisionErrorMessages.ALREADY_REVERSED);
@@ -233,6 +241,7 @@ export class Decision extends BaseAggregate<DecisionState, DecisionEvent> {
    * Mark decision as superseded by a newer decision.
    */
   supersede(supersededBy: UUID): DecisionSupersededEvent {
+    this.ensureNotRemoved();
     // State validation
     if (this.state.status === DecisionStatus.SUPERSEDED) {
       throw new Error(DecisionErrorMessages.ALREADY_SUPERSEDED);
@@ -252,9 +261,29 @@ export class Decision extends BaseAggregate<DecisionState, DecisionEvent> {
   }
 
   /**
-   * Restore a reversed or superseded decision back to active status.
+   * Irreversibly remove a decision while preserving its historical properties.
    */
+  remove(): DecisionRemovedEvent {
+    if (this.state.status === DecisionStatus.REMOVED) {
+      throw new Error(DecisionErrorMessages.ALREADY_REMOVED);
+    }
+
+    return this.makeEvent<DecisionRemovedEvent>(
+      DecisionEventType.REMOVED,
+      { status: DecisionStatus.REMOVED },
+      Decision.apply
+    );
+  }
+
+  private ensureNotRemoved(): void {
+    if (this.state.status === DecisionStatus.REMOVED) {
+      throw new Error(DecisionErrorMessages.CANNOT_MODIFY_REMOVED);
+    }
+  }
+
+  /** Restore a reversed or superseded decision back to active status. */
   restore(reason: string): DecisionRestoredEvent {
+    this.ensureNotRemoved();
     if (this.state.status === DecisionStatus.ACTIVE) {
       throw new Error(DecisionErrorMessages.ALREADY_ACTIVE);
     }

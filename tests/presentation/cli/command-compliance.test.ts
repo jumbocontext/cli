@@ -73,6 +73,17 @@ describe("Command Compliance", () => {
     expect(violations((f) => !f.content.includes("export const metadata"))).toEqual([]);
   });
 
+  test("decision remove is discoverable and classified as project-scoped", () => {
+    const command = commands.find(candidate => candidate.path === "decision remove");
+    expect(command?.metadata.requiredOptions?.map(option => option.flags)).toEqual(["-i, --id <id>"]);
+    expect(command?.metadata.examples?.map(example => example.command)).toContain(
+      "jumbo decision remove --id dec_123 --format json"
+    );
+    expect(classifyCommand(["node", "jumbo", "decision", "remove", "--id", "dec_123"], commands)).toEqual({
+      requiresInfrastructure: true, requiresProject: true, commandPath: "decision remove",
+    });
+  });
+
   test("global search command metadata supports project guard and output detail", () => {
     const command = commands.find((c) => c.path === "search");
 

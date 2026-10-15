@@ -9,7 +9,8 @@ export const DecisionEventType = {
   UPDATED: 'DecisionUpdatedEvent',
   REVERSED: 'DecisionReversedEvent',
   SUPERSEDED: 'DecisionSupersededEvent',
-  RESTORED: 'DecisionRestoredEvent'
+  RESTORED: 'DecisionRestoredEvent',
+  REMOVED: 'DecisionRemovedEvent'
 } as const;
 
 export type DecisionEventTypeValue = typeof DecisionEventType[keyof typeof DecisionEventType];
@@ -18,7 +19,8 @@ export type DecisionEventTypeValue = typeof DecisionEventType[keyof typeof Decis
 export const DecisionStatus = {
   ACTIVE: 'active',
   REVERSED: 'reversed',
-  SUPERSEDED: 'superseded'
+  SUPERSEDED: 'superseded',
+  REMOVED: 'removed'
 } as const;
 
 export type DecisionStatusType = typeof DecisionStatus[keyof typeof DecisionStatus];
@@ -37,6 +39,8 @@ export const DecisionErrorMessages = {
   ALREADY_REVERSED: 'Decision is already reversed',
   ALREADY_SUPERSEDED: 'Decision is already superseded',
   ALREADY_ACTIVE: 'Decision is already active',
+  ALREADY_REMOVED: 'Decision is already removed',
+  CANNOT_MODIFY_REMOVED: 'Cannot modify a removed decision',
   CANNOT_MODIFY_INACTIVE: 'Cannot modify a reversed or superseded decision',
   REASON_REQUIRED: 'Reason for reversal must be provided',
   REASON_TOO_LONG: 'Reversal reason must be less than {max} characters',

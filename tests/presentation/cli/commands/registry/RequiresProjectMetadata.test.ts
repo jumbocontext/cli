@@ -49,6 +49,13 @@ describe("requiresProject metadata", () => {
     expect(command?.metadata.requiresProject).toBe(true);
   });
 
+  it("includes decision remove as an explicitly project-scoped generated command", () => {
+    const command = commands.find((c) => c.path === "decision remove");
+    expect(command).toBeDefined();
+    expect(command?.metadata.requiresProject).toBe(true);
+    expect(command?.handler).toEqual(expect.any(Function));
+  });
+
   it("includes decision show as an explicitly project-scoped generated command", () => {
     const command = commands.find((c) => c.path === "decision show");
 

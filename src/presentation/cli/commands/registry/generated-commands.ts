@@ -30,6 +30,7 @@ import { componentUndeprecate, metadata as componentUndeprecateMeta } from '../.
 import { componentUpdate, metadata as componentUpdateMeta } from '../../commands/components/update/component.update.js';
 import { decisionAdd, metadata as decisionAddMeta } from '../../commands/decisions/add/decision.add.js';
 import { decisionsList, metadata as decisionsListMeta } from '../../commands/decisions/list/decisions.list.js';
+import { decisionRemove, metadata as decisionRemoveMeta } from '../../commands/decisions/remove/decision.remove.js';
 import { decisionRestore, metadata as decisionRestoreMeta } from '../../commands/decisions/restore/decision.restore.js';
 import { decisionReverse, metadata as decisionReverseMeta } from '../../commands/decisions/reverse/decision.reverse.js';
 import { decisionsSearch, metadata as decisionsSearchMeta } from '../../commands/decisions/search/decisions.search.js';
@@ -209,6 +210,11 @@ export const commands: RegisteredCommand[] = [
     path: 'decisions list',
     metadata: decisionsListMeta,
     handler: decisionsList
+  },
+  {
+    path: 'decision remove',
+    metadata: decisionRemoveMeta,
+    handler: decisionRemove
   },
   {
     path: 'decision restore',

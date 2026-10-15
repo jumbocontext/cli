@@ -26,6 +26,10 @@ export class DecisionSearchDocumentProjector implements ISearchDocumentProjector
       return { operation: "upsert", document: this.fromAdded(event as DecisionAddedEvent) };
     }
 
+    if (event.type === DecisionEventType.REMOVED) {
+      return { operation: "remove", source: this.getSource(event) };
+    }
+
     if (!current) return null;
 
     const metadata = { ...current.metadata };

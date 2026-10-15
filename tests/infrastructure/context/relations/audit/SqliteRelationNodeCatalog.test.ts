@@ -26,7 +26,7 @@ describe("SqliteRelationNodeCatalog", () => {
 
       INSERT INTO session_views VALUES ('session-1', 'ended');
       INSERT INTO goal_views VALUES ('goal-1', 'done');
-      INSERT INTO decision_views VALUES ('decision-1', 'reversed');
+      INSERT INTO decision_views VALUES ('decision-1', 'reversed'), ('decision-removed', 'removed');
       INSERT INTO architecture_views VALUES ('architecture-1', 1);
       INSERT INTO component_views VALUES ('component-1', 'deprecated'), ('component-removed', 'removed');
       INSERT INTO dependency_views VALUES ('dependency-1', 'deprecated'), ('dependency-removed', 'removed');
@@ -69,6 +69,7 @@ describe("SqliteRelationNodeCatalog", () => {
       .toEqual([
         "audience:audience-removed",
         "component:component-removed",
+        "decision:decision-removed",
         "dependency:dependency-removed",
         "guideline:guideline-removed",
         "relation:relation-removed",

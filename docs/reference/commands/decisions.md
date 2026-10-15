@@ -5,7 +5,13 @@ sidebar:
   order: 8
 ---
 
-Record, update, supersede, reverse, and restore architectural decisions (ADRs).
+Record, update, supersede, reverse, restore, and remove architectural decisions (ADRs).
+
+### Removed decision history
+
+Use `jumbo decision remove --id <id>` for irreversible decision removal. Removal preserves decision fields and event history, prunes incoming and outgoing relations (including deactivated relations), and removes the decision from global search. Removed decisions cannot be updated, reversed, superseded, or restored.
+
+Unfiltered and `all` decision queries retain removed history, including ID lookups; the backend also supports explicit `removed` status filtering. Project statistics continue counting only active decisions. Database and search-index rebuilds preserve this behavior without repeating live relation-pruning cascades.
 
 ---
 
@@ -178,6 +184,33 @@ Reverse an architectural decision.
 ```bash
 > jumbo decision reverse --id dec_abc123 --reason "Performance benchmarks showed unacceptable latency"
 ```
+
+---
+
+## jumbo decision remove
+
+Irreversibly mark a decision as `removed` and prune its incoming and outgoing relations, including deactivated relations. Decision fields and event history remain available; removal does not erase history and cannot be undone with `decision restore`.
+
+### Synopsis
+
+```bash
+> jumbo decision remove --id <id>
+```
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `-i, --id <id>` | Decision ID to remove (required) |
+
+### Examples
+
+```bash
+> jumbo decision remove --id dec_abc123
+> jumbo decision remove --id dec_abc123 --format json
+```
+
+Non-TTY output defaults to a single JSON object containing `decisionId` and `status: "removed"`; use `--format text` for human-readable output. The command requires a Jumbo project. Missing IDs, unknown decisions, and repeated removal fail with a nonzero exit status.
 
 ---
 

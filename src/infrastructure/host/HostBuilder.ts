@@ -85,6 +85,13 @@ import { ShowDecisionController } from "../../application/context/decisions/show
 import { ReverseDecisionCommandHandler } from "../../application/context/decisions/reverse/ReverseDecisionCommandHandler.js";
 import { LocalReverseDecisionGateway } from "../../application/context/decisions/reverse/LocalReverseDecisionGateway.js";
 import { ReverseDecisionController } from "../../application/context/decisions/reverse/ReverseDecisionController.js";
+import { DecisionEventType } from "../../domain/decisions/Constants.js";
+import { RemoveDecisionCommandHandler } from "../../application/context/decisions/remove/RemoveDecisionCommandHandler.js";
+import { LocalRemoveDecisionGateway } from "../../application/context/decisions/remove/LocalRemoveDecisionGateway.js";
+import { RemoveDecisionController } from "../../application/context/decisions/remove/RemoveDecisionController.js";
+import { DecisionRemovedEventHandler } from "../../application/context/decisions/remove/DecisionRemovedEventHandler.js";
+import { FsDecisionRemovedEventStore } from "../context/decisions/remove/FsDecisionRemovedEventStore.js";
+import { SqliteDecisionRemovedProjector } from "../context/decisions/remove/SqliteDecisionRemovedProjector.js";
 import { RestoreDecisionCommandHandler } from "../../application/context/decisions/restore/RestoreDecisionCommandHandler.js";
 import { LocalRestoreDecisionGateway } from "../../application/context/decisions/restore/LocalRestoreDecisionGateway.js";
 import { RestoreDecisionController } from "../../application/context/decisions/restore/RestoreDecisionController.js";
@@ -647,7 +654,7 @@ export class HostBuilder {
    *
    * @returns Promise<IApplicationContainer> - Container with all services
    */
-  async build(): Promise<IApplicationContainer> {
+  async build(): Promise<IApplicationContainer & { removeDecisionCommandHandler: RemoveDecisionCommandHandler }> {
     // ============================================================
     // STEP 1: Get Core Infrastructure
     // ============================================================
@@ -775,6 +782,7 @@ export class HostBuilder {
     const decisionAddedEventStore = new FsDecisionAddedEventStore(this.rootDir, logger);
     const decisionUpdatedEventStore = new FsDecisionUpdatedEventStore(this.rootDir, logger);
     const decisionReversedEventStore = new FsDecisionReversedEventStore(this.rootDir, logger);
+    const decisionRemovedEventStore = new FsDecisionRemovedEventStore(this.rootDir, logger);
     const decisionRestoredEventStore = new FsDecisionRestoredEventStore(this.rootDir, logger);
     const decisionSupersededEventStore = new FsDecisionSupersededEventStore(this.rootDir, logger);
     // Guideline Event Stores - decomposed by use case
@@ -876,6 +884,7 @@ export class HostBuilder {
     const decisionAddedProjector = new SqliteDecisionAddedProjector(this.db);
     const decisionUpdatedProjector = new SqliteDecisionUpdatedProjector(this.db);
     const decisionReversedProjector = new SqliteDecisionReversedProjector(this.db);
+    const decisionRemovedProjector = new SqliteDecisionRemovedProjector(this.db);
     const decisionRestoredProjector = new SqliteDecisionRestoredProjector(this.db);
     const decisionSupersededProjector = new SqliteDecisionSupersededProjector(this.db);
     const decisionViewReader = new SqliteDecisionViewReader(this.db);
@@ -1526,6 +1535,9 @@ const audiencePainContextReader = new SqliteAudiencePainContextReader(this.db);
     const reverseDecisionController = new ReverseDecisionController(
       reverseDecisionGateway
     );
+    const removeDecisionCommandHandler = new RemoveDecisionCommandHandler(decisionRemovedEventStore, decisionViewReader, eventBus);
+    const removeDecisionGateway = new LocalRemoveDecisionGateway(removeDecisionCommandHandler);
+    const removeDecisionController = new RemoveDecisionController(removeDecisionGateway);
     const restoreDecisionCommandHandler = new RestoreDecisionCommandHandler(
       decisionRestoredEventStore,
       decisionRestoredProjector,
@@ -1947,6 +1959,7 @@ const audiencePainContextReader = new SqliteAudiencePainContextReader(this.db);
     const decisionAddedEventHandler = new DecisionAddedEventHandler(decisionAddedProjector);
     const decisionUpdatedEventHandler = new DecisionUpdatedEventHandler(decisionUpdatedProjector, relationMaintenanceGoalRegistrar);
     const decisionReversedEventHandler = new DecisionReversedEventHandler(decisionReversedProjector, relationDeactivationCascade);
+    const decisionRemovedEventHandler = new DecisionRemovedEventHandler(decisionRemovedProjector, relationPruningCascade);
     const decisionRestoredEventHandler = new DecisionRestoredEventHandler(decisionRestoredProjector, relationReactivationCascade, relationMaintenanceGoalRegistrar);
     const decisionSupersededEventHandler = new DecisionSupersededEventHandler(decisionSupersededProjector, relationDeactivationCascade, relationMaintenanceGoalRegistrar);
     // Guideline Event Handlers - decomposed by use case
@@ -2087,6 +2100,7 @@ const audiencePainContextReader = new SqliteAudiencePainContextReader(this.db);
     eventBus.subscribe("DecisionAddedEvent", decisionAddedEventHandler);
     eventBus.subscribe("DecisionUpdatedEvent", decisionUpdatedEventHandler);
     eventBus.subscribe("DecisionReversedEvent", decisionReversedEventHandler);
+    eventBus.subscribe(DecisionEventType.REMOVED, decisionRemovedEventHandler);
     eventBus.subscribe("DecisionRestoredEvent", decisionRestoredEventHandler);
     eventBus.subscribe("DecisionSupersededEvent", decisionSupersededEventHandler);
 
@@ -2148,6 +2162,7 @@ const audiencePainContextReader = new SqliteAudiencePainContextReader(this.db);
     // ============================================================
 
     return {
+      removeDecisionCommandHandler,
       // Core Infrastructure
       projectRootResolver,
       eventBus,
@@ -2266,6 +2281,7 @@ const audiencePainContextReader = new SqliteAudiencePainContextReader(this.db);
       searchDecisionsController,
       reverseDecisionController,
       restoreDecisionController,
+      removeDecisionController,
       supersedeDecisionController,
       updateDecisionController,
 
