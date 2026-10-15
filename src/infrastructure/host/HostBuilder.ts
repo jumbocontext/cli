@@ -87,6 +87,8 @@ import { LocalReverseDecisionGateway } from "../../application/context/decisions
 import { ReverseDecisionController } from "../../application/context/decisions/reverse/ReverseDecisionController.js";
 import { DecisionEventType } from "../../domain/decisions/Constants.js";
 import { RemoveDecisionCommandHandler } from "../../application/context/decisions/remove/RemoveDecisionCommandHandler.js";
+import { LocalRemoveDecisionGateway } from "../../application/context/decisions/remove/LocalRemoveDecisionGateway.js";
+import { RemoveDecisionController } from "../../application/context/decisions/remove/RemoveDecisionController.js";
 import { DecisionRemovedEventHandler } from "../../application/context/decisions/remove/DecisionRemovedEventHandler.js";
 import { FsDecisionRemovedEventStore } from "../context/decisions/remove/FsDecisionRemovedEventStore.js";
 import { SqliteDecisionRemovedProjector } from "../context/decisions/remove/SqliteDecisionRemovedProjector.js";
@@ -1534,6 +1536,8 @@ const audiencePainContextReader = new SqliteAudiencePainContextReader(this.db);
       reverseDecisionGateway
     );
     const removeDecisionCommandHandler = new RemoveDecisionCommandHandler(decisionRemovedEventStore, decisionViewReader, eventBus);
+    const removeDecisionGateway = new LocalRemoveDecisionGateway(removeDecisionCommandHandler);
+    const removeDecisionController = new RemoveDecisionController(removeDecisionGateway);
     const restoreDecisionCommandHandler = new RestoreDecisionCommandHandler(
       decisionRestoredEventStore,
       decisionRestoredProjector,
@@ -2277,6 +2281,7 @@ const audiencePainContextReader = new SqliteAudiencePainContextReader(this.db);
       searchDecisionsController,
       reverseDecisionController,
       restoreDecisionController,
+      removeDecisionController,
       supersedeDecisionController,
       updateDecisionController,
 

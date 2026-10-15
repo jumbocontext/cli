@@ -135,6 +135,7 @@ import { SearchDecisionsController } from "../context/decisions/search/SearchDec
 import { ShowDecisionController } from "../context/decisions/show/ShowDecisionController.js";
 import { ReverseDecisionController } from "../context/decisions/reverse/ReverseDecisionController.js";
 import { RestoreDecisionController } from "../context/decisions/restore/RestoreDecisionController.js";
+import { RemoveDecisionController } from "../context/decisions/remove/RemoveDecisionController.js";
 import { SupersedeDecisionController } from "../context/decisions/supersede/SupersedeDecisionController.js";
 import { UpdateDecisionController } from "../context/decisions/update/UpdateDecisionController.js";
 import { IDecisionAddedProjector } from "../context/decisions/add/IDecisionAddedProjector.js";
@@ -486,6 +487,7 @@ export interface IApplicationContainer {
   showDecisionController: ShowDecisionController;
   reverseDecisionController: ReverseDecisionController;
   restoreDecisionController: RestoreDecisionController;
+  removeDecisionController: RemoveDecisionController;
   supersedeDecisionController: SupersedeDecisionController;
   updateDecisionController: UpdateDecisionController;
 

@@ -6,6 +6,8 @@ import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { AuditRelationsController } from "../../../src/application/context/relations/audit/AuditRelationsController.js";
 import { ShowDecisionController } from "../../../src/application/context/decisions/show/ShowDecisionController.js";
+import { RemoveDecisionController } from "../../../src/application/context/decisions/remove/RemoveDecisionController.js";
+import { DecisionStatus } from "../../../src/domain/decisions/Constants.js";
 import { HostBuilder } from "../../../src/infrastructure/host/HostBuilder.js";
 import { SqliteRelationNodeCatalog } from "../../../src/infrastructure/context/relations/audit/SqliteRelationNodeCatalog.js";
 import { MigrationRunner } from "../../../src/infrastructure/persistence/MigrationRunner.js";
@@ -46,6 +48,19 @@ describe("HostBuilder relation audit wiring", () => {
         }),
       }),
     );
+  });
+
+  it("wires decision removal through the controller, gateway, and backend handler", async () => {
+    const container = await new HostBuilder(tempDirectory, db).build();
+    expect(container.removeDecisionController).toBeInstanceOf(RemoveDecisionController);
+    const { decisionId } = await container.addDecisionController.handle({
+      title: "Wiring choice", context: "Verify local removal composition",
+    });
+    await expect(container.removeDecisionController.handle({ decisionId })).resolves.toEqual({
+      decisionId, status: DecisionStatus.REMOVED,
+    });
+    expect((await container.decisionViewReader.findByIds([decisionId]))[0].status).toBe(DecisionStatus.REMOVED);
+    await expect(container.removeDecisionController.handle({ decisionId })).rejects.toThrow();
   });
 
   it("exposes a usable decision-show controller backed by the decision view reader", async () => {
