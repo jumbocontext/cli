@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Command discovery skill**: Renamed the managed skill to `jumbo-discover-commands` and reduced it to a minimal pointer to `jumbo --help` and selected-command help.
+
+### Fixed
+
+- **Retired skill cleanup**: `jumbo init` and `jumbo evolve --yes` remove deprecated `jumbo-command-discovery` directories and their contents from current and legacy skill locations. A dedicated project-maintenance module owns the extensible retirement list and cleanup mechanism.
+
 ## [3.26.0] - 2026-10-15
 
 ### Added

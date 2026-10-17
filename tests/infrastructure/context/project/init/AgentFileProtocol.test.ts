@@ -237,7 +237,7 @@ describe("AgentFileProtocol", () => {
 
       const expectedSkillNames = [
         "jumbo-bootstrap-session",
-        "jumbo-command-discovery",
+        "jumbo-discover-commands",
         "jumbo-context-maintenance",
         "jumbo-correction-capture",
       ];

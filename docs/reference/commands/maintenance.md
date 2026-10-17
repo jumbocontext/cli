@@ -76,7 +76,9 @@ Runs the complete installation update workflow in sequence:
 7. Refresh managed harness and hook configuration
 8. Rebuild database projections from the event store
 
-The command is designed to be idempotent. Re-running it after a successful evolve should not create duplicate events or duplicate relations. Existing `.jumbo/settings.jsonc` files are upgraded additively: missing defaults are inserted, explicit values and unknown entries are preserved, and invalid JSONC fails instead of being partially rewritten. Codex skills are refreshed in `.agents/skills`; obsolete Jumbo-managed copies under `.codex/skills` are removed only when they exactly match the current managed templates.
+The command is designed to be idempotent. Re-running it after a successful evolve should not create duplicate events or duplicate relations. Existing `.jumbo/settings.jsonc` files are upgraded additively: missing defaults are inserted, explicit values and unknown entries are preserved, and invalid JSONC fails instead of being partially rewritten. Codex skills are refreshed in `.agents/skills`; obsolete Jumbo-managed copies under `.codex/skills` are removed only when they exactly match the current managed templates, except for explicitly retired skill directories.
+
+The command-discovery skill is now `jumbo-discover-commands`. Evolve removes the retired `jumbo-command-discovery` directory and all its contents, including customizations, from `.agents/skills`, `.claude/skills`, `.vibe/skills`, `.codex/skills`, and `.gemini/skills`. Initialization performs the same retirement cleanup.
 
 ### Examples
 
