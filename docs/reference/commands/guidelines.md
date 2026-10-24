@@ -105,6 +105,43 @@ Search execution guidelines by category, title, or free-text query.
 
 ---
 
+## jumbo guideline show
+
+Retrieve one complete guideline by ID, including removed guidelines. Requires an initialized Jumbo project.
+
+### Synopsis
+
+```bash
+> jumbo guideline show --id <guidelineId> [--format text|json]
+```
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `-i, --id <guidelineId>` | ID of the guideline to show (required) |
+| `--format <format>` | Explicit output format: `text` or `json` |
+
+### Output
+
+By default, terminals receive rich text and non-TTY/piped output receives exactly one JSON object. Explicit `--format text` or `--format json` overrides this default.
+
+JSON is the complete `GuidelineView`, without a wrapper: `guidelineId`, `category`, `title`, `description`, `rationale`, `examples`, `isRemoved`, `removedAt`, `removalReason`, `version`, `createdAt`, and `updatedAt`. No fields or examples are truncated. JSON preserves nulls and empty values; text displays them explicitly as `(null)` and `(empty)`.
+
+Unknown IDs and unexpected failures produce diagnostics on stderr, leave stdout empty, and exit non-zero.
+
+### Examples
+
+```bash
+> jumbo guideline show --id guide_abc123
+> jumbo guideline show --id guide_abc123 --format json
+> jumbo guideline show --id guide_abc123 --format text
+```
+
+Related: `jumbo guidelines list`, `jumbo guidelines search`, `jumbo guideline update`.
+
+---
+
 ## jumbo guideline update
 
 Update an existing guideline.

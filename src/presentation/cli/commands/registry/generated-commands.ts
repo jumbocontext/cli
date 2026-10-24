@@ -69,6 +69,7 @@ import { guidelineAdd, metadata as guidelineAddMeta } from '../../commands/guide
 import { guidelinesList, metadata as guidelinesListMeta } from '../../commands/guidelines/list/guidelines.list.js';
 import { guidelineRemove, metadata as guidelineRemoveMeta } from '../../commands/guidelines/remove/guideline.remove.js';
 import { guidelinesSearch, metadata as guidelinesSearchMeta } from '../../commands/guidelines/search/guidelines.search.js';
+import { guidelineShow, metadata as guidelineShowMeta } from '../../commands/guidelines/show/guideline.show.js';
 import { guidelineUpdate, metadata as guidelineUpdateMeta } from '../../commands/guidelines/update/guideline.update.js';
 import { heal, metadata as healMeta } from '../../commands/heal/heal.js';
 import { workerView, metadata as workerViewMeta } from '../../commands/host/workers/worker.view.js';
@@ -405,6 +406,11 @@ export const commands: RegisteredCommand[] = [
     path: 'guidelines search',
     metadata: guidelinesSearchMeta,
     handler: guidelinesSearch
+  },
+  {
+    path: 'guideline show',
+    metadata: guidelineShowMeta,
+    handler: guidelineShow
   },
   {
     path: 'guideline update',

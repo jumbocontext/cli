@@ -18,7 +18,7 @@ Complete command documentation.
 | [Component Commands](commands/components.md) | add, show, update, rename, search, list, deprecate, undeprecate, remove |
 | [Decision Commands](commands/decisions.md) | add, list, update, supersede, reverse, restore |
 | [Dependency Commands](commands/dependencies.md) | add, list, search, update, remove |
-| [Guideline Commands](commands/guidelines.md) | add, list, update, remove |
+| [Guideline Commands](commands/guidelines.md) | add, list, search, show, update, remove |
 | [Invariant Commands](commands/invariants.md) | add, list, update, remove |
 | [Audience Commands](commands/audiences.md) | add, list, update, remove |
 | [Audience Pain Commands](commands/audience-pains.md) | add, list, update |
