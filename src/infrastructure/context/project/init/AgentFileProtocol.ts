@@ -29,6 +29,7 @@ import { VibeConfigurer } from "./VibeConfigurer.js";
 import { CodexConfigurer } from "./CodexConfigurer.js";
 import { CursorConfigurer } from "./CursorConfigurer.js";
 import { OpenCodeConfigurer } from "./OpenCodeConfigurer.js";
+import { DeprecatedFileCleaner } from "../maintenance/DeprecatedFileCleaner.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -45,6 +46,7 @@ const DEFAULT_TEMPLATE_SKILLS_ROOT = path.resolve(
 );
 export class AgentFileProtocol implements IAgentFileProtocol {
   private readonly configurers: IConfigurer[];
+  private readonly deprecatedFileCleaner = new DeprecatedFileCleaner();
 
   constructor(private readonly templateSkillsRoot: string = DEFAULT_TEMPLATE_SKILLS_ROOT) {
     this.configurers = [
@@ -126,6 +128,7 @@ export class AgentFileProtocol implements IAgentFileProtocol {
     }
 
     await this.installSkillsFromTemplates(projectRoot, selectedAgentIds);
+    await this.deprecatedFileCleaner.clean(projectRoot);
   }
 
   /**
@@ -200,6 +203,7 @@ export class AgentFileProtocol implements IAgentFileProtocol {
     }
 
     await this.repairSkillsFromTemplates(projectRoot, selectedAgentIds);
+    await this.deprecatedFileCleaner.clean(projectRoot);
   }
 
   getAvailableAgents(): readonly AvailableAgent[] {
