@@ -49,7 +49,7 @@ Memory and context orchestration for coding agents.
 | [Component Commands](reference/commands/components.md) | add, show, update, rename, search, list, deprecate, undeprecate, remove |
 | [Decision Commands](reference/commands/decisions.md) | add, list, update, supersede, reverse, restore |
 | [Dependency Commands](reference/commands/dependencies.md) | add, list, search, update, remove |
-| [Guideline Commands](reference/commands/guidelines.md) | add, list, update, remove |
+| [Guideline Commands](reference/commands/guidelines.md) | add, list, search, show, update, remove |
 | [Invariant Commands](reference/commands/invariants.md) | add, list, update, remove |
 | [Audience Commands](reference/commands/audiences.md) | add, list, update, remove |
 | [Audience Pain Commands](reference/commands/audience-pains.md) | add, list, update |
