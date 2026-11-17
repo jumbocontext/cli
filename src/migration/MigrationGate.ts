@@ -13,6 +13,10 @@ export class MigrationGate {
       return { kind: "allowed" };
     }
 
+    return this.assertLaunchAllowed();
+  }
+
+  async assertLaunchAllowed(): Promise<MigrationGateResult> {
     const contextProject = CachedContextProject.get();
     const projectRoot = contextProject.path;
     const applicationRoot = ApplicationRoot.getInstance();

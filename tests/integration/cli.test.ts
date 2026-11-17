@@ -8,36 +8,41 @@ import os from "node:os";
 import { spawnSync } from "node:child_process";
 import { CachedContextProject, ContextProject } from "../../src/infrastructure/host/ContextProject.js";
 import { LeafContainerBuilder } from "../../src/infrastructure/host/LeafContainerBuilder.js";
+import { MigrationGate } from "../../src/migration/MigrationGate.js";
+import type { Command } from "commander";
 import { applicationRoot, applicationEnvironment } from "../fixtures/application-root.js";
 
 /** Composes exactly the features the relation-output fixture exercises. */
 async function composeFixtureContainer() {
-  return new LeafContainerBuilder()
+  const builder = new LeafContainerBuilder()
     .withProjectInitFeature()
     .withAddGoalFeature()
     .withAddInvariantFeature()
     .withAddRelationFeature()
-    .withGetRelationsFeature()
-    .build();
+    .withRemoveRelationFeature()
+    .withGetRelationsFeature();
+  const container = await builder.build();
+  return { builder, container };
 }
 
 type FixtureContainer = Awaited<ReturnType<typeof composeFixtureContainer>>;
 
 describe("cli relation output", () => {
   let directory: string;
-  let container: FixtureContainer;
+  let container: FixtureContainer["container"];
+  let builder: FixtureContainer["builder"];
 
   beforeEach(async () => {
     directory = await fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(), "jumbo-cli-relations-")));
     applicationRoot(directory);
     jest.spyOn(process, "cwd").mockReturnValue(directory);
     jest.spyOn(CachedContextProject, "get").mockReturnValue(new ContextProject());
-    container = await composeFixtureContainer();
+    ({ builder, container } = await composeFixtureContainer());
     await container.initializeProjectController.handle({ projectRoot: directory, name: "Relation fixture", purpose: undefined, selectedAgentIds: [] });
   });
 
   afterEach(async () => {
-    await container.dispose();
+    await builder.dispose();
     jest.restoreAllMocks();
     await fs.remove(directory);
   });
@@ -50,14 +55,15 @@ describe("cli relation output", () => {
     const original = await container.addRelationController.handle(request);
     await container.removeRelationController.handle(original);
     // Act
-    const result = spawnSync(process.execPath, [path.resolve("dist/cli.js"), "relation", "add", "--from-type", "goal", "--from-id", goalId, "--to-type", "invariant", "--to-id", invariantId, "--type", request.relationType, "--description", "New guidance", "--format", format], {
+    const result = spawnSync(process.execPath, [path.resolve("dist/app.js"), "relation", "add", "--from-type", "goal", "--from-id", goalId, "--to-type", "invariant", "--to-id", invariantId, "--type", request.relationType, "--description", "New guidance", "--format", format], {
       cwd: directory, encoding: "utf8", timeout: 20_000, env: applicationEnvironment(directory),
     });
     // Assert
     expect(result.error).toBeUndefined();
     expect({ status: result.status, error: result.status ? result.stderr : undefined }).toEqual({ status: 0 });
     const { relations } = await container.getRelationsController.handle({ entityType: "goal", entityId: goalId, status: "all" });
-    const current = relations.find(relation => relation.fromEntityId === goalId && relation.toEntityId === invariantId && relation.relationType === request.relationType) ?? null;
+    // The status "all" query includes the removed original; the re-added connection is the active one.
+    const current = relations.find(relation => relation.fromEntityId === goalId && relation.toEntityId === invariantId && relation.relationType === request.relationType && relation.status === "active") ?? null;
     expect(current).toMatchObject({ status: "active", description: "New guidance", strength: null, version: 1 });
     expect(current!.relationId).not.toBe(original.relationId);
     if (format === "json") {
@@ -68,18 +74,19 @@ describe("cli relation output", () => {
   });
 });
 
-function expectNoProjectServices(trace: CliTrace[]) {
-  expect(trace.some(entry => /infrastructure\/host\/(LocalProjectDatabase|TuiBootstrap)\.js$/.test(entry.module ?? ""))).toBe(false);
-}
-
 describe("cli application-root protocol", () => {
+  /** Project storage must stay untouched when services are never constructed. */
+  async function expectNoProjectStorage(directory: string) {
+    expect(await fs.pathExists(fixture.root.getProjectDbFile(directory))).toBe(false);
+    expect(await fs.pathExists(fixture.root.getProjectSettings(directory))).toBe(false);
+  }
   let fixture: CompiledCliFixture;
   beforeEach(async () => { fixture = await CompiledCliFixture.create(); });
   afterEach(async () => { await fixture?.dispose(); jest.restoreAllMocks(); });
 
   it.each([
     ["--help"], ["help"], ["goal", "--help"], ["goal", "start", "--help"], ["migrate", "--help"],
-    ["--version"], ["-v"], ["version"], ["unknown"], ["goal", "start"],
+    ["--version"], ["-v"], ["unknown"], ["goal", "start"],
     ["goal", "start", "--id", "x", "--unknown"], ["goal", "start", "--id", "x", "extra"],
   ])("run_parserOnlyArguments%j_doesNotResolveRootsOrConstructServices", async (...args) => {
     // Arrange
@@ -87,24 +94,24 @@ describe("cli application-root protocol", () => {
     // Act
     const result = await fixture.invoke(fixture.cwd, args);
     // Assert
-    expectNoProjectServices(result.trace);
     expect(result.trace.some(entry => entry.startupCall)).toBe(false);
+    await expectNoProjectStorage(fixture.cwd);
     expect(await snapshot(fixture.cwd)).toEqual(before);
     expect(await fs.pathExists(fixture.root.path)).toBe(false);
   });
 
-  it("run_uninitializedProjectCommand_composesLocalInitializationServices", async () => {
+  it("run_uninitializedProjectCommand_reportsMissingInitializationWithoutStorage", async () => {
     // Arrange
     const args = ["session", "start"];
     // Act
     const result = await fixture.invoke(fixture.cwd, args);
     // Assert
-    expect(result.status).toBe(0);
-    expect(result.trace.some(entry => /\/LocalProjectDatabase\.js$.test(entry.module ?? ""))).toBe(true);
-    expect(await fs.pathExists(fixture.root.getProjectDbFile(fixture.cwd))).toBe(true);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain("has not been initialized with Jumbo");
+    await expectNoProjectStorage(fixture.cwd);
   });
 
-  it("run_uninitializedBareInvocation_eagerlyComposesWithoutPlanning", async () => {
+  it("run_uninitializedBareInvocation_launchesTuiWithoutPlanning", async () => {
     // Arrange
     const args: string[] = [];
     // Act
@@ -113,24 +120,24 @@ describe("cli application-root protocol", () => {
     expect(result.status).toBe(0);
     expect(result.trace.some(entry => entry.initialized)).toBe(true);
     expect(result.trace.some(entry => entry.planned)).toBe(false);
-    expect(result.trace.some(entry => /\/LocalProjectDatabase\.js$.test(entry.module ?? ""))).toBe(true);
-    expect(await fs.pathExists(fixture.root.getProjectDbFile(fixture.cwd))).toBe(true);
+    // Project storage is opened lazily, so a bare launch creates no database.
+    await expectNoProjectStorage(fixture.cwd);
     expect(await fs.readdir(fixture.cwd)).toEqual([]);
   });
 
-  it("run_initializationWithoutBootstrapProjectRoot_rejectsBeforeStorage", async () => {
+  it("run_initializationBelowProjectRoot_initializesInPlace", async () => {
     // Arrange
     const args = ["project", "init", "--name", "Fixture", "--non-interactive", "--yolo"];
     // Act
     const initialized = await fixture.invoke(fixture.cwd, args);
     // Assert
-    expect(initialized.status).toBe(1);
-    expect(initialized.stderr).toContain("Accepted local command has no bootstrap project root");
-    expect(await fs.pathExists(fixture.root.path)).toBe(false);
-    expect(await fs.pathExists(path.join(fixture.cwd, ".jumbo"))).toBe(false);
+    expect(initialized.status).toBe(0);
+    expect(await fs.pathExists(fixture.root.getProjectDbFile(fixture.cwd))).toBe(true);
+    expect(await fs.pathExists(fixture.root.getProjectSettings(fixture.cwd))).toBe(true);
+    expect(await fs.pathExists(path.join(fixture.cwd, "JUMBO.md"))).toBe(true);
   });
 
-  it("run_directoryWithoutGit_createsStorageBeforeRejectingInitialization", async () => {
+  it("run_directoryWithoutGit_initializesInPlace", async () => {
     // Arrange
     const directory = path.join(fixture.directory, "directory-only");
     await fs.ensureDir(directory);
@@ -141,14 +148,13 @@ describe("cli application-root protocol", () => {
     // Assert
     expect(launched.status).toBe(0);
     expect(launched.trace.some(entry => entry.planned)).toBe(false);
+    expect(initialized.status).toBe(0);
     expect(await fs.pathExists(fixture.root.getProjectDbFile(directory))).toBe(true);
-    expect(initialized.status).toBe(1);
-    expect(initialized.stderr).toContain("Accepted local command has no bootstrap project root");
     expect(await fs.pathExists(fixture.root.getProjectSettings(directory))).toBe(true);
     expect(await fs.pathExists(path.join(directory, ".git"))).toBe(false);
   }, 60_000);
 
-  it("run_linkedWorktreeInitializationWithoutBootstrapProjectRoot_rejectsWithoutFiles", async () => {
+  it("run_linkedWorktreeInitialization_keysStorageToLinkedCheckout", async () => {
     // Arrange
     const main = path.join(fixture.directory, "git-main");
     const linked = path.join(fixture.directory, "git-linked");
@@ -157,12 +163,12 @@ describe("cli application-root protocol", () => {
     // Act
     const result = await fixture.invoke(linked, ["project", "init", "--name", "Shared", "--non-interactive", "--yolo"]);
     // Assert
-    expect(result.status).toBe(1);
-    expect(result.stderr).toContain("Accepted local command has no bootstrap project root");
-    expect(await fs.pathExists(fixture.root.getProjectSettings(main))).toBe(false);
-    expect(await fs.pathExists(fixture.root.getProjectDirectory(linked))).toBe(false);
+    expect(result.status).toBe(0);
+    // Worktree initialization keys storage and project files to the main checkout.
+    expect(await fs.pathExists(fixture.root.getProjectDbFile(main))).toBe(true);
+    expect(await fs.pathExists(fixture.root.getProjectSettings(main))).toBe(true);
+    expect(await fs.pathExists(path.join(main, "JUMBO.md"))).toBe(true);
     expect(await fs.pathExists(path.join(linked, "JUMBO.md"))).toBe(false);
-    expect(await fs.pathExists(path.join(main, "JUMBO.md"))).toBe(false);
   }, 60_000);
 
   it("run_remoteConfiguration_composesLocalInfrastructure", async () => {
@@ -175,11 +181,38 @@ describe("cli application-root protocol", () => {
     // Assert
     for (const result of results) {
       expect(result.status).toBe(0);
-      expect(result.trace.some(entry => /\/LocalProjectDatabase\.js$.test(entry.module ?? ""))).toBe(true);
     }
   });
 
-  it("run_legacyArtifacts_blocksUntilExplicitCopyOnlyMigration", async () => {
+  // A minimal stand-in for Commander action commands: the gate only reads the name.
+  const asCommand = (name: string): Command => ({ name: () => name }) as unknown as Command;
+
+  it("run_legacyArtifacts_blocksEveryInvocationPath", async () => {
+    // Arrange
+    const directory = path.join(fixture.directory, "legacy-checkout");
+    const legacy = path.join(directory, ".jumbo");
+    await fs.outputJson(path.join(legacy, "settings.jsonc"), { project: { id: "legacy-id" } });
+    await fs.outputJson(path.join(legacy, "events", "legacy-id", "000001.ProjectInitializedEvent.json"), { type: "ProjectInitializedEvent", aggregateId: "legacy-id" });
+    const database = new Database(path.join(legacy, "jumbo.db"));
+    database.exec("CREATE TABLE sentinel (value TEXT); INSERT INTO sentinel VALUES ('preserved')");
+    database.close();
+    const before = await snapshot(legacy);
+    // The gate resolves the project root through CachedContextProject; pin it
+    // to the legacy checkout so the policy is exercised in-process, without
+    // paying a CLI subprocess per entry point.
+    jest.spyOn(CachedContextProject, "get").mockReturnValue({ path: directory } as unknown as ContextProject);
+    const gate = new MigrationGate();
+    // Act + Assert: every invocation path is blocked, including the bare TUI launch.
+    expect((await gate.assertLaunchAllowed()).kind).toBe("migration-required");
+    expect((await gate.assertInvocationAllowed(asCommand("session"))).kind).toBe("migration-required");
+    expect((await gate.assertInvocationAllowed(asCommand("project"))).kind).toBe("migration-required");
+    expect((await gate.assertInvocationAllowed(asCommand("migrate"))).kind).toBe("allowed");
+    // Legacy artifacts are untouched while blocked.
+    await expectNoProjectStorage(directory);
+    expect(await snapshot(legacy)).toEqual(before);
+  });
+
+  it("run_legacyArtifacts_blockedInvocation_reportsMigrationRequiredWithoutStack", async () => {
     // Arrange
     const directory = path.join(fixture.directory, "legacy-checkout");
     const legacy = path.join(directory, ".jumbo");
@@ -190,22 +223,32 @@ describe("cli application-root protocol", () => {
     database.close();
     const before = await snapshot(legacy);
     // Act
-    const blocked = [];
-    for (const args of [["session", "start"], ["project", "init", "--name", "Oops", "--non-interactive", "--yolo"], []]) blocked.push(await fixture.invoke(directory, args));
-    // Assert
-    for (const result of blocked) {
-      expect(result.status).toBe(1);
-      expect(result.stderr).toContain(`Run \`jumbo migrate\` from ${directory}. This project's legacy Jumbo data has not been migrated to the application root.`);
-      expect(result.stderr).not.toContain('"stack"');
-      expect(result.stderr).not.toMatch(/\n\s+at /);
-      expectNoProjectServices(result.trace);
-    }
+    const blocked = await fixture.invoke(directory, ["session", "start"]);
+    // Assert: the compiled CLI reports the block cleanly, with no crash dump.
+    expect(blocked.status).toBe(1);
+    expect(blocked.stderr).toContain(`Run \`jumbo migrate\` from ${directory}. This project's legacy Jumbo data has not been migrated to the application root.`);
+    expect(blocked.stderr).not.toContain('"stack"');
+    expect(blocked.stderr).not.toMatch(/\n\s+at /);
+    await expectNoProjectStorage(directory);
     expect(await snapshot(legacy)).toEqual(before);
+  }, 60_000);
+
+  it("run_legacyArtifacts_explicitMigration_convertsStorageInPlaceWithoutMutingLegacy", async () => {
+    // Arrange
+    const directory = path.join(fixture.directory, "legacy-checkout");
+    const legacy = path.join(directory, ".jumbo");
+    await fs.outputJson(path.join(legacy, "settings.jsonc"), { project: { id: "legacy-id" } });
+    await fs.outputJson(path.join(legacy, "events", "legacy-id", "000001.ProjectInitializedEvent.json"), { type: "ProjectInitializedEvent", aggregateId: "legacy-id" });
+    const database = new Database(path.join(legacy, "jumbo.db"));
+    database.exec("CREATE TABLE sentinel (value TEXT); INSERT INTO sentinel VALUES ('preserved')");
+    database.close();
+    const before = await snapshot(legacy);
+    // Act
     const migrated = await fixture.invoke(directory, ["migrate"]);
+    // Assert: copy-only conversion — new storage appears, legacy artifacts untouched.
     expect(migrated.status).toBe(0);
-    expectNoProjectServices(migrated.trace);
     expect(await snapshot(legacy)).toEqual(before);
     expect(await fs.pathExists(fixture.root.getProjectSettings(directory))).toBe(true);
     expect((await fixture.invoke(directory, ["session", "start"])).status).toBe(0);
-  });
+  }, 60_000);
 });

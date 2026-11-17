@@ -43,12 +43,6 @@ export function createCommanderProgram(version: string): Command {
   // Keep Commander's existing -V/--version output and accept Jumbo's documented -v.
   program.version(version, "-v");
   program.options.at(-1)!.hideHelp();
-  program
-    .command("version")
-    .description("Show CLI version")
-    .action(() => {
-      program.configureOutput().writeOut?.(`${version}\n`);
-    });
 
   const originalHelp = program.helpInformation.bind(program);
   program.helpInformation = function () {

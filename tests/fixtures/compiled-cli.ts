@@ -29,7 +29,7 @@ export async function snapshot(directory: string): Promise<Record<string, string
 
 /** Fresh-process CLI tracing; only the interactive launcher is replaced. */
 export class CompiledCliFixture {
-  readonly cli = path.resolve("dist/cli.js");
+  readonly cli = path.resolve("dist/app.js");
   readonly cwd: string;
   readonly root: ApplicationRoot;
   private readonly traceFile: string;
@@ -70,11 +70,11 @@ export class CompiledCliFixture {
         }
         const loaded = await nextLoad(url, context);
         const startupClass = name.endsWith('/dist/application/host/ApplicationRoot.js') ? 'ApplicationRoot'
-          : name.endsWith('/dist/infrastructure/host/ContextProjectPath.js') ? 'ContextProjectPath'
+          : name.endsWith('/dist/infrastructure/host/ContextProject.js') ? 'CachedContextProject'
           : name.endsWith('/dist/migration/LegacyInstallationDetector.js') ? 'LegacyInstallationDetector' : null;
         if (startupClass) {
           const method = startupClass === 'LegacyInstallationDetector' ? 'find(workingDirectory) {'
-            : startupClass === 'ContextProjectPath' ? 'static get() {' : 'static getInstance() {';
+            : startupClass === 'CachedContextProject' ? 'static get() {' : 'static getInstance() {';
           const traceImport = 'import { appendFileSync as recordStartupCall } from "node:fs";';
           const traceCall = 'recordStartupCall(process.env.JUMBO_TEST_TRACE, JSON.stringify({ startupCall: '
             + JSON.stringify(startupClass) + ' }) + String.fromCharCode(10));';

@@ -180,6 +180,7 @@ describe("TuiBootstrap", () => {
 
   it("launch_launcherFails_stillReleasesResourcesAndPropagatesFailure", async () => {
     // Arrange
+    servicesFixture();
     const composition = await createTuiDependencies();
     const failure = new Error("launcher failed");
     launch.mockReset().mockRejectedValue(failure);
@@ -192,6 +193,7 @@ describe("TuiBootstrap", () => {
 
   it("launch_launcherPending_awaitsCompletionAndPropagatesFailure", async () => {
     // Arrange
+    servicesFixture();
     const composition = await createTuiDependencies();
     let reject!: (error: Error) => void;
     let entered!: () => void;

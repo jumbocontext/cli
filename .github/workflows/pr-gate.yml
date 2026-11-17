@@ -59,7 +59,7 @@ jobs:
 
       - run: npm run build
 
-      - run: npm test -- --testPathPatterns='\\.platform\\.test\\.ts$'
+      - run: npm test -- --testPathPatterns='\.platform\.test\.ts$'
 
   build:
     runs-on: ubuntu-latest

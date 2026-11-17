@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { lstatSync, realpathSync } from "node:fs";
+import { existsSync, lstatSync, realpathSync } from "node:fs";
 import path from "node:path";
 import { ApplicationRoot } from "../../application/host/ApplicationRoot.js";
 
@@ -23,17 +23,10 @@ export class ContextProject {
     // Start at the current directory when searching for checkout metadata.
     let ancestor = cwd;
     
-    // Search each ancestor for a Git checkout marker.
+    // Walk from the working tree upward, searching each directory for a
+    // resolvable .git entry that identifies the checkout root.
     while (true) {
-      try {
-        // Check whether this directory is a Git checkout root.
-        lstatSync(path.join(ancestor, ".git"));
-        // Stop searching once checkout metadata is found.
-        break;
-      } catch (error) {
-        // Propagate filesystem errors other than a missing checkout marker.
-        if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
-      }
+      if (hasResolvableGitDir(path.join(ancestor, ".git"))) break;
     
       // Move to the parent directory.
       const parent = path.dirname(ancestor);
@@ -60,15 +53,7 @@ export class ContextProject {
     const git = (...args: string[]) =>
       execFileSync("git", args, { cwd, env, encoding: "utf8" });
   
-    // Some sandboxed environments (e.g. Codex's workspace-write sandbox)
-    // materialize an empty, unusable .git directory in the workdir. When Git
-    // rejects the marker, treat this context as having no checkout metadata.
-    try {
-      return this.#resolveCheckoutRoot(git);
-    } catch (error) {
-      if (!isUnusableCheckoutError(error)) throw error;
-      return cwd;
-    }
+    return this.#resolveCheckoutRoot(git);
   }
 
   #resolveCheckoutRoot(
@@ -114,16 +99,22 @@ export class ContextProject {
 }
 
 
-/**
- * Detects a Git marker that exists on disk but is not usable checkout
- * metadata (e.g. an empty .git directory materialized by a sandbox).
- */
-function isUnusableCheckoutError(error: unknown): boolean {
-  const stderr =
-    error instanceof Error && "stderr" in error
-      ? String((error as { stderr?: unknown }).stderr)
-      : "";
-  return stderr.includes("not a git repository");
+// A .git entry is resolvable when it is either a gitfile — a .git file whose
+// contents point at a gitdir, as created by git worktree add — or a .git
+// directory following the standard repository layout (HEAD, objects/, refs/).
+// Fabricated or empty .git directories, as materialized by sandboxed agent
+// environments, lack the layout and are not resolvable.
+function hasResolvableGitDir(entry: string): boolean {
+  try {
+    if (lstatSync(entry).isFile()) return true; // gitfile: a worktree pointer
+    return (
+      existsSync(path.join(entry, "HEAD")) &&
+      existsSync(path.join(entry, "objects")) &&
+      existsSync(path.join(entry, "refs"))
+    );
+  } catch {
+    return false;
+  }
 }
 
 export class CachedContextProject {

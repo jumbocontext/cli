@@ -11,13 +11,6 @@ describe("createCommanderProgram", () => {
     expect(output).toBe("1.2.3\n");
   });
 
-  it("supports the version subcommand without application commands", async () => {
-    let output = "";
-    const program = createCommanderProgram("1.2.3").configureOutput({ writeOut: text => { output += text; } });
-    await program.parseAsync(["version"], { from: "user" });
-    expect(output).toBe("1.2.3\n");
-  });
-
   it("builds categorized discovery from direct Commander registrations", () => {
     const program = createCommanderProgram("1.2.3");
     const fixture = program.command("fixture").description("Fixture");

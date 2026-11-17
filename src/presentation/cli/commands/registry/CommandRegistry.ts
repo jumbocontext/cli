@@ -1,5 +1,4 @@
 import type { Command } from "commander";
-import { registerExampleCommands } from "../examples/registerExampleCommands.js";
 import { registerProjectCommands } from "../project/registerProjectCommands.js";
 import { registerGoalCommands } from "../goals/registerGoalCommands.js";
 import { registerGuidelineCommands } from "../guidelines/registerGuidelineCommands.js";
@@ -29,7 +28,6 @@ import { registerDependencyCommands } from "../dependencies/registerDependencyCo
  * group's parent command once and registers all of its leaf commands beneath it.
  */
 export function registerCliCommands(program: Command): void {
-  registerExampleCommands(program);
   registerProjectCommands(program);
   registerGoalCommands(program);
   registerGuidelineCommands(program);

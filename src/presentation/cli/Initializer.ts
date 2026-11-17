@@ -6,6 +6,9 @@ import { FAILURE_EXIT_CODE } from "./Constants.js";
 import { registerCliCommands } from "./commands/registry/CommandRegistry.js";
 import { createCommanderProgram } from "./program/createCommanderProgram.js";
 
+/** Signals that the migration gate already rendered its guidance and exited. */
+class MigrationRequiredError extends Error {}
+
 /** Assembles and executes the single Commander CLI program. */
 export class Initializer {
   constructor(private readonly version: string) {}
@@ -19,7 +22,7 @@ export class Initializer {
       if (result.kind === "migration-required") {
         renderMigrationRequired(result.projectRoot);
         process.exitCode = FAILURE_EXIT_CODE;
-        throw new Error("Migration required.");
+        throw new MigrationRequiredError("Migration required.");
       }
     });
 
@@ -33,6 +36,8 @@ export class Initializer {
         process.exitCode = FAILURE_EXIT_CODE;
         return;
       }
+      // The migration gate already rendered its message and set the exit code.
+      if (error instanceof MigrationRequiredError) return;
       throw error;
     }
   }
