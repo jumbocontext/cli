@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.26.1] - 2026-11-04
+
+### Added
+
+- **Guideline show command**: Added `jumbo guideline show --id <id>` to display the complete guideline record by ID, with text and JSON output formats.
+
 ### Changed
 
 - **CLI startup construction**: Commander now validates the selected command before Jumbo loads its handler or constructs services. Help, version, and invalid arguments skip project discovery and do not open project storage. Project commands retain exact-working-directory guards, and bare launches below a project root retain their initialization flow instead of opening the ancestor project.
