@@ -8,6 +8,8 @@ import os from "node:os";
 import { spawnSync } from "node:child_process";
 import { CachedContextProject, ContextProject } from "../../src/infrastructure/host/ContextProject.js";
 import { LeafContainerBuilder } from "../../src/infrastructure/host/LeafContainerBuilder.js";
+import { MigrationGate } from "../../src/migration/MigrationGate.js";
+import type { Command } from "commander";
 import { applicationRoot, applicationEnvironment } from "../fixtures/application-root.js";
 
 /** Composes exactly the features the relation-output fixture exercises. */
@@ -182,7 +184,35 @@ describe("cli application-root protocol", () => {
     }
   });
 
-  it("run_legacyArtifacts_blocksUntilExplicitCopyOnlyMigration", async () => {
+  // A minimal stand-in for Commander action commands: the gate only reads the name.
+  const asCommand = (name: string): Command => ({ name: () => name }) as unknown as Command;
+
+  it("run_legacyArtifacts_blocksEveryInvocationPath", async () => {
+    // Arrange
+    const directory = path.join(fixture.directory, "legacy-checkout");
+    const legacy = path.join(directory, ".jumbo");
+    await fs.outputJson(path.join(legacy, "settings.jsonc"), { project: { id: "legacy-id" } });
+    await fs.outputJson(path.join(legacy, "events", "legacy-id", "000001.ProjectInitializedEvent.json"), { type: "ProjectInitializedEvent", aggregateId: "legacy-id" });
+    const database = new Database(path.join(legacy, "jumbo.db"));
+    database.exec("CREATE TABLE sentinel (value TEXT); INSERT INTO sentinel VALUES ('preserved')");
+    database.close();
+    const before = await snapshot(legacy);
+    // The gate resolves the project root through CachedContextProject; pin it
+    // to the legacy checkout so the policy is exercised in-process, without
+    // paying a CLI subprocess per entry point.
+    jest.spyOn(CachedContextProject, "get").mockReturnValue({ path: directory } as unknown as ContextProject);
+    const gate = new MigrationGate();
+    // Act + Assert: every invocation path is blocked, including the bare TUI launch.
+    expect((await gate.assertLaunchAllowed()).kind).toBe("migration-required");
+    expect((await gate.assertInvocationAllowed(asCommand("session"))).kind).toBe("migration-required");
+    expect((await gate.assertInvocationAllowed(asCommand("project"))).kind).toBe("migration-required");
+    expect((await gate.assertInvocationAllowed(asCommand("migrate"))).kind).toBe("allowed");
+    // Legacy artifacts are untouched while blocked.
+    await expectNoProjectStorage(directory);
+    expect(await snapshot(legacy)).toEqual(before);
+  });
+
+  it("run_legacyArtifacts_blockedInvocation_reportsMigrationRequiredWithoutStack", async () => {
     // Arrange
     const directory = path.join(fixture.directory, "legacy-checkout");
     const legacy = path.join(directory, ".jumbo");
@@ -193,21 +223,32 @@ describe("cli application-root protocol", () => {
     database.close();
     const before = await snapshot(legacy);
     // Act
-    const blocked = [];
-    for (const args of [["session", "start"], ["project", "init", "--name", "Oops", "--non-interactive", "--yolo"], []]) blocked.push(await fixture.invoke(directory, args));
-    // Assert
-    for (const result of blocked) {
-      expect(result.status).toBe(1);
-      expect(result.stderr).toContain(`Run \`jumbo migrate\` from ${directory}. This project's legacy Jumbo data has not been migrated to the application root.`);
-      expect(result.stderr).not.toContain('"stack"');
-      expect(result.stderr).not.toMatch(/\n\s+at /);
-      await expectNoProjectStorage(directory);
-    }
+    const blocked = await fixture.invoke(directory, ["session", "start"]);
+    // Assert: the compiled CLI reports the block cleanly, with no crash dump.
+    expect(blocked.status).toBe(1);
+    expect(blocked.stderr).toContain(`Run \`jumbo migrate\` from ${directory}. This project's legacy Jumbo data has not been migrated to the application root.`);
+    expect(blocked.stderr).not.toContain('"stack"');
+    expect(blocked.stderr).not.toMatch(/\n\s+at /);
+    await expectNoProjectStorage(directory);
     expect(await snapshot(legacy)).toEqual(before);
+  }, 60_000);
+
+  it("run_legacyArtifacts_explicitMigration_convertsStorageInPlaceWithoutMutingLegacy", async () => {
+    // Arrange
+    const directory = path.join(fixture.directory, "legacy-checkout");
+    const legacy = path.join(directory, ".jumbo");
+    await fs.outputJson(path.join(legacy, "settings.jsonc"), { project: { id: "legacy-id" } });
+    await fs.outputJson(path.join(legacy, "events", "legacy-id", "000001.ProjectInitializedEvent.json"), { type: "ProjectInitializedEvent", aggregateId: "legacy-id" });
+    const database = new Database(path.join(legacy, "jumbo.db"));
+    database.exec("CREATE TABLE sentinel (value TEXT); INSERT INTO sentinel VALUES ('preserved')");
+    database.close();
+    const before = await snapshot(legacy);
+    // Act
     const migrated = await fixture.invoke(directory, ["migrate"]);
+    // Assert: copy-only conversion — new storage appears, legacy artifacts untouched.
     expect(migrated.status).toBe(0);
     expect(await snapshot(legacy)).toEqual(before);
     expect(await fs.pathExists(fixture.root.getProjectSettings(directory))).toBe(true);
     expect((await fixture.invoke(directory, ["session", "start"])).status).toBe(0);
-  });
+  }, 60_000);
 });
