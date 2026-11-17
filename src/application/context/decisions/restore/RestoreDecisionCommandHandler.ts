@@ -3,20 +3,27 @@ import { IDecisionRestoredEventWriter } from "./IDecisionRestoredEventWriter.js"
 import { IDecisionRestoreReader } from "./IDecisionRestoreReader.js";
 import { IEventBus } from "../../../messaging/IEventBus.js";
 import { Decision } from "../../../../domain/decisions/Decision.js";
-import { DecisionErrorMessages, formatErrorMessage } from "../../../../domain/decisions/Constants.js";
+import {
+  DecisionErrorMessages,
+  formatErrorMessage,
+} from "../../../../domain/decisions/Constants.js";
 
 export class RestoreDecisionCommandHandler {
   constructor(
     private readonly eventWriter: IDecisionRestoredEventWriter,
     private readonly reader: IDecisionRestoreReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
-  async execute(command: RestoreDecisionCommand): Promise<{ decisionId: string }> {
+  async execute(
+    command: RestoreDecisionCommand,
+  ): Promise<{ decisionId: string }> {
     const view = await this.reader.findById(command.decisionId);
     if (!view) {
       throw new Error(
-        formatErrorMessage(DecisionErrorMessages.DECISION_NOT_FOUND, { id: command.decisionId })
+        formatErrorMessage(DecisionErrorMessages.DECISION_NOT_FOUND, {
+          id: command.decisionId,
+        }),
       );
     }
 

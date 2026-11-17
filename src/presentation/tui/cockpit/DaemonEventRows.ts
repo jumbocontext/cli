@@ -20,7 +20,7 @@ function fromSnapshots(
   observedAtMs: number,
 ): readonly DaemonEventRow[] {
   const rows = snapshots.flatMap((snapshot) =>
-    DaemonEventRowNormalizer.fromSnapshot(snapshot, observedAtMs)
+    DaemonEventRowNormalizer.fromSnapshot(snapshot, observedAtMs),
   );
 
   return trimRows(newestFirst(rows));
@@ -40,7 +40,9 @@ function append(
   return trimRows(newestFirst([...currentRows, ...appendedRows]));
 }
 
-function newestFirst(rows: readonly DaemonEventRow[]): readonly DaemonEventRow[] {
+function newestFirst(
+  rows: readonly DaemonEventRow[],
+): readonly DaemonEventRow[] {
   return [...rows].sort((left, right) => right.timestampMs - left.timestampMs);
 }
 

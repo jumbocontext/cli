@@ -8,10 +8,10 @@ export class SubprocessOutputRingBuffer {
   }
 
   appendLines(buffer: string[], value: string): string[] {
-    const lines = value
-      .split(/\r?\n/)
-      .filter((line) => line.length > 0);
-    buffer.push(...lines.map((line) => this.limitTextTail(line, OUTPUT_LINE_MAX_LENGTH)));
+    const lines = value.split(/\r?\n/).filter((line) => line.length > 0);
+    buffer.push(
+      ...lines.map((line) => this.limitTextTail(line, OUTPUT_LINE_MAX_LENGTH)),
+    );
     while (buffer.length > OUTPUT_RING_BUFFER_SIZE) {
       buffer.shift();
     }

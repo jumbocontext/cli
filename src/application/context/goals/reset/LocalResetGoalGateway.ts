@@ -7,12 +7,14 @@ import { IGoalResetReader } from "./IGoalResetReader.js";
 export class LocalResetGoalGateway implements IResetGoalGateway {
   constructor(
     private readonly commandHandler: ResetGoalCommandHandler,
-    private readonly goalReader: IGoalResetReader
+    private readonly goalReader: IGoalResetReader,
   ) {}
 
   async resetGoal(request: ResetGoalRequest): Promise<ResetGoalResponse> {
     // Execute command
-    const result = await this.commandHandler.execute({ goalId: request.goalId });
+    const result = await this.commandHandler.execute({
+      goalId: request.goalId,
+    });
 
     // Fetch updated view for display
     const view = await this.goalReader.findById(result.goalId);
@@ -20,7 +22,7 @@ export class LocalResetGoalGateway implements IResetGoalGateway {
     return {
       goalId: result.goalId,
       objective: view?.objective || request.goalId,
-      status: view?.status || 'defined',
+      status: view?.status || "defined",
     };
   }
 }

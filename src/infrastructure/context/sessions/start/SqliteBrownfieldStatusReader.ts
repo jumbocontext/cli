@@ -23,9 +23,11 @@ export class SqliteBrownfieldStatusReader implements IBrownfieldStatusReader {
            EXISTS(SELECT 1 FROM decision_views WHERE status = ?) OR
            EXISTS(SELECT 1 FROM invariant_views) OR
            EXISTS(SELECT 1 FROM guideline_views WHERE isRemoved = 0)
-         AS hasSolutionContext`
+         AS hasSolutionContext`,
       )
-      .get(ComponentStatus.ACTIVE, DecisionStatus.ACTIVE) as { hasSolutionContext: number };
+      .get(ComponentStatus.ACTIVE, DecisionStatus.ACTIVE) as {
+      hasSolutionContext: number;
+    };
 
     return row.hasSolutionContext === 0;
   }

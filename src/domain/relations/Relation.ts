@@ -6,7 +6,15 @@ import { RelationAddedEvent } from "./add/RelationAddedEvent.js";
 import { RelationDeactivatedEvent } from "./deactivate/RelationDeactivatedEvent.js";
 import { RelationReactivatedEvent } from "./reactivate/RelationReactivatedEvent.js";
 import { RelationRemovedEvent } from "./remove/RelationRemovedEvent.js";
-import { RelationEventType, EntityTypeValue, RelationStrengthValue, RelationStatus, RelationStatusValue, RelationErrorMessages, formatErrorMessage } from "./Constants.js";
+import {
+  RelationEventType,
+  EntityTypeValue,
+  RelationStrengthValue,
+  RelationStatus,
+  RelationStatusValue,
+  RelationErrorMessages,
+  formatErrorMessage,
+} from "./Constants.js";
 import { ENTITY_TYPE_RULES, ENTITY_ID_RULES } from "./rules/EntityTypeRules.js";
 import { RELATION_TYPE_RULES } from "./rules/RelationTypeRules.js";
 import { DESCRIPTION_RULES } from "./rules/DescriptionRules.js";
@@ -76,13 +84,13 @@ export class Relation extends BaseAggregate<RelationState, RelationEvent> {
   static create(id: RelationId = RelationId.create()): Relation {
     const state: RelationState = {
       id,
-      fromEntityType: '' as EntityTypeValue,
-      fromEntityId: '',
-      toEntityType: '' as EntityTypeValue,
-      toEntityId: '',
-      relationType: '',
+      fromEntityType: "" as EntityTypeValue,
+      fromEntityId: "",
+      toEntityType: "" as EntityTypeValue,
+      toEntityId: "",
+      relationType: "",
       strength: null,
-      description: '',
+      description: "",
       status: RelationStatus.ACTIVE,
       version: 0,
     };
@@ -96,13 +104,13 @@ export class Relation extends BaseAggregate<RelationState, RelationEvent> {
   static rehydrate(id: UUID, history: RelationEvent[]): Relation {
     const state: RelationState = {
       id: RelationId.fromLegacy(id),
-      fromEntityType: '' as EntityTypeValue,
-      fromEntityId: '',
-      toEntityType: '' as EntityTypeValue,
-      toEntityId: '',
-      relationType: '',
+      fromEntityType: "" as EntityTypeValue,
+      fromEntityId: "",
+      toEntityType: "" as EntityTypeValue,
+      toEntityId: "",
+      relationType: "",
       strength: null,
-      description: '',
+      description: "",
       status: RelationStatus.ACTIVE,
       version: 0,
     };
@@ -121,13 +129,13 @@ export class Relation extends BaseAggregate<RelationState, RelationEvent> {
     toEntityId: string,
     relationType: string,
     description: string,
-    strength?: RelationStrengthValue
+    strength?: RelationStrengthValue,
   ): RelationAddedEvent {
     // Validation using rule pattern
-    ValidationRuleSet.ensure(fromEntityType, ENTITY_TYPE_RULES('from'));
-    ValidationRuleSet.ensure(fromEntityId, ENTITY_ID_RULES('from'));
-    ValidationRuleSet.ensure(toEntityType, ENTITY_TYPE_RULES('to'));
-    ValidationRuleSet.ensure(toEntityId, ENTITY_ID_RULES('to'));
+    ValidationRuleSet.ensure(fromEntityType, ENTITY_TYPE_RULES("from"));
+    ValidationRuleSet.ensure(fromEntityId, ENTITY_ID_RULES("from"));
+    ValidationRuleSet.ensure(toEntityType, ENTITY_TYPE_RULES("to"));
+    ValidationRuleSet.ensure(toEntityId, ENTITY_ID_RULES("to"));
     ValidationRuleSet.ensure(relationType, RELATION_TYPE_RULES);
     ValidationRuleSet.ensure(description, DESCRIPTION_RULES);
 
@@ -146,9 +154,9 @@ export class Relation extends BaseAggregate<RelationState, RelationEvent> {
         toEntityId,
         relationType,
         strength: strength || null,
-        description
+        description,
       },
-      Relation.apply
+      Relation.apply,
     );
   }
 
@@ -157,8 +165,8 @@ export class Relation extends BaseAggregate<RelationState, RelationEvent> {
     if (this.state.status === RelationStatus.REMOVED) {
       throw new Error(
         formatErrorMessage(RelationErrorMessages.RELATION_ALREADY_REMOVED, {
-          relationId: this.state.id
-        })
+          relationId: this.state.id,
+        }),
       );
     }
 
@@ -171,9 +179,9 @@ export class Relation extends BaseAggregate<RelationState, RelationEvent> {
         toEntityType: this.state.toEntityType,
         toEntityId: this.state.toEntityId,
         relationType: this.state.relationType,
-        reason: reason
+        reason: reason,
       },
-      Relation.apply
+      Relation.apply,
     );
   }
 
@@ -181,8 +189,8 @@ export class Relation extends BaseAggregate<RelationState, RelationEvent> {
     if (this.state.status !== RelationStatus.ACTIVE) {
       throw new Error(
         formatErrorMessage(RelationErrorMessages.RELATION_NOT_ACTIVE, {
-          relationId: this.state.id
-        })
+          relationId: this.state.id,
+        }),
       );
     }
 
@@ -190,9 +198,9 @@ export class Relation extends BaseAggregate<RelationState, RelationEvent> {
       RelationEventType.DEACTIVATED,
       {
         reason,
-        deactivatedAt: new Date().toISOString()
+        deactivatedAt: new Date().toISOString(),
       },
-      Relation.apply
+      Relation.apply,
     );
   }
 
@@ -200,8 +208,8 @@ export class Relation extends BaseAggregate<RelationState, RelationEvent> {
     if (this.state.status !== RelationStatus.DEACTIVATED) {
       throw new Error(
         formatErrorMessage(RelationErrorMessages.RELATION_NOT_DEACTIVATED, {
-          relationId: this.state.id
-        })
+          relationId: this.state.id,
+        }),
       );
     }
 
@@ -209,9 +217,9 @@ export class Relation extends BaseAggregate<RelationState, RelationEvent> {
       RelationEventType.REACTIVATED,
       {
         reason,
-        reactivatedAt: new Date().toISOString()
+        reactivatedAt: new Date().toISOString(),
       },
-      Relation.apply
+      Relation.apply,
     );
   }
 }

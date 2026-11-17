@@ -14,6 +14,8 @@ export class ArchitectureDeprecatedEventHandler implements IEventHandler {
 
   async handle(event: BaseEvent): Promise<void> {
     const architectureDeprecatedEvent = event as ArchitectureDeprecatedEvent;
-    await this.projector.applyArchitectureDeprecated(architectureDeprecatedEvent);
+    await this.projector.applyArchitectureDeprecated(
+      architectureDeprecatedEvent,
+    );
   }
 }

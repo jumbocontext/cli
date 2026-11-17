@@ -1,10 +1,10 @@
-import { Section } from './Section.js';
-import { PromptSection } from './PromptSection.js';
-import { DataSection } from './DataSection.js';
-import { GroupSection } from './GroupSection.js';
-import { Annotation } from './Annotation.js';
-import { AnnotationType } from './AnnotationType.js';
-import { TerminalOutput } from './TerminalOutput.js';
+import { Section } from "./Section.js";
+import { PromptSection } from "./PromptSection.js";
+import { DataSection } from "./DataSection.js";
+import { GroupSection } from "./GroupSection.js";
+import { Annotation } from "./Annotation.js";
+import { AnnotationType } from "./AnnotationType.js";
+import { TerminalOutput } from "./TerminalOutput.js";
 
 /**
  * Fluent builder for composing terminal output.
@@ -18,7 +18,7 @@ export class TerminalOutputBuilder {
    */
   addPrompt(text: string): this {
     const section: PromptSection = {
-      type: 'prompt',
+      type: "prompt",
       content: text,
     };
     this.sections.push(section);
@@ -30,7 +30,7 @@ export class TerminalOutputBuilder {
    */
   addData(content: unknown, annotation?: Annotation): this {
     const section: DataSection = {
-      type: 'data',
+      type: "data",
       content,
       metadata: annotation ? { annotation } : undefined,
     };
@@ -43,7 +43,7 @@ export class TerminalOutputBuilder {
    */
   addAnnotation(type: AnnotationType, text: string): this {
     this.sections.push({
-      type: 'annotation',
+      type: "annotation",
       content: { type, text },
     });
     return this;
@@ -58,10 +58,10 @@ export class TerminalOutputBuilder {
     options?: {
       groupHeader?: string;
       annotation?: Annotation;
-    }
+    },
   ): this {
     const section: GroupSection = {
-      type: 'group',
+      type: "group",
       content: entities,
       metadata: {
         rendererType,

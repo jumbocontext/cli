@@ -16,7 +16,7 @@ export class EndSessionCommandHandler {
     private readonly eventWriter: ISessionEndedEventWriter,
     private readonly eventReader: ISessionEndedEventReader,
     private readonly activeSessionReader: IActiveSessionReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
   async execute(command: EndSessionCommand): Promise<{ sessionId: string }> {
@@ -28,7 +28,10 @@ export class EndSessionCommandHandler {
 
     // 2. Rehydrate session from event store
     const history = await this.eventReader.readStream(activeSession.sessionId);
-    const session = Session.rehydrate(activeSession.sessionId, history as SessionEvent[]);
+    const session = Session.rehydrate(
+      activeSession.sessionId,
+      history as SessionEvent[],
+    );
 
     // 3. Domain logic produces event
     const event = session.end(command.focus, command.summary);

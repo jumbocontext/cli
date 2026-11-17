@@ -9,5 +9,7 @@ export interface IValuePropositionRemovedProjector {
   /**
    * Applies a ValuePropositionRemovedEvent event to update the materialized view.
    */
-  applyValuePropositionRemoved(event: ValuePropositionRemovedEvent): Promise<void>;
+  applyValuePropositionRemoved(
+    event: ValuePropositionRemovedEvent,
+  ): Promise<void>;
 }

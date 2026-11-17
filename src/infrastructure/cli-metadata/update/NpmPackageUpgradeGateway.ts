@@ -45,18 +45,17 @@ export class NpmPackageUpgradeGateway implements ICliPackageUpgradeGateway {
     private readonly packageEntryPointPath: string = process.argv[1] ?? "",
     private readonly telemetryClient?: Pick<ITelemetryClient, "track">,
     private readonly logger?: Pick<ILogger, "warn" | "info">,
-    private readonly npmCliPath: string | null =
-      NpmPackageUpgradeGateway.findNpmCliPath(),
-    private readonly selfUpgradeTestModeEnabled: boolean =
-      process.env[CLI_UPDATE_TEST_MODE_ENV] === "1",
-    private readonly testUpgradeResult: TestUpgradeResult =
-      NpmPackageUpgradeGateway.parseTestUpgradeResult(
-        process.env[CLI_UPDATE_TEST_UPGRADE_RESULT_ENV],
-      ),
-    private readonly testUpgradeDelayMs: number =
-      NpmPackageUpgradeGateway.parseTestUpgradeDelayMs(
-        process.env[CLI_UPDATE_TEST_UPGRADE_DELAY_MS_ENV],
-      ),
+    private readonly npmCliPath:
+      string | null = NpmPackageUpgradeGateway.findNpmCliPath(),
+    private readonly selfUpgradeTestModeEnabled: boolean = process.env[
+      CLI_UPDATE_TEST_MODE_ENV
+    ] === "1",
+    private readonly testUpgradeResult: TestUpgradeResult = NpmPackageUpgradeGateway.parseTestUpgradeResult(
+      process.env[CLI_UPDATE_TEST_UPGRADE_RESULT_ENV],
+    ),
+    private readonly testUpgradeDelayMs: number = NpmPackageUpgradeGateway.parseTestUpgradeDelayMs(
+      process.env[CLI_UPDATE_TEST_UPGRADE_DELAY_MS_ENV],
+    ),
   ) {}
 
   async evaluate(): Promise<CliUpgradeFeasibility> {
@@ -96,10 +95,7 @@ export class NpmPackageUpgradeGateway implements ICliPackageUpgradeGateway {
           ...context,
           reason: CliUpdateFailureReason.SelfUpgradeUnavailable,
         });
-        return this.unavailable(
-          startedAt,
-          "PackageInstallSourceUnsupported",
-        );
+        return this.unavailable(startedAt, "PackageInstallSourceUnsupported");
       }
 
       const result = this.feasibleResult();
@@ -186,7 +182,9 @@ export class NpmPackageUpgradeGateway implements ICliPackageUpgradeGateway {
     return path.resolve(result.stdout.trim());
   }
 
-  private findPackageRoots(candidatePaths: readonly string[]): readonly string[] {
+  private findPackageRoots(
+    candidatePaths: readonly string[],
+  ): readonly string[] {
     const packageRoots: string[] = [];
     for (const candidatePath of candidatePaths) {
       const packageRoot = this.findPackageRootFromCandidate(candidatePath);
@@ -341,7 +339,7 @@ export class NpmPackageUpgradeGateway implements ICliPackageUpgradeGateway {
         : {
             reason: result.reason,
             errorType: result.errorType,
-        }),
+          }),
     });
   }
 
@@ -380,9 +378,10 @@ export class NpmPackageUpgradeGateway implements ICliPackageUpgradeGateway {
     };
   }
 
-  private normalizeExecFileResult(
-    result: unknown,
-  ): { readonly stdout: string; readonly stderr: string } {
+  private normalizeExecFileResult(result: unknown): {
+    readonly stdout: string;
+    readonly stderr: string;
+  } {
     if (typeof result === "string") {
       return { stdout: result, stderr: "" };
     }
@@ -403,8 +402,7 @@ export class NpmPackageUpgradeGateway implements ICliPackageUpgradeGateway {
     operation: string,
     invocation: NpmInvocation,
   ): Error {
-    const decorated =
-      error instanceof Error ? error : new Error(String(error));
+    const decorated = error instanceof Error ? error : new Error(String(error));
     const details = decorated as Error & {
       operation?: string;
       npmInvocationMode?: string;
@@ -460,10 +458,12 @@ export class NpmPackageUpgradeGateway implements ICliPackageUpgradeGateway {
       ...(typeof shapedError.npmCommandBasename === "string"
         ? { npmCommand: shapedError.npmCommandBasename }
         : {}),
-      ...(typeof shapedError.stdout === "string" && shapedError.stdout.length > 0
+      ...(typeof shapedError.stdout === "string" &&
+      shapedError.stdout.length > 0
         ? { stdoutTail: this.tail(shapedError.stdout) }
         : {}),
-      ...(typeof shapedError.stderr === "string" && shapedError.stderr.length > 0
+      ...(typeof shapedError.stderr === "string" &&
+      shapedError.stderr.length > 0
         ? { stderrTail: this.tail(shapedError.stderr) }
         : {}),
     };

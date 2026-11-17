@@ -5,7 +5,10 @@ import { DecisionEventType } from "../../../../domain/decisions/Constants.js";
 import { DependencyEventType } from "../../../../domain/dependencies/Constants.js";
 import { GuidelineEventType } from "../../../../domain/guidelines/Constants.js";
 import { InvariantEventType } from "../../../../domain/invariants/Constants.js";
-import { EntityType, EntityTypeValue } from "../../../../domain/relations/Constants.js";
+import {
+  EntityType,
+  EntityTypeValue,
+} from "../../../../domain/relations/Constants.js";
 import { IRelationDiscoveryGoalRegistrar } from "./IRelationDiscoveryGoalRegistrar.js";
 
 const EVENT_TYPE_TO_ENTITY_TYPE: Record<string, EntityTypeValue> = {
@@ -23,7 +26,7 @@ const EVENT_TYPE_TO_ENTITY_TYPE: Record<string, EntityTypeValue> = {
  */
 export class RelationDiscoveryEventHandler implements IEventHandler {
   constructor(
-    private readonly relationDiscoveryGoalRegistrar: IRelationDiscoveryGoalRegistrar
+    private readonly relationDiscoveryGoalRegistrar: IRelationDiscoveryGoalRegistrar,
   ) {}
 
   async handle(event: BaseEvent): Promise<void> {
@@ -31,6 +34,9 @@ export class RelationDiscoveryEventHandler implements IEventHandler {
     if (!entityType) {
       return;
     }
-    await this.relationDiscoveryGoalRegistrar.execute(entityType, event.aggregateId);
+    await this.relationDiscoveryGoalRegistrar.execute(
+      entityType,
+      event.aggregateId,
+    );
   }
 }

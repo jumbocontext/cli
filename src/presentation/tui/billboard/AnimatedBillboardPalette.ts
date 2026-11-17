@@ -53,4 +53,5 @@ export const AnimatedBillboardPalette = [
   },
 ] as const;
 
-export type AnimatedBillboardColorPair = (typeof AnimatedBillboardPalette)[number];
+export type AnimatedBillboardColorPair =
+  (typeof AnimatedBillboardPalette)[number];

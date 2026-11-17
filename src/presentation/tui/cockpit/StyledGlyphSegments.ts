@@ -23,9 +23,9 @@ export function getStyledGlyphSegments(
     const previousSegment = segments[segments.length - 1];
 
     if (
-      previousSegment !== undefined
-      && previousSegment.color === glyphStyle.color
-      && previousSegment.dimColor === glyphStyle.dimColor
+      previousSegment !== undefined &&
+      previousSegment.color === glyphStyle.color &&
+      previousSegment.dimColor === glyphStyle.dimColor
     ) {
       previousSegment.text += character;
       continue;

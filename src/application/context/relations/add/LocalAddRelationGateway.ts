@@ -4,9 +4,7 @@ import { AddRelationResponse } from "./AddRelationResponse.js";
 import { AddRelationCommandHandler } from "./AddRelationCommandHandler.js";
 
 export class LocalAddRelationGateway implements IAddRelationGateway {
-  constructor(
-    private readonly commandHandler: AddRelationCommandHandler
-  ) {}
+  constructor(private readonly commandHandler: AddRelationCommandHandler) {}
 
   async addRelation(request: AddRelationRequest): Promise<AddRelationResponse> {
     const result = await this.commandHandler.execute({

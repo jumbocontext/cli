@@ -14,7 +14,7 @@ import { EntityType } from "../../../../domain/relations/Constants.js";
 export class DependencyRemovedEventHandler implements IEventHandler {
   constructor(
     private readonly projector: IDependencyRemovedProjector,
-    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar
+    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar,
   ) {}
 
   async handle(event: BaseEvent): Promise<void> {
@@ -22,7 +22,7 @@ export class DependencyRemovedEventHandler implements IEventHandler {
     await this.relationMaintenanceGoalRegistrar.execute(
       EntityType.DEPENDENCY,
       dependencyRemovedEvent.aggregateId,
-      "dependency was removed"
+      "dependency was removed",
     );
     await this.projector.applyDependencyRemoved(dependencyRemovedEvent);
   }

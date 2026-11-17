@@ -8,14 +8,19 @@
 import { Database } from "better-sqlite3";
 import { IAudiencePainContextReader } from "../../../../application/context/audience-pains/query/IAudiencePainContextReader.js";
 import { AudiencePainView } from "../../../../application/context/audience-pains/AudiencePainView.js";
-import { AudiencePainStatus, AudiencePainStatusType } from "../../../../domain/audience-pains/Constants.js";
+import {
+  AudiencePainStatus,
+  AudiencePainStatusType,
+} from "../../../../domain/audience-pains/Constants.js";
 
 export class SqliteAudiencePainContextReader implements IAudiencePainContextReader {
   constructor(private db: Database) {}
 
   async findAllActive(): Promise<AudiencePainView[]> {
     const rows = this.db
-      .prepare("SELECT * FROM audience_pain_views WHERE status = ? ORDER BY createdAt ASC")
+      .prepare(
+        "SELECT * FROM audience_pain_views WHERE status = ? ORDER BY createdAt ASC",
+      )
       .all(AudiencePainStatus.ACTIVE);
     return rows.map((row) => this.mapRowToView(row as Record<string, unknown>));
   }

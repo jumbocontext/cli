@@ -41,7 +41,7 @@ export class SqliteGoalResumedProjector
       event.payload.claimExpiresAt || null,
       event.version,
       event.timestamp,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 

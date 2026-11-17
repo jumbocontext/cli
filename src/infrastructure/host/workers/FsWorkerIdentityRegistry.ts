@@ -14,7 +14,10 @@
 import fs from "fs-extra";
 import path from "path";
 import { IWorkerIdentityReader } from "../../../application/host/workers/IWorkerIdentityReader.js";
-import { WorkerId, createWorkerId } from "../../../application/host/workers/WorkerId.js";
+import {
+  WorkerId,
+  createWorkerId,
+} from "../../../application/host/workers/WorkerId.js";
 import { WorkerId as DomainWorkerId } from "../../../domain/workers/WorkerId.js";
 import { HostSessionKeyResolver } from "../session/HostSessionKeyResolver.js";
 
@@ -117,7 +120,7 @@ export class FsWorkerIdentityRegistry implements IWorkerIdentityReader {
     fs.writeFileSync(
       this.registryFilePath,
       JSON.stringify(registry, null, 2),
-      "utf-8"
+      "utf-8",
     );
   }
 }

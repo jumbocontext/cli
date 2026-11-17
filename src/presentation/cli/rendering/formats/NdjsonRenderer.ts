@@ -9,7 +9,9 @@ import { IFormatRenderer, RenderData } from "../types.js";
 
 export class NdjsonRenderer implements IFormatRenderer {
   success(message: string, data?: RenderData): void {
-    const output = data ? { type: "success", ...data } : { type: "success", message };
+    const output = data
+      ? { type: "success", ...data }
+      : { type: "success", message };
     this.writeLine(output);
   }
 
@@ -31,7 +33,9 @@ export class NdjsonRenderer implements IFormatRenderer {
   }
 
   info(message: string, data?: RenderData): void {
-    const output = data ? { type: "info", message, ...data } : { type: "info", message };
+    const output = data
+      ? { type: "info", message, ...data }
+      : { type: "info", message };
     this.writeLine(output);
   }
 

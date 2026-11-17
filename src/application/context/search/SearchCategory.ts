@@ -6,6 +6,7 @@ export const SearchCategory = {
   INVARIANT: "invariant",
 } as const;
 
-export type KnownSearchCategory = (typeof SearchCategory)[keyof typeof SearchCategory];
+export type KnownSearchCategory =
+  (typeof SearchCategory)[keyof typeof SearchCategory];
 
 export type SearchCategory = KnownSearchCategory | (string & {});

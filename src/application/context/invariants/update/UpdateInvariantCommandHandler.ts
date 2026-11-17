@@ -20,10 +20,12 @@ export class UpdateInvariantCommandHandler {
   constructor(
     private readonly eventWriter: IInvariantUpdatedEventWriter,
     private readonly eventReader: IInvariantUpdatedEventReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
-  async execute(command: UpdateInvariantCommand): Promise<{ invariantId: string }> {
+  async execute(
+    command: UpdateInvariantCommand,
+  ): Promise<{ invariantId: string }> {
     // 1. Load aggregate from event store
     const history = await this.eventReader.readStream(command.invariantId);
     if (history.length === 0) {
@@ -31,7 +33,10 @@ export class UpdateInvariantCommandHandler {
     }
 
     // 2. Rehydrate aggregate from events
-    const invariant = Invariant.rehydrate(command.invariantId, history as InvariantEvent[]);
+    const invariant = Invariant.rehydrate(
+      command.invariantId,
+      history as InvariantEvent[],
+    );
 
     // 3. Domain logic produces event
     const event = invariant.update({

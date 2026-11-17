@@ -4,7 +4,10 @@ import { IGoalUpdatedEventReader } from "./IGoalUpdatedEventReader.js";
 import { IGoalUpdateReader } from "./IGoalUpdateReader.js";
 import { IEventBus } from "../../../messaging/IEventBus.js";
 import { Goal } from "../../../../domain/goals/Goal.js";
-import { GoalErrorMessages, formatErrorMessage } from "../../../../domain/goals/Constants.js";
+import {
+  GoalErrorMessages,
+  formatErrorMessage,
+} from "../../../../domain/goals/Constants.js";
 
 /**
  * Application layer command handler for updating a goal.
@@ -15,7 +18,7 @@ export class UpdateGoalCommandHandler {
     private readonly eventWriter: IGoalUpdatedEventWriter,
     private readonly eventReader: IGoalUpdatedEventReader,
     private readonly goalReader: IGoalUpdateReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
   async execute(command: UpdateGoalCommand): Promise<{ goalId: string }> {
@@ -25,7 +28,7 @@ export class UpdateGoalCommandHandler {
       throw new Error(
         formatErrorMessage(GoalErrorMessages.NOT_FOUND, {
           goalId: command.goalId,
-        })
+        }),
       );
     }
 
@@ -43,7 +46,7 @@ export class UpdateGoalCommandHandler {
       command.nextGoalId,
       command.prerequisiteGoals,
       command.branch,
-      command.worktree
+      command.worktree,
     );
 
     // 4. Persist event to file store

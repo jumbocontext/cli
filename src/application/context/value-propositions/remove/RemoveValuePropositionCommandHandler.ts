@@ -16,31 +16,29 @@ export class RemoveValuePropositionCommandHandler {
   constructor(
     private readonly eventWriter: IValuePropositionRemovedEventWriter,
     private readonly eventBus: IEventBus,
-    private readonly reader: IValuePropositionRemoveReader
+    private readonly reader: IValuePropositionRemoveReader,
   ) {}
 
   async execute(
-    command: RemoveValuePropositionCommand
+    command: RemoveValuePropositionCommand,
   ): Promise<{ valuePropositionId: string; title: string }> {
     // 1. Check if value proposition exists
-    const existingView = await this.reader.findById(
-      command.valuePropositionId
-    );
+    const existingView = await this.reader.findById(command.valuePropositionId);
     if (!existingView) {
       throw new Error(
         formatErrorMessage(ValuePropositionErrorMessages.NOT_FOUND, {
           id: command.valuePropositionId,
-        })
+        }),
       );
     }
 
     // 2. Rehydrate aggregate from event history
     const history = await this.eventWriter.readStream(
-      command.valuePropositionId
+      command.valuePropositionId,
     );
     const valueProposition = ValueProposition.rehydrate(
       command.valuePropositionId,
-      history
+      history,
     );
 
     // 3. Domain logic produces event

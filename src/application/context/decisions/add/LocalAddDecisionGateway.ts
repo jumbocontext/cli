@@ -4,9 +4,7 @@ import { AddDecisionResponse } from "./AddDecisionResponse.js";
 import { AddDecisionCommandHandler } from "./AddDecisionCommandHandler.js";
 
 export class LocalAddDecisionGateway implements IAddDecisionGateway {
-  constructor(
-    private readonly commandHandler: AddDecisionCommandHandler
-  ) {}
+  constructor(private readonly commandHandler: AddDecisionCommandHandler) {}
 
   async addDecision(request: AddDecisionRequest): Promise<AddDecisionResponse> {
     const result = await this.commandHandler.execute({

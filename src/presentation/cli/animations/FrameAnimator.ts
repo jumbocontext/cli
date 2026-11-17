@@ -26,7 +26,7 @@ export interface AnimationConfig {
  * Sleep utility for frame delays
  */
 function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -69,7 +69,12 @@ export async function playAnimation(config: AnimationConfig): Promise<void> {
     return;
   }
 
-  const { frames, frameDelay, clearScreen = false, resetCursor = true } = config;
+  const {
+    frames,
+    frameDelay,
+    clearScreen = false,
+    resetCursor = true,
+  } = config;
 
   if (frames.length === 0) {
     return;
@@ -106,7 +111,6 @@ export async function playAnimation(config: AnimationConfig): Promise<void> {
 
     // Final delay to show last frame
     await sleep(frameDelay);
-
   } finally {
     // Always show cursor again
     process.stdout.write(ANSI.showCursor);
@@ -120,7 +124,10 @@ export async function playAnimation(config: AnimationConfig): Promise<void> {
 /**
  * Create a simple fade-in effect by gradually revealing lines
  */
-export function createFadeInFrames(lines: string[], stepsPerLine = 2): string[][] {
+export function createFadeInFrames(
+  lines: string[],
+  stepsPerLine = 2,
+): string[][] {
   const frames: string[][] = [];
   const totalLines = lines.length;
 
@@ -129,10 +136,7 @@ export function createFadeInFrames(lines: string[], stepsPerLine = 2): string[][
     const visibleLines = lines.slice(0, i);
 
     // Pad with empty lines to maintain frame height
-    const paddedFrame = [
-      ...Array(totalLines - i).fill(""),
-      ...visibleLines,
-    ];
+    const paddedFrame = [...Array(totalLines - i).fill(""), ...visibleLines];
 
     frames.push(paddedFrame);
 
@@ -223,17 +227,18 @@ function getColorFromGradient(anchorColors: RGB[], progress: number): RGB {
   const segmentLength = 1 / segmentCount;
   const segmentIndex = Math.min(
     Math.floor(clampedProgress / segmentLength),
-    segmentCount - 1
+    segmentCount - 1,
   );
 
   // Calculate progress within this segment (0-1)
-  const segmentProgress = (clampedProgress - segmentIndex * segmentLength) / segmentLength;
+  const segmentProgress =
+    (clampedProgress - segmentIndex * segmentLength) / segmentLength;
 
   // Interpolate between the two anchor colors
   return lerpColor(
     anchorColors[segmentIndex],
     anchorColors[segmentIndex + 1],
-    segmentProgress
+    segmentProgress,
   );
 }
 
@@ -241,9 +246,7 @@ function getColorFromGradient(anchorColors: RGB[], progress: number): RGB {
  * Easing function for smooth animation (ease-in-out)
  */
 function easeInOutCubic(t: number): number {
-  return t < 0.5
-    ? 4 * t * t * t
-    : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
 /**
@@ -257,10 +260,10 @@ export function createElephantWalkFrames(
   options: {
     totalFrames?: number;
     useEasing?: boolean;
-  } = {}
+  } = {},
 ): string[][] {
   const { totalFrames = 60, useEasing = true } = options;
-  
+
   // Calculate elephant width (plain text without ANSI)
   const elephantWidth = 30; // Known width of the ASCII art
   const maxOffset = Math.max(0, terminalWidth - elephantWidth);
@@ -271,30 +274,36 @@ export function createElephantWalkFrames(
   for (let i = 0; i < totalFrames; i++) {
     // Calculate progress for round trip
     const rawProgress = i / (totalFrames - 1);
-    
+
     // Create bounce effect: 0 -> 1 -> 0
-    const bounceProgress = rawProgress < 0.5
-      ? rawProgress * 2  // First half: 0 -> 1
-      : 2 - rawProgress * 2;  // Second half: 1 -> 0
+    const bounceProgress =
+      rawProgress < 0.5
+        ? rawProgress * 2 // First half: 0 -> 1
+        : 2 - rawProgress * 2; // Second half: 1 -> 0
 
     // Apply easing for smoother motion
-    const easedProgress = useEasing ? easeInOutCubic(bounceProgress) : bounceProgress;
+    const easedProgress = useEasing
+      ? easeInOutCubic(bounceProgress)
+      : bounceProgress;
 
     // Calculate position
     const xOffset = Math.floor(easedProgress * maxOffset);
 
     // Color follows the position
-    const colorProgress = rawProgress < 0.5
-      ? rawProgress * 2           // First half: 0 -> 1 (blue to red)
-      : 2 - rawProgress * 2;      // Second half: 1 -> 0 (red to blue)
+    const colorProgress =
+      rawProgress < 0.5
+        ? rawProgress * 2 // First half: 0 -> 1 (blue to red)
+        : 2 - rawProgress * 2; // Second half: 1 -> 0 (red to blue)
     const color = getColorFromGradient(anchorColors, colorProgress);
 
     // Create frame - brute force approach: manually build each line with spaces + colored art
-    const frame = elephantLines.map(line => {
+    const frame = elephantLines.map((line) => {
       // Add padding spaces first
-      const padding = ' '.repeat(xOffset);
+      const padding = " ".repeat(xOffset);
       // Then add the colored line (using background color so it's solid)
-      return padding + `\x1b[48;2;${color.r};${color.g};${color.b}m${line}\x1b[0m`;
+      return (
+        padding + `\x1b[48;2;${color.r};${color.g};${color.b}m${line}\x1b[0m`
+      );
     });
 
     frames.push(frame);

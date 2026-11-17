@@ -18,7 +18,13 @@
 
 import path from "path";
 import fs from "fs-extra";
-import { applyEdits, modify, parse, type FormattingOptions, type ParseError } from "jsonc-parser";
+import {
+  applyEdits,
+  modify,
+  parse,
+  type FormattingOptions,
+  type ParseError,
+} from "jsonc-parser";
 import { IConfigurer } from "./IConfigurer.js";
 import { PlannedFileChange } from "../../../../application/context/project/init/PlannedFileChange.js";
 import { AgentFileAssetContent } from "../../../../domain/project/AgentFileAssetContent.js";
@@ -93,36 +99,59 @@ export class CodexConfigurer implements IConfigurer {
 
       const exists = await fs.pathExists(hooksPath);
       if (!exists) {
-        await fs.writeFile(hooksPath, JSON.stringify(this.getJumboHooks(), null, 2) + "\n", "utf-8");
+        await fs.writeFile(
+          hooksPath,
+          JSON.stringify(this.getJumboHooks(), null, 2) + "\n",
+          "utf-8",
+        );
         return;
       }
 
       const existingContent = await fs.readFile(hooksPath, "utf-8");
       const parseErrors: ParseError[] = [];
       const existingHooks = existingContent.trim()
-        ? (parse(existingContent, parseErrors, { allowTrailingComma: true }) as unknown)
+        ? (parse(existingContent, parseErrors, {
+            allowTrailingComma: true,
+          }) as unknown)
         : {};
 
       if (parseErrors.length > 0 || !this.isJsonObject(existingHooks)) {
-        await fs.writeFile(hooksPath, JSON.stringify(this.getJumboHooks(), null, 2) + "\n", "utf-8");
+        await fs.writeFile(
+          hooksPath,
+          JSON.stringify(this.getJumboHooks(), null, 2) + "\n",
+          "utf-8",
+        );
         return;
       }
 
-      const mergedContent = this.mergeJumboHooks(existingContent, existingHooks);
-      await fs.writeFile(hooksPath, this.ensureTrailingNewline(mergedContent), "utf-8");
+      const mergedContent = this.mergeJumboHooks(
+        existingContent,
+        existingHooks,
+      );
+      await fs.writeFile(
+        hooksPath,
+        this.ensureTrailingNewline(mergedContent),
+        "utf-8",
+      );
     } catch (error) {
       console.warn(
-        `Warning: Failed to configure Codex hooks: ${error instanceof Error ? error.message : String(error)}`
+        `Warning: Failed to configure Codex hooks: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
 
-  private mergeJumboHooks(existingContent: string, existingHooks: Record<string, unknown>): string {
+  private mergeJumboHooks(
+    existingContent: string,
+    existingHooks: Record<string, unknown>,
+  ): string {
     if (!existingContent.trim()) {
       return JSON.stringify(this.getJumboHooks(), null, 2);
     }
 
-    const updatedContent = this.replaceStaleJumboCommandValues(existingContent, existingHooks);
+    const updatedContent = this.replaceStaleJumboCommandValues(
+      existingContent,
+      existingHooks,
+    );
     const updatedHooks = this.parseCodexHooksDocument(updatedContent);
     return this.addMissingJumboHooks(updatedContent, updatedHooks ?? {});
   }
@@ -132,7 +161,9 @@ export class CodexConfigurer implements IConfigurer {
   }
 
   private getJumboHooks(): CodexHooksDocument {
-    return AgentFileAssetContent.readJson<CodexHooksDocument>("codex-hooks.fragment.json");
+    return AgentFileAssetContent.readJson<CodexHooksDocument>(
+      "codex-hooks.fragment.json",
+    );
   }
 
   private isJsonObject(value: unknown): value is Record<string, unknown> {
@@ -141,7 +172,7 @@ export class CodexConfigurer implements IConfigurer {
 
   private replaceStaleJumboCommandValues(
     existingContent: string,
-    existingHooks: Record<string, unknown>
+    existingHooks: Record<string, unknown>,
   ): string {
     const rawHooks = existingHooks.hooks;
     if (!this.isJsonObject(rawHooks)) {
@@ -155,7 +186,10 @@ export class CodexConfigurer implements IConfigurer {
       }
 
       matcherGroups.forEach((matcherGroup, matcherGroupIndex) => {
-        if (!this.isJsonObject(matcherGroup) || !Array.isArray(matcherGroup.hooks)) {
+        if (
+          !this.isJsonObject(matcherGroup) ||
+          !Array.isArray(matcherGroup.hooks)
+        ) {
           return;
         }
 
@@ -169,14 +203,18 @@ export class CodexConfigurer implements IConfigurer {
             return;
           }
 
-          updatedContent = this.applyJsoncEdit(updatedContent, [
-            "hooks",
-            eventName,
-            matcherGroupIndex,
-            "hooks",
-            hookIndex,
-            "command",
-          ], replacement);
+          updatedContent = this.applyJsoncEdit(
+            updatedContent,
+            [
+              "hooks",
+              eventName,
+              matcherGroupIndex,
+              "hooks",
+              hookIndex,
+              "command",
+            ],
+            replacement,
+          );
         });
       });
     }
@@ -184,18 +222,31 @@ export class CodexConfigurer implements IConfigurer {
     return updatedContent;
   }
 
-  private addMissingJumboHooks(existingContent: string, existingHooks: CodexHooksDocument): string {
+  private addMissingJumboHooks(
+    existingContent: string,
+    existingHooks: CodexHooksDocument,
+  ): string {
     const jumboHooks = this.getJumboHooks();
     if (!this.isJsonObject(existingHooks.hooks)) {
-      return this.applyJsoncEdit(existingContent, ["hooks"], jumboHooks.hooks ?? {});
+      return this.applyJsoncEdit(
+        existingContent,
+        ["hooks"],
+        jumboHooks.hooks ?? {},
+      );
     }
 
     let updatedContent = existingContent;
-    for (const [eventName, jumboMatcherGroups] of Object.entries(jumboHooks.hooks ?? {})) {
+    for (const [eventName, jumboMatcherGroups] of Object.entries(
+      jumboHooks.hooks ?? {},
+    )) {
       const currentHooks = this.parseCodexHooksDocument(updatedContent);
       const currentMatcherGroups = currentHooks?.hooks?.[eventName];
       if (!Array.isArray(currentMatcherGroups)) {
-        updatedContent = this.applyJsoncEdit(updatedContent, ["hooks", eventName], jumboMatcherGroups);
+        updatedContent = this.applyJsoncEdit(
+          updatedContent,
+          ["hooks", eventName],
+          jumboMatcherGroups,
+        );
         continue;
       }
 
@@ -203,7 +254,7 @@ export class CodexConfigurer implements IConfigurer {
         updatedContent = this.addMissingJumboMatcherGroupHook(
           updatedContent,
           eventName,
-          jumboMatcherGroup
+          jumboMatcherGroup,
         );
       }
     }
@@ -214,7 +265,7 @@ export class CodexConfigurer implements IConfigurer {
   private addMissingJumboMatcherGroupHook(
     existingContent: string,
     eventName: string,
-    jumboMatcherGroup: CodexMatcherGroup
+    jumboMatcherGroup: CodexMatcherGroup,
   ): string {
     const currentHooks = this.parseCodexHooksDocument(existingContent);
     const currentMatcherGroups = currentHooks?.hooks?.[eventName];
@@ -223,10 +274,14 @@ export class CodexConfigurer implements IConfigurer {
     }
 
     const matcherGroupIndex = currentMatcherGroups.findIndex(
-      (matcherGroup) => matcherGroup.matcher === jumboMatcherGroup.matcher
+      (matcherGroup) => matcherGroup.matcher === jumboMatcherGroup.matcher,
     );
     if (matcherGroupIndex === -1) {
-      return this.applyJsoncEdit(existingContent, ["hooks", eventName, -1], jumboMatcherGroup);
+      return this.applyJsoncEdit(
+        existingContent,
+        ["hooks", eventName, -1],
+        jumboMatcherGroup,
+      );
     }
 
     const currentMatcherGroup = currentMatcherGroups[matcherGroupIndex];
@@ -234,35 +289,48 @@ export class CodexConfigurer implements IConfigurer {
       return this.applyJsoncEdit(
         existingContent,
         ["hooks", eventName, matcherGroupIndex, "hooks"],
-        jumboMatcherGroup.hooks ?? []
+        jumboMatcherGroup.hooks ?? [],
       );
     }
 
     let updatedContent = existingContent;
     for (const jumboHook of jumboMatcherGroup.hooks ?? []) {
       const refreshedHooks = this.parseCodexHooksDocument(updatedContent);
-      const refreshedHookArray = refreshedHooks?.hooks?.[eventName]?.[matcherGroupIndex]?.hooks;
-      if (refreshedHookArray?.some((hook) => this.hasSameHookCommand(hook, jumboHook))) {
+      const refreshedHookArray =
+        refreshedHooks?.hooks?.[eventName]?.[matcherGroupIndex]?.hooks;
+      if (
+        refreshedHookArray?.some((hook) =>
+          this.hasSameHookCommand(hook, jumboHook),
+        )
+      ) {
         continue;
       }
 
       updatedContent = this.applyJsoncEdit(
         updatedContent,
         ["hooks", eventName, matcherGroupIndex, "hooks", -1],
-        jumboHook
+        jumboHook,
       );
     }
 
     return updatedContent;
   }
 
-  private hasSameHookCommand(existingHook: CodexHookCommand, jumboHook: CodexHookCommand): boolean {
-    return existingHook.type === jumboHook.type && existingHook.command === jumboHook.command;
+  private hasSameHookCommand(
+    existingHook: CodexHookCommand,
+    jumboHook: CodexHookCommand,
+  ): boolean {
+    return (
+      existingHook.type === jumboHook.type &&
+      existingHook.command === jumboHook.command
+    );
   }
 
   private parseCodexHooksDocument(content: string): CodexHooksDocument | null {
     const parseErrors: ParseError[] = [];
-    const parsed = parse(content, parseErrors, { allowTrailingComma: true }) as unknown;
+    const parsed = parse(content, parseErrors, {
+      allowTrailingComma: true,
+    }) as unknown;
     if (parseErrors.length > 0 || !this.isJsonObject(parsed)) {
       return null;
     }
@@ -270,7 +338,11 @@ export class CodexConfigurer implements IConfigurer {
     return parsed as CodexHooksDocument;
   }
 
-  private applyJsoncEdit(content: string, pathSegments: (string | number)[], value: unknown): string {
+  private applyJsoncEdit(
+    content: string,
+    pathSegments: (string | number)[],
+    value: unknown,
+  ): string {
     const edits = modify(content, pathSegments, value, {
       formattingOptions: JSON_FORMATTING_OPTIONS,
     });
@@ -281,23 +353,39 @@ export class CodexConfigurer implements IConfigurer {
    * Remove Jumbo-managed skill copies from the obsolete .codex/skills
    * location now that Codex reads repo skills from .agents/skills.
    */
-  private async removeObsoleteManagedSkillCopies(projectRoot: string): Promise<void> {
-    const obsoleteCodexSkillsRoot = path.join(projectRoot, OBSOLETE_CODEX_SKILLS_RELATIVE_PATH);
+  private async removeObsoleteManagedSkillCopies(
+    projectRoot: string,
+  ): Promise<void> {
+    const obsoleteCodexSkillsRoot = path.join(
+      projectRoot,
+      OBSOLETE_CODEX_SKILLS_RELATIVE_PATH,
+    );
     if (!(await fs.pathExists(obsoleteCodexSkillsRoot))) {
       return;
     }
 
     for (const skillName of await this.getTemplateSkillNames()) {
-      const templateSkillDirectory = path.join(this.templateSkillsRoot, skillName);
-      const obsoleteSkillDirectory = path.join(obsoleteCodexSkillsRoot, skillName);
-      if (await this.isObsoleteManagedSkillCopy(obsoleteSkillDirectory, templateSkillDirectory)) {
+      const templateSkillDirectory = path.join(
+        this.templateSkillsRoot,
+        skillName,
+      );
+      const obsoleteSkillDirectory = path.join(
+        obsoleteCodexSkillsRoot,
+        skillName,
+      );
+      if (
+        await this.isObsoleteManagedSkillCopy(
+          obsoleteSkillDirectory,
+          templateSkillDirectory,
+        )
+      ) {
         try {
           await fs.remove(obsoleteSkillDirectory);
         } catch (error) {
           console.warn(
             `Warning: Failed to remove obsolete Codex managed skill '${skillName}': ${
               error instanceof Error ? error.message : String(error)
-            }`
+            }`,
           );
         }
       }
@@ -311,8 +399,12 @@ export class CodexConfigurer implements IConfigurer {
       return [];
     }
 
-    const entries = await fs.readdir(this.templateSkillsRoot, { withFileTypes: true });
-    return entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
+    const entries = await fs.readdir(this.templateSkillsRoot, {
+      withFileTypes: true,
+    });
+    return entries
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name);
   }
 
   /**
@@ -323,14 +415,20 @@ export class CodexConfigurer implements IConfigurer {
    */
   private async isObsoleteManagedSkillCopy(
     skillDirectory: string,
-    templateSkillDirectory: string
+    templateSkillDirectory: string,
   ): Promise<boolean> {
     try {
-      if (!(await this.isDirectory(skillDirectory)) || !(await this.isDirectory(templateSkillDirectory))) {
+      if (
+        !(await this.isDirectory(skillDirectory)) ||
+        !(await this.isDirectory(templateSkillDirectory))
+      ) {
         return false;
       }
 
-      return await this.directoryContentMatchesManagedTemplate(skillDirectory, templateSkillDirectory);
+      return await this.directoryContentMatchesManagedTemplate(
+        skillDirectory,
+        templateSkillDirectory,
+      );
     } catch {
       return false;
     }
@@ -338,7 +436,7 @@ export class CodexConfigurer implements IConfigurer {
 
   private async directoryContentMatchesManagedTemplate(
     directory: string,
-    templateDirectory: string
+    templateDirectory: string,
   ): Promise<boolean> {
     const entries = await fs.readdir(directory, { withFileTypes: true });
     if (entries.length === 0) {
@@ -352,12 +450,20 @@ export class CodexConfigurer implements IConfigurer {
       if (entry.isDirectory()) {
         if (
           !(await this.isDirectory(templateEntryPath)) ||
-          !(await this.directoryContentMatchesManagedTemplate(entryPath, templateEntryPath))
+          !(await this.directoryContentMatchesManagedTemplate(
+            entryPath,
+            templateEntryPath,
+          ))
         ) {
           return false;
         }
       } else if (entry.isFile()) {
-        if (!(await this.fileContentMatchesManagedTemplate(entryPath, templateEntryPath))) {
+        if (
+          !(await this.fileContentMatchesManagedTemplate(
+            entryPath,
+            templateEntryPath,
+          ))
+        ) {
           return false;
         }
       } else {
@@ -370,7 +476,7 @@ export class CodexConfigurer implements IConfigurer {
 
   private async fileContentMatchesManagedTemplate(
     filePath: string,
-    templateFilePath: string
+    templateFilePath: string,
   ): Promise<boolean> {
     if (!(await this.isFile(templateFilePath))) {
       return false;
@@ -413,7 +519,9 @@ export class CodexConfigurer implements IConfigurer {
   /**
    * Return what changes this configurer will make without executing.
    */
-  async getPlannedFileChanges(projectRoot: string): Promise<PlannedFileChange[]> {
+  async getPlannedFileChanges(
+    projectRoot: string,
+  ): Promise<PlannedFileChange[]> {
     const hooksPath = path.join(projectRoot, ".codex", "hooks.json");
 
     return [

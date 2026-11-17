@@ -40,7 +40,7 @@ export interface AggregateState {
  */
 export abstract class BaseAggregate<
   TState extends AggregateState,
-  TEvent extends BaseEvent
+  TEvent extends BaseEvent,
 > {
   protected state: TState;
 
@@ -73,7 +73,7 @@ export abstract class BaseAggregate<
   protected makeEvent<T extends TEvent>(
     type: string,
     payload: T extends { payload: infer P } ? P : never,
-    applyFn: (state: TState, event: T) => void
+    applyFn: (state: TState, event: T) => void,
   ): T {
     const event = {
       type,

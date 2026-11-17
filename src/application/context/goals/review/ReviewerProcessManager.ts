@@ -1,5 +1,9 @@
 import { IAgentGateway } from "../../../agents/IAgentGateway.js";
-import { IProcessManager, ProcessManagerOptions, ProcessManagerResult } from "../../../daemons/IProcessManager.js";
+import {
+  IProcessManager,
+  ProcessManagerOptions,
+  ProcessManagerResult,
+} from "../../../daemons/IProcessManager.js";
 import { ProcessManagerEventEmitter } from "../../../daemons/ProcessManagerEventEmitter.js";
 import { IWorkerIdentityReader } from "../../../host/workers/IWorkerIdentityReader.js";
 import { ITelemetryClient } from "../../../telemetry/ITelemetryClient.js";
@@ -7,10 +11,12 @@ import { GoalStatus } from "../../../../domain/goals/Constants.js";
 import { GoalView } from "../GoalView.js";
 import { IGoalStatusReader } from "../IGoalStatusReader.js";
 import { GoalClaimPolicy } from "../claims/GoalClaimPolicy.js";
-import { ReviewGoalController } from "./ReviewGoalController.js";
 import { IGoalSubmitForReviewReader } from "./IGoalSubmitForReviewReader.js";
 
-const REVIEW_COMPLETE_STATUSES = new Set<string>([GoalStatus.QUALIFIED, GoalStatus.REJECTED]);
+const REVIEW_COMPLETE_STATUSES = new Set<string>([
+  GoalStatus.QUALIFIED,
+  GoalStatus.REJECTED,
+]);
 const REVIEWER_EVENT_SOURCE = "reviewer";
 const REVIEWER_EVENT_TEXT_FIELD_MAX_LENGTH = 2_048;
 const REVIEWER_EVENT_COPY = {
@@ -46,19 +52,31 @@ export class ReviewerProcessManager implements IProcessManager {
     private readonly goalReader: IGoalSubmitForReviewReader,
     private readonly claimPolicy: GoalClaimPolicy,
     private readonly workerIdentityReader: IWorkerIdentityReader,
-    private readonly reviewGoalController: ReviewGoalController,
     private readonly agentGateway: IAgentGateway,
     private readonly telemetryClient: ITelemetryClient,
   ) {}
 
-  async processNext(options: ProcessManagerOptions): Promise<ProcessManagerResult> {
+  async processNext(
+    options: ProcessManagerOptions,
+  ): Promise<ProcessManagerResult> {
     const startedAt = process.hrtime.bigint();
-    const events = new ProcessManagerEventEmitter(REVIEWER_EVENT_SOURCE, options, startedAt);
-    events.emit("processing", "polling", "polling for submitted goals", { phase: "polling" });
+    const events = new ProcessManagerEventEmitter(
+      REVIEWER_EVENT_SOURCE,
+      options,
+      startedAt,
+    );
+    events.emit("processing", "polling", "polling for submitted goals", {
+      phase: "polling",
+    });
     const goals = await this.selectEligibleGoals();
 
     if (goals.length === 0) {
-      events.emit("idle", REVIEWER_EVENT_COPY.noWork.category, REVIEWER_EVENT_COPY.noWork.message, { phase: "idle" });
+      events.emit(
+        "idle",
+        REVIEWER_EVENT_COPY.noWork.category,
+        REVIEWER_EVENT_COPY.noWork.message,
+        { phase: "idle" },
+      );
       this.track(startedAt, { status: "idle", attempts: 0 });
       return { status: "idle", attempts: 0 };
     }
@@ -69,36 +87,35 @@ export class ReviewerProcessManager implements IProcessManager {
       goalId: goal.goalId,
     });
 
-    try {
-      await this.reviewGoalController.handle({ goalId: goal.goalId });
-    } catch (error) {
-      const errorProperties = this.errorProperties(error);
-      events.emit("failed", REVIEWER_EVENT_COPY.failed.category, REVIEWER_EVENT_COPY.failed.message, {
-        phase: "failed",
-        goalId: goal.goalId,
-        ...errorProperties,
-      });
-      this.track(startedAt, { status: "failed", attempts: 0, goalId: goal.goalId, ...errorProperties });
-      return { status: "failed", goalId: goal.goalId, attempts: 0 };
-    }
-
     for (let attempt = 1; attempt <= options.maxRetries; attempt++) {
       const attemptContext = {
         goalId: goal.goalId,
         attempt,
         maxRetries: options.maxRetries,
       };
-      events.emit("processing", REVIEWER_EVENT_COPY.workStarted.category, REVIEWER_EVENT_COPY.workStarted.message, {
-        phase: "working",
-        ...attemptContext,
-      });
+      events.emit(
+        "processing",
+        REVIEWER_EVENT_COPY.workStarted.category,
+        REVIEWER_EVENT_COPY.workStarted.message,
+        {
+          phase: "working",
+          ...attemptContext,
+        },
+      );
       let sawAgentActivity = false;
       const invocation = {
         agentId: options.agentId,
         prompt: this.buildPrompt(goal.goalId),
-        onActivity: (activity: { readonly stream: "stdout" | "stderr"; readonly text: string }) => {
+        onActivity: (activity: {
+          readonly stream: "stdout" | "stderr";
+          readonly text: string;
+        }) => {
           sawAgentActivity = true;
-          events.emitAgentActivity(activity.stream, activity.text, attemptContext);
+          events.emitAgentActivity(
+            activity.stream,
+            activity.text,
+            attemptContext,
+          );
         },
       };
       const result = await this.agentGateway.invoke(invocation);
@@ -107,21 +124,40 @@ export class ReviewerProcessManager implements IProcessManager {
       }
 
       if (await this.isReviewComplete(goal.goalId)) {
-        events.emit("completed", REVIEWER_EVENT_COPY.completed.category, REVIEWER_EVENT_COPY.completed.message, {
-          phase: "completed",
-          ...attemptContext,
-          exitCode: result.exitCode,
+        events.emit(
+          "completed",
+          REVIEWER_EVENT_COPY.completed.category,
+          REVIEWER_EVENT_COPY.completed.message,
+          {
+            phase: "completed",
+            ...attemptContext,
+            exitCode: result.exitCode,
+          },
+        );
+        this.track(startedAt, {
+          status: "completed",
+          attempts: attempt,
+          goalId: goal.goalId,
+          agentExitCode: result.exitCode,
         });
-        this.track(startedAt, { status: "completed", attempts: attempt, goalId: goal.goalId, agentExitCode: result.exitCode });
         return { status: "completed", goalId: goal.goalId, attempts: attempt };
       }
 
       const retryExhausted = attempt === options.maxRetries;
-      events.emit(retryExhausted ? "exhausted" : "skipped", retryExhausted ? REVIEWER_EVENT_COPY.exhausted.category : REVIEWER_EVENT_COPY.skipped.category, retryExhausted ? REVIEWER_EVENT_COPY.exhausted.message : REVIEWER_EVENT_COPY.skipped.message, {
-        phase: retryExhausted ? "exhausted" : "retry",
-        ...attemptContext,
-        exitCode: result.exitCode,
-      });
+      events.emit(
+        retryExhausted ? "exhausted" : "skipped",
+        retryExhausted
+          ? REVIEWER_EVENT_COPY.exhausted.category
+          : REVIEWER_EVENT_COPY.skipped.category,
+        retryExhausted
+          ? REVIEWER_EVENT_COPY.exhausted.message
+          : REVIEWER_EVENT_COPY.skipped.message,
+        {
+          phase: retryExhausted ? "exhausted" : "retry",
+          ...attemptContext,
+          exitCode: result.exitCode,
+        },
+      );
       if (!retryExhausted) {
         events.emit("processing", "retry", "retrying review", {
           phase: "retry",
@@ -130,22 +166,38 @@ export class ReviewerProcessManager implements IProcessManager {
       }
     }
 
-    this.track(startedAt, { status: "exhausted", attempts: options.maxRetries, goalId: goal.goalId });
-    return { status: "exhausted", goalId: goal.goalId, attempts: options.maxRetries };
+    this.track(startedAt, {
+      status: "exhausted",
+      attempts: options.maxRetries,
+      goalId: goal.goalId,
+    });
+    return {
+      status: "exhausted",
+      goalId: goal.goalId,
+      attempts: options.maxRetries,
+    };
   }
 
   async selectEligibleGoals(): Promise<GoalView[]> {
-    const goals = await this.goalStatusReader.findByStatus(GoalStatus.SUBMITTED);
+    const goals = await this.goalStatusReader.findByStatus(
+      GoalStatus.SUBMITTED,
+    );
     const workerId = this.workerIdentityReader.workerId;
     return goals
-      .filter((goal) => this.claimPolicy.canClaim(goal.goalId, workerId).allowed)
-      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      .filter(
+        (goal) => this.claimPolicy.canClaim(goal.goalId, workerId).allowed,
+      )
+      .sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      );
   }
 
   buildPrompt(goalId: string): string {
     return [
-      `Continue the Jumbo review workflow for goal ${goalId}.`,
-      "The daemon has already moved the goal into review.",
+      `Run the Jumbo review workflow for goal ${goalId}.`,
+      `Start by claiming the goal with: jumbo goal review --id ${goalId}.`,
+      "If that command reports the goal is claimed by another worker, stop and report the claim conflict without making changes.",
       `If the implementation passes QA, run: jumbo goal approve --id ${goalId}`,
       `If it fails QA, run: jumbo goal reject --id ${goalId} --review-issues "describe the issues"`,
     ].join(" ");
@@ -159,7 +211,9 @@ export class ReviewerProcessManager implements IProcessManager {
   private track(startedAt: bigint, properties: Record<string, unknown>): void {
     this.telemetryClient.track("reviewer_process_completed", {
       daemon: "reviewer",
-      durationMs: Number((process.hrtime.bigint() - startedAt) / BigInt(1_000_000)),
+      durationMs: Number(
+        (process.hrtime.bigint() - startedAt) / BigInt(1_000_000),
+      ),
       ...properties,
     });
   }
@@ -167,7 +221,11 @@ export class ReviewerProcessManager implements IProcessManager {
   private emitReturnedAgentOutput(
     events: ProcessManagerEventEmitter,
     result: { readonly stdout?: string; readonly stderr?: string },
-    context: { readonly goalId: string; readonly attempt: number; readonly maxRetries: number },
+    context: {
+      readonly goalId: string;
+      readonly attempt: number;
+      readonly maxRetries: number;
+    },
   ): void {
     if (result.stdout !== undefined) {
       events.emitAgentActivity("stdout", result.stdout, context);
@@ -177,19 +235,30 @@ export class ReviewerProcessManager implements IProcessManager {
     }
   }
 
-  private errorProperties(error: unknown): { errorType: string; errorMessage: string; errorStack?: string } {
+  private errorProperties(error: unknown): {
+    errorType: string;
+    errorMessage: string;
+    errorStack?: string;
+  } {
     if (error instanceof Error) {
       return {
         errorType: error.name,
-        errorMessage: limitTextTail(error.message, REVIEWER_EVENT_TEXT_FIELD_MAX_LENGTH),
-        errorStack: error.stack === undefined
-          ? undefined
-          : limitTextTail(error.stack, REVIEWER_EVENT_TEXT_FIELD_MAX_LENGTH),
+        errorMessage: limitTextTail(
+          error.message,
+          REVIEWER_EVENT_TEXT_FIELD_MAX_LENGTH,
+        ),
+        errorStack:
+          error.stack === undefined
+            ? undefined
+            : limitTextTail(error.stack, REVIEWER_EVENT_TEXT_FIELD_MAX_LENGTH),
       };
     }
     return {
       errorType: "UnknownError",
-      errorMessage: limitTextTail(String(error), REVIEWER_EVENT_TEXT_FIELD_MAX_LENGTH),
+      errorMessage: limitTextTail(
+        String(error),
+        REVIEWER_EVENT_TEXT_FIELD_MAX_LENGTH,
+      ),
     };
   }
 }

@@ -9,10 +9,12 @@ export class AddComponentCommandHandler {
   constructor(
     private readonly eventWriter: IComponentAddedEventWriter,
     private readonly eventBus: IEventBus,
-    private readonly reader: IComponentAddReader
+    private readonly reader: IComponentAddReader,
   ) {}
 
-  async execute(command: AddComponentCommand): Promise<{ componentId: string }> {
+  async execute(
+    command: AddComponentCommand,
+  ): Promise<{ componentId: string }> {
     // Check if component with same name already exists
     const existing = await this.reader.findByName(command.name);
 
@@ -23,13 +25,16 @@ export class AddComponentCommandHandler {
       // Update existing component (idempotent behavior)
       componentId = existing.componentId;
       const history = await this.eventWriter.readStream(componentId);
-      const component = Component.rehydrate(componentId, history as ComponentEvent[]);
+      const component = Component.rehydrate(
+        componentId,
+        history as ComponentEvent[],
+      );
 
       event = component.update(
         command.description,
         command.responsibility,
         command.path,
-        command.type
+        command.type,
       );
     } else {
       // Create new component
@@ -41,7 +46,7 @@ export class AddComponentCommandHandler {
         command.type,
         command.description,
         command.responsibility,
-        command.path
+        command.path,
       );
     }
 

@@ -66,7 +66,7 @@ export class SafeClaudeSettingsMerger {
    */
   static async mergeSettings(
     projectRoot: string,
-    newSettings: ClaudeSettings
+    newSettings: ClaudeSettings,
   ): Promise<void> {
     const settingsPath = path.join(projectRoot, ".claude", "settings.json");
     const backupPath = `${settingsPath}.backup.${Date.now()}`;
@@ -100,7 +100,7 @@ export class SafeClaudeSettingsMerger {
       await fs.writeFile(
         settingsPath,
         JSON.stringify(merged, null, 2) + "\n",
-        "utf-8"
+        "utf-8",
       );
 
       // STEP 6: Cleanup backup on success (optional - keep for audit trail)
@@ -122,7 +122,7 @@ export class SafeClaudeSettingsMerger {
    */
   private static deepMerge(
     existing: ClaudeSettings,
-    newSettings: ClaudeSettings
+    newSettings: ClaudeSettings,
   ): ClaudeSettings {
     const result: ClaudeSettings = { ...existing };
 
@@ -136,7 +136,7 @@ export class SafeClaudeSettingsMerger {
           const existingHooks = existing.hooks?.[eventType] ?? [];
           result.hooks[eventType] = this.mergeHookMatchers(
             existingHooks,
-            newHooks
+            newHooks,
           );
         }
       }
@@ -150,21 +150,27 @@ export class SafeClaudeSettingsMerger {
       if (newSettings.permissions.allow) {
         const existingAllow = existing.permissions?.allow ?? [];
         const newAllow = newSettings.permissions.allow;
-        result.permissions.allow = Array.from(new Set([...existingAllow, ...newAllow]));
+        result.permissions.allow = Array.from(
+          new Set([...existingAllow, ...newAllow]),
+        );
       }
 
       // Merge deny array (unique values)
       if (newSettings.permissions.deny) {
         const existingDeny = existing.permissions?.deny ?? [];
         const newDeny = newSettings.permissions.deny;
-        result.permissions.deny = Array.from(new Set([...existingDeny, ...newDeny]));
+        result.permissions.deny = Array.from(
+          new Set([...existingDeny, ...newDeny]),
+        );
       }
 
       // Merge ask array (unique values)
       if (newSettings.permissions.ask) {
         const existingAsk = existing.permissions?.ask ?? [];
         const newAsk = newSettings.permissions.ask;
-        result.permissions.ask = Array.from(new Set([...existingAsk, ...newAsk]));
+        result.permissions.ask = Array.from(
+          new Set([...existingAsk, ...newAsk]),
+        );
       }
     }
 
@@ -176,14 +182,14 @@ export class SafeClaudeSettingsMerger {
    */
   private static mergeHookMatchers(
     existing: ClaudeHookMatcher[],
-    additions: ClaudeHookMatcher[]
+    additions: ClaudeHookMatcher[],
   ): ClaudeHookMatcher[] {
     const merged = [...existing];
 
     for (const newMatcher of additions) {
       // Find existing matcher with same matcher type
       const existingIndex = merged.findIndex(
-        (m) => m.matcher === newMatcher.matcher
+        (m) => m.matcher === newMatcher.matcher,
       );
 
       if (existingIndex >= 0) {
@@ -241,7 +247,7 @@ export class SafeClaudeSettingsMerger {
       return parsed;
     } catch (error) {
       throw new Error(
-        `Invalid settings.json: ${error instanceof Error ? error.message : String(error)}`
+        `Invalid settings.json: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
@@ -271,7 +277,9 @@ export class SafeClaudeSettingsMerger {
 
         for (const matcher of matchers) {
           if (!matcher.matcher || typeof matcher.matcher !== "string") {
-            throw new Error(`${eventType} matcher must have a matcher property`);
+            throw new Error(
+              `${eventType} matcher must have a matcher property`,
+            );
           }
 
           if (!Array.isArray(matcher.hooks)) {
@@ -290,7 +298,9 @@ export class SafeClaudeSettingsMerger {
             } else {
               // Cast to unknown to access type for error message
               const unknownHook = hook as unknown as { type?: string };
-              throw new Error(`Hook type must be 'command' or 'prompt', got '${unknownHook.type}'`);
+              throw new Error(
+                `Hook type must be 'command' or 'prompt', got '${unknownHook.type}'`,
+              );
             }
           }
         }
@@ -299,19 +309,31 @@ export class SafeClaudeSettingsMerger {
 
     // Validate permissions structure if present
     if (settings.permissions !== undefined) {
-      if (typeof settings.permissions !== "object" || settings.permissions === null) {
+      if (
+        typeof settings.permissions !== "object" ||
+        settings.permissions === null
+      ) {
         throw new Error("permissions must be an object");
       }
 
-      if (settings.permissions.allow !== undefined && !Array.isArray(settings.permissions.allow)) {
+      if (
+        settings.permissions.allow !== undefined &&
+        !Array.isArray(settings.permissions.allow)
+      ) {
         throw new Error("permissions.allow must be an array");
       }
 
-      if (settings.permissions.deny !== undefined && !Array.isArray(settings.permissions.deny)) {
+      if (
+        settings.permissions.deny !== undefined &&
+        !Array.isArray(settings.permissions.deny)
+      ) {
         throw new Error("permissions.deny must be an array");
       }
 
-      if (settings.permissions.ask !== undefined && !Array.isArray(settings.permissions.ask)) {
+      if (
+        settings.permissions.ask !== undefined &&
+        !Array.isArray(settings.permissions.ask)
+      ) {
         throw new Error("permissions.ask must be an array");
       }
     }
@@ -321,7 +343,7 @@ export class SafeClaudeSettingsMerger {
       JSON.stringify(settings);
     } catch (error) {
       throw new Error(
-        `Settings cannot be serialized to JSON: ${error instanceof Error ? error.message : String(error)}`
+        `Settings cannot be serialized to JSON: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }

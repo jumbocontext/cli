@@ -17,7 +17,9 @@ export class SqliteAudiencePainUpdatedProjector
 {
   constructor(private db: Database) {}
 
-  async applyAudiencePainUpdated(event: AudiencePainUpdatedEvent): Promise<void> {
+  async applyAudiencePainUpdated(
+    event: AudiencePainUpdatedEvent,
+  ): Promise<void> {
     // Build dynamic UPDATE statement based on provided fields
     const updates: string[] = [];
     const values: unknown[] = [];

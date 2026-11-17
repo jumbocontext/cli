@@ -18,10 +18,14 @@ export class SqliteGoalClaimStore implements IGoalClaimStore {
   getClaim(goalId: string): GoalClaim | null {
     const row = this.db
       .prepare(
-        "SELECT claimedBy, claimedAt, claimExpiresAt FROM goal_views WHERE goalId = ?"
+        "SELECT claimedBy, claimedAt, claimExpiresAt FROM goal_views WHERE goalId = ?",
       )
       .get(goalId) as
-      | { claimedBy: string | null; claimedAt: string | null; claimExpiresAt: string | null }
+      | {
+          claimedBy: string | null;
+          claimedAt: string | null;
+          claimExpiresAt: string | null;
+        }
       | undefined;
 
     if (!row || !row.claimedBy || !row.claimedAt || !row.claimExpiresAt) {
@@ -39,15 +43,20 @@ export class SqliteGoalClaimStore implements IGoalClaimStore {
   setClaim(claim: GoalClaim): void {
     this.db
       .prepare(
-        "UPDATE goal_views SET claimedBy = ?, claimedAt = ?, claimExpiresAt = ? WHERE goalId = ?"
+        "UPDATE goal_views SET claimedBy = ?, claimedAt = ?, claimExpiresAt = ? WHERE goalId = ?",
       )
-      .run(claim.claimedBy, claim.claimedAt, claim.claimExpiresAt, claim.goalId);
+      .run(
+        claim.claimedBy,
+        claim.claimedAt,
+        claim.claimExpiresAt,
+        claim.goalId,
+      );
   }
 
   releaseClaim(goalId: string): void {
     this.db
       .prepare(
-        "UPDATE goal_views SET claimedBy = NULL, claimedAt = NULL, claimExpiresAt = NULL WHERE goalId = ?"
+        "UPDATE goal_views SET claimedBy = NULL, claimedAt = NULL, claimExpiresAt = NULL WHERE goalId = ?",
       )
       .run(goalId);
   }

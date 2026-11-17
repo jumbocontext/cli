@@ -13,7 +13,7 @@ export class AgentsMdContent {
   static getJumboSection(): string {
     return AgentFileAssetContent.extractSection(
       AgentFileAssetContent.readMarkdown("AGENTS.md"),
-      this.getCurrentJumboSectionMarker()
+      this.getCurrentJumboSectionMarker(),
     );
   }
 
@@ -37,9 +37,7 @@ export class AgentsMdContent {
    * so that repair/init can find and replace old installations.
    */
   static getLegacyJumboSectionMarkers(): string[] {
-    return [
-      "## Instructions for Jumbo",
-    ];
+    return ["## Instructions for Jumbo"];
   }
 
   /**
@@ -51,7 +49,10 @@ export class AgentsMdContent {
    * @returns Updated content, or null if no marker found
    */
   static replaceJumboSection(existingContent: string): string | null {
-    const allMarkers = [this.getCurrentJumboSectionMarker(), ...this.getLegacyJumboSectionMarkers()];
+    const allMarkers = [
+      this.getCurrentJumboSectionMarker(),
+      ...this.getLegacyJumboSectionMarkers(),
+    ];
 
     let matchedMarker: string | null = null;
     let markerIndex = -1;
@@ -68,7 +69,9 @@ export class AgentsMdContent {
     if (matchedMarker === null || markerIndex === -1) return null;
 
     // Find the next ## heading after the marker (or EOF)
-    const afterMarker = existingContent.substring(markerIndex + matchedMarker.length);
+    const afterMarker = existingContent.substring(
+      markerIndex + matchedMarker.length,
+    );
     const nextHeadingMatch = afterMarker.match(/\n## /);
     const endIndex = nextHeadingMatch
       ? markerIndex + matchedMarker.length + nextHeadingMatch.index!

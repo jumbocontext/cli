@@ -14,7 +14,7 @@ export class TelemetryConsentStatusResolver {
   resolve(
     settings: Settings,
     configured: boolean,
-    environmentStatus: TelemetryEnvironmentStatus
+    environmentStatus: TelemetryEnvironmentStatus,
   ): ResolvedTelemetryConsentStatus {
     const disabledByCi = environmentStatus.ciDetected;
     const disabledByEnvironment = environmentStatus.environmentDisabled;

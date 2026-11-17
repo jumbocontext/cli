@@ -12,12 +12,15 @@ export class LocalDefineArchitectureGateway implements IDefineArchitectureGatewa
   constructor(
     private readonly eventWriter: IArchitectureDefinedEventWriter,
     private readonly architectureReader: IArchitectureDefineReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
-  async defineArchitecture(request: DefineArchitectureRequest): Promise<DefineArchitectureResponse> {
+  async defineArchitecture(
+    request: DefineArchitectureRequest,
+  ): Promise<DefineArchitectureResponse> {
     // Check if architecture already exists (precondition)
-    const existingArchitecture = await this.architectureReader.findById('architecture');
+    const existingArchitecture =
+      await this.architectureReader.findById("architecture");
     if (existingArchitecture) {
       if (existingArchitecture.deprecated) {
         throw new Error(ArchitectureErrorMessages.DEPRECATED);
@@ -26,14 +29,16 @@ export class LocalDefineArchitectureGateway implements IDefineArchitectureGatewa
     }
 
     // 1. Create new aggregate
-    const architectureId = 'architecture'; // Single architecture per project
+    const architectureId = "architecture"; // Single architecture per project
     const architecture = Architecture.create(architectureId);
 
     // 2. Parse data stores from string format
-    const dataStores: DataStore[] | undefined = request.dataStores?.map(ds => {
-      const [name, type, purpose] = ds.split(':');
-      return { name, type, purpose };
-    });
+    const dataStores: DataStore[] | undefined = request.dataStores?.map(
+      (ds) => {
+        const [name, type, purpose] = ds.split(":");
+        return { name, type, purpose };
+      },
+    );
 
     // 3. Domain logic produces event
     const event = architecture.define(
@@ -42,7 +47,7 @@ export class LocalDefineArchitectureGateway implements IDefineArchitectureGatewa
       request.patterns,
       request.principles,
       dataStores,
-      request.stack
+      request.stack,
     );
 
     // 3. Persist event to file store

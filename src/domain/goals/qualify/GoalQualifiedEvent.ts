@@ -10,7 +10,7 @@ import { GoalEventType, GoalStatusType } from "../Constants.js";
 export interface GoalQualifiedEvent extends BaseEvent {
   readonly type: typeof GoalEventType.QUALIFIED;
   readonly payload: {
-    readonly status: GoalStatusType;  // Legacy: 'qualified'
-    readonly qualifiedAt: string;     // ISO 8601 timestamp when qualified
+    readonly status: GoalStatusType; // Legacy: 'qualified'
+    readonly qualifiedAt: string; // ISO 8601 timestamp when qualified
   };
 }

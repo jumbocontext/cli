@@ -9,7 +9,7 @@ import { GoalEventType, GoalStatusType } from "../Constants.js";
 export interface GoalSubmittedEvent extends BaseEvent {
   readonly type: typeof GoalEventType.SUBMITTED;
   readonly payload: {
-    readonly status: GoalStatusType;   // 'submitted'
-    readonly submittedAt: string;      // ISO 8601 timestamp
+    readonly status: GoalStatusType; // 'submitted'
+    readonly submittedAt: string; // ISO 8601 timestamp
   };
 }

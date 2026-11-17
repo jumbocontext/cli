@@ -4,9 +4,10 @@
  */
 
 export const GoalPausedReasons = {
-  ContextCompressed: 'ContextCompressed',
-  WorkPaused: 'WorkPaused',
-  Other: 'Other'
+  ContextCompressed: "ContextCompressed",
+  WorkPaused: "WorkPaused",
+  Other: "Other",
 } as const;
 
-export type GoalPausedReasonsType = typeof GoalPausedReasons[keyof typeof GoalPausedReasons];
+export type GoalPausedReasonsType =
+  (typeof GoalPausedReasons)[keyof typeof GoalPausedReasons];

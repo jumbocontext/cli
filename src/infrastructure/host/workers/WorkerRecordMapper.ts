@@ -4,7 +4,10 @@
  * Handles type casting at the infrastructure-application boundary.
  */
 
-import { WorkerId, createWorkerId } from "../../../application/host/workers/WorkerId.js";
+import {
+  WorkerId,
+  createWorkerId,
+} from "../../../application/host/workers/WorkerId.js";
 import { WorkerMode } from "../../../application/host/workers/WorkerMode.js";
 import { WorkerRecord } from "./WorkerRecord.js";
 

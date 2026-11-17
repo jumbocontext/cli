@@ -17,7 +17,7 @@ import { WorkSummaryView } from "../views/WorkSummaryView.js";
 export class GetWorkSummaryQueryHandler {
   constructor(
     private readonly activeSessionReader: IActiveSessionReader,
-    private readonly goalStatusReader: IGoalStatusReader
+    private readonly goalStatusReader: IGoalStatusReader,
   ) {}
 
   /**

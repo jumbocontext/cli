@@ -4,11 +4,10 @@ import {
   TELEMETRY_DISABLED_ENVIRONMENT_VARIABLE,
 } from "./TelemetryEnvironmentVariables.js";
 
-export class ProcessTelemetryEnvironmentReader
-implements ITelemetryEnvironmentReader {
+export class ProcessTelemetryEnvironmentReader implements ITelemetryEnvironmentReader {
   isCiEnvironment(): boolean {
     return CI_ENVIRONMENT_VARIABLE_NAMES.some((name) =>
-      this.hasTruthyEnvironmentVariable(name)
+      this.hasTruthyEnvironmentVariable(name),
     );
   }
 

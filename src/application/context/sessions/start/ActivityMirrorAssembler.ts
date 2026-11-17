@@ -34,7 +34,7 @@ export class ActivityMirrorAssembler {
     const allEvents = await this.eventStore.getAllEvents();
 
     const sessionStarts = allEvents.filter(
-      (e) => e.type === "SessionStartedEvent"
+      (e) => e.type === "SessionStartedEvent",
     );
 
     if (sessionStarts.length === 0) {

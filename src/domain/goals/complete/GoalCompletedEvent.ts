@@ -8,6 +8,6 @@ import { GoalEventType, GoalStatusType } from "../Constants.js";
 export interface GoalCompletedEvent extends BaseEvent {
   readonly type: typeof GoalEventType.COMPLETED;
   readonly payload: {
-    readonly status: GoalStatusType;  // Will be 'completed'
+    readonly status: GoalStatusType; // Will be 'completed'
   };
 }

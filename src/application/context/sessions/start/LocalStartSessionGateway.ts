@@ -12,10 +12,12 @@ export class LocalStartSessionGateway implements IStartSessionGateway {
     private readonly startSessionCommandHandler: StartSessionCommandHandler,
     private readonly brownfieldStatusReader: IBrownfieldStatusReader,
     private readonly settingsReader: ISettingsReader,
-    private readonly goalBacklogPreviewQueryHandler: GoalBacklogPreviewQueryHandler
+    private readonly goalBacklogPreviewQueryHandler: GoalBacklogPreviewQueryHandler,
   ) {}
 
-  async startSession(_request: SessionStartRequest): Promise<SessionStartResponse> {
+  async startSession(
+    _request: SessionStartRequest,
+  ): Promise<SessionStartResponse> {
     const [isUnprimed, settings] = await Promise.all([
       this.brownfieldStatusReader.isUnprimed(),
       this.settingsReader.read(),

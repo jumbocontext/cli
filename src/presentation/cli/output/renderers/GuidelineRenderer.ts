@@ -1,5 +1,5 @@
-import { EntityRenderer } from './EntityRenderer.js';
-import { Annotation } from '../Annotation.js';
+import { EntityRenderer } from "./EntityRenderer.js";
+import { Annotation } from "../Annotation.js";
 
 /**
  * GuidelineContextView from ContextualGoalView
@@ -28,12 +28,12 @@ export class GuidelineRenderer implements EntityRenderer<GuidelineContextView> {
 
   getDefaultAnnotation(): Annotation {
     return {
-      type: 'instruction',
-      text: 'INSTRUCTION: You (the developer) SHOULD follow these guidelines while implementing this goal.',
+      type: "instruction",
+      text: "INSTRUCTION: You (the developer) SHOULD follow these guidelines while implementing this goal.",
     };
   }
 
   getGroupHeader(): string {
-    return '## Guidelines:';
+    return "## Guidelines:";
   }
 }

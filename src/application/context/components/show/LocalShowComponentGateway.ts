@@ -7,10 +7,12 @@ import { IRelationViewReader } from "../../relations/get/IRelationViewReader.js"
 export class LocalShowComponentGateway implements IShowComponentGateway {
   constructor(
     private readonly componentReader: IComponentReader,
-    private readonly relationViewReader: IRelationViewReader
+    private readonly relationViewReader: IRelationViewReader,
   ) {}
 
-  async showComponent(request: ShowComponentRequest): Promise<ShowComponentResponse> {
+  async showComponent(
+    request: ShowComponentRequest,
+  ): Promise<ShowComponentResponse> {
     const component = request.componentId
       ? await this.componentReader.findById(request.componentId)
       : request.name

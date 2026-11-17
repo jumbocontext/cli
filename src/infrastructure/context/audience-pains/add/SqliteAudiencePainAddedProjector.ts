@@ -28,7 +28,7 @@ export class SqliteAudiencePainAddedProjector implements IAudiencePainAddedProje
       null,
       event.version,
       event.timestamp,
-      event.timestamp
+      event.timestamp,
     );
   }
 }

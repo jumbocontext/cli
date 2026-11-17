@@ -1,6 +1,14 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
 import { GoalState } from "../Goal.js";
-import { GoalStatus, GoalErrorMessages, formatErrorMessage, WAITING_STATES } from "../Constants.js";
+import {
+  GoalStatus,
+  GoalErrorMessages,
+  formatErrorMessage,
+  WAITING_STATES,
+} from "../Constants.js";
 
 /**
  * Validates that a goal can be refined (transition to 'refined' status).
@@ -26,10 +34,11 @@ export class CanRefineRule implements ValidationRule<GoalState> {
     if (state.status !== GoalStatus.TODO) {
       return {
         isValid: false,
-        errors: [formatErrorMessage(
-          GoalErrorMessages.CANNOT_REFINE_IN_STATUS,
-          { status: state.status }
-        )],
+        errors: [
+          formatErrorMessage(GoalErrorMessages.CANNOT_REFINE_IN_STATUS, {
+            status: state.status,
+          }),
+        ],
       };
     }
 
@@ -73,7 +82,10 @@ export class CanStartRule implements ValidationRule<GoalState> {
     }
 
     // Goal must be refined before starting (or already doing for idempotency)
-    if (state.status === GoalStatus.TODO || state.status === GoalStatus.IN_REFINEMENT) {
+    if (
+      state.status === GoalStatus.TODO ||
+      state.status === GoalStatus.IN_REFINEMENT
+    ) {
       return {
         isValid: false,
         errors: [GoalErrorMessages.CANNOT_START_NOT_REFINED],
@@ -132,10 +144,11 @@ export class CanResetRule implements ValidationRule<GoalState> {
     if (WAITING_STATES.has(state.status)) {
       return {
         isValid: false,
-        errors: [formatErrorMessage(
-          GoalErrorMessages.CANNOT_RESET_WAITING_STATE,
-          { status: state.status }
-        )],
+        errors: [
+          formatErrorMessage(GoalErrorMessages.CANNOT_RESET_WAITING_STATE, {
+            status: state.status,
+          }),
+        ],
       };
     }
 
@@ -170,17 +183,23 @@ export class CanBlockRule implements ValidationRule<GoalState> {
   validate(state: GoalState): ValidationResult {
     // Valid statuses to block from: DEFINED, DOING, INREVIEW, CODIFYING
     // Invalid statuses: BLOCKED (already blocked), DONE (can't block terminal)
-    const validStatuses: string[] = [GoalStatus.TODO, GoalStatus.DOING, GoalStatus.INREVIEW, GoalStatus.CODIFYING];
+    const validStatuses: string[] = [
+      GoalStatus.TODO,
+      GoalStatus.DOING,
+      GoalStatus.INREVIEW,
+      GoalStatus.CODIFYING,
+    ];
     const isValid = validStatuses.includes(state.status);
 
     return {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(
-            GoalErrorMessages.CANNOT_BLOCK_IN_STATUS,
-            { status: state.status }
-          )],
+        : [
+            formatErrorMessage(GoalErrorMessages.CANNOT_BLOCK_IN_STATUS, {
+              status: state.status,
+            }),
+          ],
     };
   }
 }
@@ -199,10 +218,11 @@ export class CanUnblockRule implements ValidationRule<GoalState> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(
-            GoalErrorMessages.CANNOT_UNBLOCK_IN_STATUS,
-            { status: state.status }
-          )],
+        : [
+            formatErrorMessage(GoalErrorMessages.CANNOT_UNBLOCK_IN_STATUS, {
+              status: state.status,
+            }),
+          ],
     };
   }
 }
@@ -221,10 +241,11 @@ export class CanPauseRule implements ValidationRule<GoalState> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(
-            GoalErrorMessages.CANNOT_PAUSE_IN_STATUS,
-            { status: state.status }
-          )],
+        : [
+            formatErrorMessage(GoalErrorMessages.CANNOT_PAUSE_IN_STATUS, {
+              status: state.status,
+            }),
+          ],
     };
   }
 }
@@ -243,10 +264,11 @@ export class CanResumeRule implements ValidationRule<GoalState> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(
-            GoalErrorMessages.CANNOT_RESUME_IN_STATUS,
-            { status: state.status }
-          )],
+        : [
+            formatErrorMessage(GoalErrorMessages.CANNOT_RESUME_IN_STATUS, {
+              status: state.status,
+            }),
+          ],
     };
   }
 }

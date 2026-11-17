@@ -1,14 +1,27 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { ArchitectureErrorMessages, ArchitectureLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  ArchitectureErrorMessages,
+  ArchitectureLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class PatternMaxLengthRule implements ValidationRule<string[]> {
-  constructor(private maxLength: number = ArchitectureLimits.PATTERN_MAX_LENGTH) {}
+  constructor(
+    private maxLength: number = ArchitectureLimits.PATTERN_MAX_LENGTH,
+  ) {}
 
   validate(patterns: string[]): ValidationResult {
     const errors: string[] = [];
     for (const pattern of patterns) {
       if (pattern.length > this.maxLength) {
-        errors.push(formatErrorMessage(ArchitectureErrorMessages.PATTERN_TOO_LONG, { max: this.maxLength }));
+        errors.push(
+          formatErrorMessage(ArchitectureErrorMessages.PATTERN_TOO_LONG, {
+            max: this.maxLength,
+          }),
+        );
         break; // Only report once
       }
     }
@@ -29,7 +42,11 @@ export class PatternsMaxCountRule implements ValidationRule<string[]> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(ArchitectureErrorMessages.TOO_MANY_PATTERNS, { max: this.maxCount })],
+        : [
+            formatErrorMessage(ArchitectureErrorMessages.TOO_MANY_PATTERNS, {
+              max: this.maxCount,
+            }),
+          ],
     };
   }
 }

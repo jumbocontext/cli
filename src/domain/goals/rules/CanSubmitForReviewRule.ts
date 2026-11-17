@@ -1,6 +1,13 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
 import { GoalState } from "../Goal.js";
-import { GoalStatus, GoalErrorMessages, formatErrorMessage } from "../Constants.js";
+import {
+  GoalStatus,
+  GoalErrorMessages,
+  formatErrorMessage,
+} from "../Constants.js";
 
 /**
  * Validates that a goal can be submitted for review (start QA review).
@@ -10,16 +17,20 @@ import { GoalStatus, GoalErrorMessages, formatErrorMessage } from "../Constants.
 export class CanSubmitForReviewRule implements ValidationRule<GoalState> {
   validate(state: GoalState): ValidationResult {
     // Allow SUBMITTED (first entry) or IN_REVIEW (idempotent re-entry, claim validation at application layer)
-    const isValid = state.status === GoalStatus.SUBMITTED || state.status === GoalStatus.INREVIEW;
+    const isValid =
+      state.status === GoalStatus.SUBMITTED ||
+      state.status === GoalStatus.INREVIEW;
 
     return {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(
-            GoalErrorMessages.CANNOT_SUBMIT_FOR_REVIEW_IN_STATUS,
-            { status: state.status }
-          )],
+        : [
+            formatErrorMessage(
+              GoalErrorMessages.CANNOT_SUBMIT_FOR_REVIEW_IN_STATUS,
+              { status: state.status },
+            ),
+          ],
     };
   }
 }

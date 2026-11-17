@@ -3,12 +3,10 @@ import { UpdateTelemetryConsentRequest } from "./UpdateTelemetryConsentRequest.j
 import { UpdateTelemetryConsentResponse } from "./UpdateTelemetryConsentResponse.js";
 
 export class UpdateTelemetryConsentController {
-  constructor(
-    private readonly gateway: IUpdateTelemetryConsentGateway
-  ) {}
+  constructor(private readonly gateway: IUpdateTelemetryConsentGateway) {}
 
   async handle(
-    request: UpdateTelemetryConsentRequest
+    request: UpdateTelemetryConsentRequest,
   ): Promise<UpdateTelemetryConsentResponse> {
     return this.gateway.updateTelemetryConsent(request);
   }

@@ -4,13 +4,20 @@ import { IGoalStartedEventReader } from "./IGoalStartedEventReader.js";
 import { IGoalReader } from "./IGoalReader.js";
 import { IEventBus } from "../../../messaging/IEventBus.js";
 import { Goal } from "../../../../domain/goals/Goal.js";
-import { GoalErrorMessages, GoalStatus, formatErrorMessage } from "../../../../domain/goals/Constants.js";
+import {
+  GoalErrorMessages,
+  GoalStatus,
+  formatErrorMessage,
+} from "../../../../domain/goals/Constants.js";
 import { GoalClaimPolicy } from "../claims/GoalClaimPolicy.js";
 import { IWorkerIdentityReader } from "../../../host/workers/IWorkerIdentityReader.js";
 import { ISettingsReader } from "../../../settings/ISettingsReader.js";
 import { GoalContextQueryHandler } from "../get/GoalContextQueryHandler.js";
 import { ContextualGoalView } from "../get/ContextualGoalView.js";
-import { PrerequisitePolicy, PrerequisiteStatus } from "../../../../domain/goals/rules/PrerequisitePolicy.js";
+import {
+  PrerequisitePolicy,
+  PrerequisiteStatus,
+} from "../../../../domain/goals/rules/PrerequisitePolicy.js";
 import { GoalView } from "../GoalView.js";
 
 /**
@@ -29,7 +36,7 @@ export class StartGoalCommandHandler {
     private readonly workerIdentityReader: IWorkerIdentityReader,
     private readonly settingsReader: ISettingsReader,
     private readonly goalContextQueryHandler: GoalContextQueryHandler,
-    private readonly prerequisitePolicy: PrerequisitePolicy
+    private readonly prerequisitePolicy: PrerequisitePolicy,
   ) {}
 
   async execute(command: StartGoalCommand): Promise<ContextualGoalView> {
@@ -37,7 +44,9 @@ export class StartGoalCommandHandler {
     const view = await this.goalReader.findById(command.goalId);
     if (!view) {
       throw new Error(
-        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, { id: command.goalId })
+        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, {
+          id: command.goalId,
+        }),
       );
     }
 
@@ -49,7 +58,9 @@ export class StartGoalCommandHandler {
         .map((p) => `  - "${p.objective}" (status: ${p.status})`)
         .join("\n");
       throw new Error(
-        formatErrorMessage(GoalErrorMessages.PREREQUISITES_NOT_SATISFIED, { details })
+        formatErrorMessage(GoalErrorMessages.PREREQUISITES_NOT_SATISFIED, {
+          details,
+        }),
       );
     }
 
@@ -57,13 +68,17 @@ export class StartGoalCommandHandler {
     const workerId = this.workerIdentityReader.workerId;
     const settings = await this.settingsReader.read();
     const claimDurationMs = settings.claims.claimDurationMinutes * 60 * 1000;
-    const entryResult = this.claimPolicy.prepareEntryClaim(command.goalId, workerId, claimDurationMs);
+    const entryResult = this.claimPolicy.prepareEntryClaim(
+      command.goalId,
+      workerId,
+      claimDurationMs,
+    );
 
     if (!entryResult.allowed) {
       throw new Error(
         formatErrorMessage(GoalErrorMessages.GOAL_CLAIMED_BY_ANOTHER_WORKER, {
           expiresAt: entryResult.existingClaim.claimExpiresAt,
-        })
+        }),
       );
     }
 
@@ -94,7 +109,9 @@ export class StartGoalCommandHandler {
   /**
    * Resolves prerequisite goal IDs to their current statuses via projection reads.
    */
-  private async resolvePrerequisites(goal: GoalView): Promise<PrerequisiteStatus[]> {
+  private async resolvePrerequisites(
+    goal: GoalView,
+  ): Promise<PrerequisiteStatus[]> {
     const prerequisiteIds = goal.prerequisiteGoals ?? [];
     const prerequisites: PrerequisiteStatus[] = [];
 

@@ -7,10 +7,12 @@ import { IComponentUpdateReader } from "../update/IComponentUpdateReader.js";
 export class LocalAddComponentGateway implements IAddComponentGateway {
   constructor(
     private readonly commandHandler: AddComponentCommandHandler,
-    private readonly componentReader: IComponentUpdateReader
+    private readonly componentReader: IComponentUpdateReader,
   ) {}
 
-  async addComponent(request: AddComponentRequest): Promise<AddComponentResponse> {
+  async addComponent(
+    request: AddComponentRequest,
+  ): Promise<AddComponentResponse> {
     const result = await this.commandHandler.execute({
       name: request.name,
       type: request.type,

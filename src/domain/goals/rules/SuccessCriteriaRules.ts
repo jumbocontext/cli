@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { GoalErrorMessages, GoalLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  GoalErrorMessages,
+  GoalLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class SuccessCriteriaRequiredRule implements ValidationRule<string[]> {
   validate(criteria: string[]): ValidationResult {
@@ -20,13 +27,19 @@ export class SuccessCriteriaMaxCountRule implements ValidationRule<string[]> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(GoalErrorMessages.TOO_MANY_CRITERIA, { max: this.maxCount })],
+        : [
+            formatErrorMessage(GoalErrorMessages.TOO_MANY_CRITERIA, {
+              max: this.maxCount,
+            }),
+          ],
     };
   }
 }
 
 export class SuccessCriterionMaxLengthRule implements ValidationRule<string[]> {
-  constructor(private maxLength: number = GoalLimits.SUCCESS_CRITERION_MAX_LENGTH) {}
+  constructor(
+    private maxLength: number = GoalLimits.SUCCESS_CRITERION_MAX_LENGTH,
+  ) {}
 
   validate(criteria: string[]): ValidationResult {
     const tooLong = criteria.find((c) => c.length > this.maxLength);
@@ -35,7 +48,11 @@ export class SuccessCriterionMaxLengthRule implements ValidationRule<string[]> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(GoalErrorMessages.SUCCESS_CRITERION_TOO_LONG, { max: this.maxLength })],
+        : [
+            formatErrorMessage(GoalErrorMessages.SUCCESS_CRITERION_TOO_LONG, {
+              max: this.maxLength,
+            }),
+          ],
     };
   }
 }

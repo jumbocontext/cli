@@ -11,7 +11,8 @@ import { DependencyRecord } from "./DependencyRecord.js";
 export class DependencyRecordMapper {
   toView(record: DependencyRecord): DependencyView {
     const packageName = record.packageName ?? record.providerId ?? "unknown";
-    const ecosystem = record.ecosystem ?? (record.providerId ? "legacy-component" : "unknown");
+    const ecosystem =
+      record.ecosystem ?? (record.providerId ? "legacy-component" : "unknown");
     return {
       dependencyId: record.id,
       name: record.name ?? packageName,

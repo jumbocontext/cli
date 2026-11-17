@@ -2,7 +2,11 @@ import { EvolveStepResult } from "../../../../application/evolve/EvolveStepResul
 import { TerminalOutput } from "../../output/TerminalOutput.js";
 import { TerminalOutputBuilder } from "../../output/TerminalOutputBuilder.js";
 import { Colors, Symbols } from "../../rendering/StyleConfig.js";
-import { heading, contentLine, metaField } from "../../rendering/OutputLayout.js";
+import {
+  heading,
+  contentLine,
+  metaField,
+} from "../../rendering/OutputLayout.js";
 
 export class EvolveOutputBuilder {
   private readonly builder = new TerminalOutputBuilder();
@@ -14,12 +18,17 @@ export class EvolveOutputBuilder {
     const lines: string[] = [];
     lines.push("");
     lines.push(heading("Evolve"));
-    lines.push(hasFailures
-      ? contentLine(`${Symbols.warning} ${Colors.warning("Completed with errors")}`)
-      : contentLine(`${Symbols.check} ${Colors.success("Complete")}`));
+    lines.push(
+      hasFailures
+        ? contentLine(
+            `${Symbols.warning} ${Colors.warning("Completed with errors")}`,
+          )
+        : contentLine(`${Symbols.check} ${Colors.success("Complete")}`),
+    );
     lines.push("");
     for (const step of steps) {
-      const statusColor = step.status === "failed" ? Colors.error : Colors.success;
+      const statusColor =
+        step.status === "failed" ? Colors.error : Colors.success;
       lines.push(metaField(step.name, statusColor(step.status), 20));
       if (step.detail) {
         lines.push(contentLine(Colors.muted(step.detail)));
@@ -31,7 +40,7 @@ export class EvolveOutputBuilder {
         step: step.name,
         status: step.status,
         ...(step.detail ? { detail: step.detail } : {}),
-      }))
+      })),
     );
     return this.builder.build();
   }
@@ -50,8 +59,16 @@ export class EvolveOutputBuilder {
     const lines: string[] = [];
     lines.push("");
     lines.push(heading("Confirmation Required"));
-    lines.push(contentLine(`${Symbols.warning} ${Colors.warning("This will update schema, migrate data, refresh managed agent files")}`));
-    lines.push(contentLine(Colors.warning("and skills, ensure settings, and rebuild projections.")));
+    lines.push(
+      contentLine(
+        `${Symbols.warning} ${Colors.warning("This will update schema, migrate data, refresh managed agent files")}`,
+      ),
+    );
+    lines.push(
+      contentLine(
+        Colors.warning("and skills, ensure settings, and rebuild projections."),
+      ),
+    );
     lines.push(contentLine(Colors.primary("Use --yes flag to proceed.")));
     this.builder.addPrompt(lines.join("\n"));
     return this.builder.build();

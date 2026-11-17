@@ -1,14 +1,27 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { ArchitectureErrorMessages, ArchitectureLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  ArchitectureErrorMessages,
+  ArchitectureLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class PrincipleMaxLengthRule implements ValidationRule<string[]> {
-  constructor(private maxLength: number = ArchitectureLimits.PRINCIPLE_MAX_LENGTH) {}
+  constructor(
+    private maxLength: number = ArchitectureLimits.PRINCIPLE_MAX_LENGTH,
+  ) {}
 
   validate(principles: string[]): ValidationResult {
     const errors: string[] = [];
     for (const principle of principles) {
       if (principle.length > this.maxLength) {
-        errors.push(formatErrorMessage(ArchitectureErrorMessages.PRINCIPLE_TOO_LONG, { max: this.maxLength }));
+        errors.push(
+          formatErrorMessage(ArchitectureErrorMessages.PRINCIPLE_TOO_LONG, {
+            max: this.maxLength,
+          }),
+        );
         break; // Only report once
       }
     }
@@ -29,7 +42,11 @@ export class PrinciplesMaxCountRule implements ValidationRule<string[]> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(ArchitectureErrorMessages.TOO_MANY_PRINCIPLES, { max: this.maxCount })],
+        : [
+            formatErrorMessage(ArchitectureErrorMessages.TOO_MANY_PRINCIPLES, {
+              max: this.maxCount,
+            }),
+          ],
     };
   }
 }

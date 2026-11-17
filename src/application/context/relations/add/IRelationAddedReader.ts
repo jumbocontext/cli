@@ -12,6 +12,6 @@ export interface IRelationAddedReader {
     fromEntityId: string,
     toEntityType: EntityTypeValue,
     toEntityId: string,
-    relationType: string
+    relationType: string,
   ): Promise<RelationView | null>;
 }

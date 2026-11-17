@@ -34,21 +34,28 @@ export class SessionStartTextRenderer {
 
   render(context: EnrichedSessionContext): SessionStartTextRenderResult {
     const sections = [
-      ...this.sessionContextOutputBuilder.buildSessionContext(context).getSections(),
-      ...this.sessionGoalsOutputBuilder.buildGoalsOutput(this.getAllGoals(context)).getSections(),
+      ...this.sessionContextOutputBuilder
+        .buildSessionContext(context)
+        .getSections(),
+      ...this.sessionGoalsOutputBuilder
+        .buildGoalsOutput(this.getAllGoals(context))
+        .getSections(),
     ];
 
     const blocks = sections
-      .filter(s => s.type === "prompt" && s.content)
-      .map(s => s.content as string);
+      .filter((s) => s.type === "prompt" && s.content)
+      .map((s) => s.content as string);
 
     // Last two sections are the separator and goal start instruction.
     // Extract the instruction separately for the legacy return shape.
-    const goalStartIndex = blocks.findIndex(b => b.includes("@LLM: Prompt the user"));
-    const llmInstruction = goalStartIndex >= 0 ? blocks.splice(goalStartIndex, 1)[0] : "";
+    const goalStartIndex = blocks.findIndex((b) =>
+      b.includes("@LLM: Prompt the user"),
+    );
+    const llmInstruction =
+      goalStartIndex >= 0 ? blocks.splice(goalStartIndex, 1)[0] : "";
 
     // Remove separator block
-    const separatorIndex = blocks.findIndex(b => b.trim() === "---");
+    const separatorIndex = blocks.findIndex((b) => b.trim() === "---");
     if (separatorIndex >= 0) {
       blocks.splice(separatorIndex, 1);
     }
@@ -56,9 +63,14 @@ export class SessionStartTextRenderer {
     return { blocks, llmInstruction };
   }
 
-  buildStructuredContext(context: EnrichedSessionContext): SessionStartStructuredContext {
-    const contextData = this.sessionContextOutputBuilder.buildStructuredSessionContext(context);
-    const goalsData = this.sessionGoalsOutputBuilder.buildStructuredGoals(this.getAllGoals(context));
+  buildStructuredContext(
+    context: EnrichedSessionContext,
+  ): SessionStartStructuredContext {
+    const contextData =
+      this.sessionContextOutputBuilder.buildStructuredSessionContext(context);
+    const goalsData = this.sessionGoalsOutputBuilder.buildStructuredGoals(
+      this.getAllGoals(context),
+    );
 
     return {
       projectContext: contextData.projectContext,

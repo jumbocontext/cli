@@ -6,5 +6,9 @@ import { EntityTypeValue } from "../../../../domain/relations/Constants.js";
  * optionally register a goal to review them.
  */
 export interface IRelationMaintenanceGoalRegistrar {
-  execute(entityType: EntityTypeValue, entityId: string, changeDescription: string): Promise<string | null>;
+  execute(
+    entityType: EntityTypeValue,
+    entityId: string,
+    changeDescription: string,
+  ): Promise<string | null>;
 }

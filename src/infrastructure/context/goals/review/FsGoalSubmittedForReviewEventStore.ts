@@ -13,7 +13,9 @@ import { ILogger } from "../../../../application/logging/ILogger.js";
 
 export class FsGoalSubmittedForReviewEventStore
   extends FsEventStore
-  implements IGoalSubmittedForReviewEventWriter, IGoalSubmittedForReviewEventReader
+  implements
+    IGoalSubmittedForReviewEventWriter,
+    IGoalSubmittedForReviewEventReader
 {
   constructor(rootDir: string, logger: ILogger) {
     super(rootDir, logger);

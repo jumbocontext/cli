@@ -8,6 +8,4 @@ import { GuidelineRemovedEvent } from "./remove/GuidelineRemovedEvent.js";
 
 // Union type of all guideline events
 export type GuidelineEvent =
-  | GuidelineAddedEvent
-  | GuidelineUpdatedEvent
-  | GuidelineRemovedEvent;
+  GuidelineAddedEvent | GuidelineUpdatedEvent | GuidelineRemovedEvent;

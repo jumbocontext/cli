@@ -17,9 +17,7 @@ export class SqliteProjectContextReader implements IProjectContextReader {
   constructor(private db: Database) {}
 
   async getProject(): Promise<ProjectView | null> {
-    const row = this.db
-      .prepare("SELECT * FROM project_views LIMIT 1")
-      .get();
+    const row = this.db.prepare("SELECT * FROM project_views LIMIT 1").get();
 
     if (!row) {
       return null;
@@ -46,12 +44,12 @@ export class SqliteProjectContextReader implements IProjectContextReader {
              (SELECT COUNT(*) FROM invariant_views) +
              (SELECT COUNT(*) FROM guideline_views WHERE isRemoved = 0)
            ) AS solutionContextItemCount,
-           (SELECT COUNT(*) FROM goal_views) AS launchpadReadyGoalCount`
+           (SELECT COUNT(*) FROM goal_views) AS launchpadReadyGoalCount`,
       )
-      .get(
-        ComponentStatus.ACTIVE,
-        DecisionStatus.ACTIVE,
-      ) as Record<string, unknown>;
+      .get(ComponentStatus.ACTIVE, DecisionStatus.ACTIVE) as Record<
+      string,
+      unknown
+    >;
 
     return {
       projectInitialized: row.projectInitialized === 1,
@@ -60,7 +58,10 @@ export class SqliteProjectContextReader implements IProjectContextReader {
     };
   }
 
-  private mapRowToView(row: Record<string, unknown>, lifecycleState: ProjectLifecycleState): ProjectView {
+  private mapRowToView(
+    row: Record<string, unknown>,
+    lifecycleState: ProjectLifecycleState,
+  ): ProjectView {
     return {
       projectId: row.projectId as string,
       name: row.name as string,

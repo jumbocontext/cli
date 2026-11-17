@@ -9,10 +9,12 @@ export class LocalInitializeProjectGateway implements IInitializeProjectGateway 
   constructor(
     private readonly commandHandler: InitializeProjectCommandHandler,
     private readonly planProjectInitGateway: IPlanProjectInitGateway,
-    private readonly agentFileProtocol: IAgentFileProtocol
+    private readonly agentFileProtocol: IAgentFileProtocol,
   ) {}
 
-  async initializeProject(request: InitializeProjectRequest): Promise<InitializeProjectResponse> {
+  async initializeProject(
+    request: InitializeProjectRequest,
+  ): Promise<InitializeProjectResponse> {
     const planResponse = await this.planProjectInitGateway.planProjectInit({
       projectRoot: request.projectRoot,
       selectedAgentIds: request.selectedAgentIds,
@@ -24,7 +26,7 @@ export class LocalInitializeProjectGateway implements IInitializeProjectGateway 
     const result = await this.commandHandler.execute(
       { name: request.name, purpose: request.purpose },
       request.projectRoot,
-      request.selectedAgentIds
+      request.selectedAgentIds,
     );
 
     return {

@@ -22,7 +22,7 @@ export class UpdateProjectCommandHandler {
     private readonly eventWriter: IProjectUpdatedEventWriter,
     private readonly eventBus: IEventBus,
     private readonly reader: IProjectUpdateReader,
-    private readonly projectIdentityResolver: IProjectIdentityResolver
+    private readonly projectIdentityResolver: IProjectIdentityResolver,
   ) {}
 
   async execute(command: UpdateProjectCommand): Promise<{
@@ -36,18 +36,17 @@ export class UpdateProjectCommandHandler {
     }
 
     // 2. Rehydrate aggregate from event history
-    const projectId = await this.projectIdentityResolver.resolveExistingProjectId(
-      existingView.projectId,
-      async (candidateProjectId) =>
-        (await this.eventWriter.readStream(candidateProjectId)).length > 0,
-    );
+    const projectId =
+      await this.projectIdentityResolver.resolveExistingProjectId(
+        existingView.projectId,
+        async (candidateProjectId) =>
+          (await this.eventWriter.readStream(candidateProjectId)).length > 0,
+      );
     const history = await this.eventWriter.readStream(projectId);
     const project = Project.rehydrate(projectId, history);
 
     // 3. Domain logic produces event (or null if no changes)
-    const event = project.update(
-      command.purpose,
-    );
+    const event = project.update(command.purpose);
 
     // 4. If no changes, return early (idempotent)
     if (!event) {

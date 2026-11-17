@@ -4,9 +4,7 @@ import { PauseWorkResponse } from "./PauseWorkResponse.js";
 import { PauseWorkCommandHandler } from "./PauseWorkCommandHandler.js";
 
 export class LocalPauseWorkGateway implements IPauseWorkGateway {
-  constructor(
-    private readonly commandHandler: PauseWorkCommandHandler
-  ) {}
+  constructor(private readonly commandHandler: PauseWorkCommandHandler) {}
 
   async pauseWork(_request: PauseWorkRequest): Promise<PauseWorkResponse> {
     const result = await this.commandHandler.execute({});

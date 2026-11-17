@@ -8,9 +8,14 @@ import {
   ExternalDependencyPayload,
   LegacyComponentDependencyPayload,
   DependencyUpdatedEvent,
-  DependencyRemovedEvent
+  DependencyRemovedEvent,
 } from "./EventIndex.js";
-import { DependencyEventType, DependencyStatus, DependencyStatusType, DependencyErrorMessages } from "./Constants.js";
+import {
+  DependencyEventType,
+  DependencyStatus,
+  DependencyStatusType,
+  DependencyErrorMessages,
+} from "./Constants.js";
 import { NAME_RULES } from "./rules/NameRules.js";
 import { ECOSYSTEM_RULES } from "./rules/EcosystemRules.js";
 import { PACKAGE_NAME_RULES } from "./rules/PackageNameRules.js";
@@ -32,7 +37,10 @@ export interface DependencyState extends AggregateState {
   version: number;
 }
 
-export class Dependency extends BaseAggregate<DependencyState, DependencyEvent> {
+export class Dependency extends BaseAggregate<
+  DependencyState,
+  DependencyEvent
+> {
   private constructor(state: DependencyState) {
     super(state);
   }
@@ -58,8 +66,10 @@ export class Dependency extends BaseAggregate<DependencyState, DependencyEvent> 
       }
       case DependencyEventType.UPDATED: {
         const e = event as DependencyUpdatedEvent;
-        if (e.payload.endpoint !== undefined) state.endpoint = e.payload.endpoint;
-        if (e.payload.contract !== undefined) state.contract = e.payload.contract;
+        if (e.payload.endpoint !== undefined)
+          state.endpoint = e.payload.endpoint;
+        if (e.payload.contract !== undefined)
+          state.contract = e.payload.contract;
         if (e.payload.status !== undefined) state.status = e.payload.status;
         state.version = e.version;
         break;
@@ -117,13 +127,14 @@ export class Dependency extends BaseAggregate<DependencyState, DependencyEvent> 
     packageName: string,
     versionConstraint?: string | null,
     endpoint?: string,
-    contract?: string
+    contract?: string,
   ): DependencyAddedEvent {
     // Validation using rule pattern
     ValidationRuleSet.ensure(name, NAME_RULES);
     ValidationRuleSet.ensure(ecosystem, ECOSYSTEM_RULES);
     ValidationRuleSet.ensure(packageName, PACKAGE_NAME_RULES);
-    if (versionConstraint) ValidationRuleSet.ensure(versionConstraint, VERSION_CONSTRAINT_RULES);
+    if (versionConstraint)
+      ValidationRuleSet.ensure(versionConstraint, VERSION_CONSTRAINT_RULES);
     if (endpoint) ValidationRuleSet.ensure(endpoint, ENDPOINT_RULES);
     if (contract) ValidationRuleSet.ensure(contract, CONTRACT_RULES);
 
@@ -138,14 +149,14 @@ export class Dependency extends BaseAggregate<DependencyState, DependencyEvent> 
         endpoint: endpoint || null,
         contract: contract || null,
       },
-      Dependency.apply
+      Dependency.apply,
     );
   }
 
   update(
     endpoint?: string | null,
     contract?: string | null,
-    status?: DependencyStatusType
+    status?: DependencyStatusType,
   ): DependencyUpdatedEvent {
     // Validation for updated fields
     if (endpoint !== undefined && endpoint !== null) {
@@ -165,7 +176,7 @@ export class Dependency extends BaseAggregate<DependencyState, DependencyEvent> 
         contract: contract !== undefined ? contract : undefined,
         status: status !== undefined ? status : undefined,
       },
-      Dependency.apply
+      Dependency.apply,
     );
   }
 
@@ -182,16 +193,20 @@ export class Dependency extends BaseAggregate<DependencyState, DependencyEvent> 
     return this.makeEvent<DependencyRemovedEvent>(
       DependencyEventType.REMOVED,
       {
-        reason: reason || null
+        reason: reason || null,
       },
-      Dependency.apply
+      Dependency.apply,
     );
   }
 
   private static upcastAddedPayload(
-    payload: ExternalDependencyPayload | LegacyComponentDependencyPayload
+    payload: ExternalDependencyPayload | LegacyComponentDependencyPayload,
   ): ExternalDependencyPayload {
-    if ("name" in payload && "ecosystem" in payload && "packageName" in payload) {
+    if (
+      "name" in payload &&
+      "ecosystem" in payload &&
+      "packageName" in payload
+    ) {
       return payload;
     }
 

@@ -26,7 +26,10 @@ export interface AntigravityHookDefinition {
     | undefined;
 }
 
-export type AntigravityHooksDocument = Record<string, AntigravityHookDefinition>;
+export type AntigravityHooksDocument = Record<
+  string,
+  AntigravityHookDefinition
+>;
 
 export class SafeAntigravityHooksMerger {
   /**
@@ -37,7 +40,7 @@ export class SafeAntigravityHooksMerger {
    */
   static async mergeHooks(
     projectRoot: string,
-    newHooks: AntigravityHooksDocument
+    newHooks: AntigravityHooksDocument,
   ): Promise<void> {
     const hooksPath = path.join(projectRoot, ".agents", "hooks.json");
     const backupPath = `${hooksPath}.backup.${Date.now()}`;
@@ -58,7 +61,11 @@ export class SafeAntigravityHooksMerger {
       }
 
       const merged = this.mergeDocuments(existing, newHooks);
-      await fs.writeFile(hooksPath, JSON.stringify(merged, null, 2) + "\n", "utf-8");
+      await fs.writeFile(
+        hooksPath,
+        JSON.stringify(merged, null, 2) + "\n",
+        "utf-8",
+      );
     } catch (error) {
       if (await fs.pathExists(backupPath)) {
         await fs.copy(backupPath, hooksPath, { overwrite: true });
@@ -69,12 +76,15 @@ export class SafeAntigravityHooksMerger {
 
   private static mergeDocuments(
     existing: AntigravityHooksDocument,
-    additions: AntigravityHooksDocument
+    additions: AntigravityHooksDocument,
   ): AntigravityHooksDocument {
     const merged: AntigravityHooksDocument = { ...existing };
 
     for (const [hookName, hookDefinition] of Object.entries(additions)) {
-      merged[hookName] = this.mergeHookDefinition(merged[hookName], hookDefinition);
+      merged[hookName] = this.mergeHookDefinition(
+        merged[hookName],
+        hookDefinition,
+      );
     }
 
     return merged;
@@ -82,7 +92,7 @@ export class SafeAntigravityHooksMerger {
 
   private static mergeHookDefinition(
     existing: AntigravityHookDefinition | undefined,
-    addition: AntigravityHookDefinition
+    addition: AntigravityHookDefinition,
   ): AntigravityHookDefinition {
     if (existing === undefined) {
       return addition;
@@ -110,14 +120,14 @@ export class SafeAntigravityHooksMerger {
           Array.isArray(existingValue)
             ? (existingValue as readonly AntigravityToolHookMatcher[])
             : [],
-          additionValue as readonly AntigravityToolHookMatcher[]
+          additionValue as readonly AntigravityToolHookMatcher[],
         );
       } else {
         merged[eventName] = this.mergeHookHandlers(
           Array.isArray(existingValue)
             ? (existingValue as readonly AntigravityHookHandler[])
             : [],
-          additionValue as readonly AntigravityHookHandler[]
+          additionValue as readonly AntigravityHookHandler[],
         );
       }
     }
@@ -127,12 +137,14 @@ export class SafeAntigravityHooksMerger {
 
   private static mergeToolHookMatchers(
     existing: readonly AntigravityToolHookMatcher[],
-    additions: readonly AntigravityToolHookMatcher[]
+    additions: readonly AntigravityToolHookMatcher[],
   ): AntigravityToolHookMatcher[] {
     const merged = [...existing];
 
     for (const addition of additions) {
-      const existingIndex = merged.findIndex((matcher) => matcher.matcher === addition.matcher);
+      const existingIndex = merged.findIndex(
+        (matcher) => matcher.matcher === addition.matcher,
+      );
 
       if (existingIndex === -1) {
         merged.push(addition);
@@ -151,7 +163,7 @@ export class SafeAntigravityHooksMerger {
 
   private static mergeHookHandlers(
     existing: readonly AntigravityHookHandler[],
-    additions: readonly AntigravityHookHandler[]
+    additions: readonly AntigravityHookHandler[],
   ): AntigravityHookHandler[] {
     const handlersByKey = new Map<string, AntigravityHookHandler>();
 

@@ -1,11 +1,12 @@
-import {
-  BaseAggregate,
-  AggregateState,
-} from "../BaseAggregate.js";
+import { BaseAggregate, AggregateState } from "../BaseAggregate.js";
 import { UUID } from "../BaseEvent.js";
 import { SessionId } from "./SessionId.js";
 import { ValidationRuleSet } from "../validation/ValidationRule.js";
-import { SessionEvent, SessionStartedEvent, SessionEndedEvent } from "./EventIndex.js";
+import {
+  SessionEvent,
+  SessionStartedEvent,
+  SessionEndedEvent,
+} from "./EventIndex.js";
 import {
   SessionEventType,
   SessionStatus,
@@ -91,7 +92,7 @@ export class Session extends BaseAggregate<SessionState, SessionEvent> {
     return this.makeEvent(
       SessionEventType.STARTED,
       {},
-      Session.apply
+      Session.apply,
     ) as SessionStartedEvent;
   }
 
@@ -118,7 +119,7 @@ export class Session extends BaseAggregate<SessionState, SessionEvent> {
         focus,
         summary: summary || null,
       },
-      Session.apply
+      Session.apply,
     ) as SessionEndedEvent;
   }
 }

@@ -37,7 +37,7 @@ export class TelemetryDisableOutputBuilder {
   }
 
   private buildHumanReadablePrompt(
-    response: UpdateTelemetryConsentResponse
+    response: UpdateTelemetryConsentResponse,
   ): string {
     return [
       "Telemetry disabled",

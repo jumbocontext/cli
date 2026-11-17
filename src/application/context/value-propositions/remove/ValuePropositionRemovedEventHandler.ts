@@ -14,7 +14,7 @@ import { EntityType } from "../../../../domain/relations/Constants.js";
 export class ValuePropositionRemovedEventHandler implements IEventHandler {
   constructor(
     private readonly projector: IValuePropositionRemovedProjector,
-    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar
+    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar,
   ) {}
 
   async handle(event: BaseEvent): Promise<void> {
@@ -22,8 +22,10 @@ export class ValuePropositionRemovedEventHandler implements IEventHandler {
     await this.relationMaintenanceGoalRegistrar.execute(
       EntityType.VALUE,
       valuePropositionRemovedEvent.aggregateId,
-      "value proposition was removed"
+      "value proposition was removed",
     );
-    await this.projector.applyValuePropositionRemoved(valuePropositionRemovedEvent);
+    await this.projector.applyValuePropositionRemoved(
+      valuePropositionRemovedEvent,
+    );
   }
 }

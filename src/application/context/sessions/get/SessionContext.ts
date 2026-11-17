@@ -41,5 +41,4 @@ export interface SessionContext {
    * Recent active decisions for context orientation.
    */
   readonly recentDecisions: DecisionView[];
-
 }

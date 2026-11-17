@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { DependencyErrorMessages, DependencyLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  DependencyErrorMessages,
+  DependencyLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class EcosystemRequiredRule implements ValidationRule<string> {
   validate(ecosystem: string): ValidationResult {
@@ -12,13 +19,21 @@ export class EcosystemRequiredRule implements ValidationRule<string> {
 }
 
 export class EcosystemMaxLengthRule implements ValidationRule<string> {
-  constructor(private maxLength: number = DependencyLimits.ECOSYSTEM_MAX_LENGTH) {}
+  constructor(
+    private maxLength: number = DependencyLimits.ECOSYSTEM_MAX_LENGTH,
+  ) {}
 
   validate(ecosystem: string): ValidationResult {
     const isValid = ecosystem.length <= this.maxLength;
     return {
       isValid,
-      errors: isValid ? [] : [formatErrorMessage(DependencyErrorMessages.ECOSYSTEM_TOO_LONG, { max: this.maxLength })],
+      errors: isValid
+        ? []
+        : [
+            formatErrorMessage(DependencyErrorMessages.ECOSYSTEM_TOO_LONG, {
+              max: this.maxLength,
+            }),
+          ],
     };
   }
 }

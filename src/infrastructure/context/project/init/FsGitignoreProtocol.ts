@@ -45,12 +45,14 @@ export class FsGitignoreProtocol implements IGitignoreProtocol {
       fs.writeFileSync(gitignorePath, newContent, "utf-8");
     } catch (error) {
       console.warn(
-        `Warning: Failed to update .gitignore: ${error instanceof Error ? error.message : String(error)}`
+        `Warning: Failed to update .gitignore: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
 
-  async getPlannedFileChanges(projectRoot: string): Promise<PlannedFileChange[]> {
+  async getPlannedFileChanges(
+    projectRoot: string,
+  ): Promise<PlannedFileChange[]> {
     const gitignorePath = path.join(projectRoot, ".gitignore");
 
     let content: string;
@@ -82,7 +84,8 @@ export class FsGitignoreProtocol implements IGitignoreProtocol {
   private findMissingPatterns(content: string): string[] {
     const lines = content.split("\n");
     return EXCLUSION_PATTERNS.filter(
-      (pattern) => !lines.some((line) => this.lineMatchesPattern(line, pattern))
+      (pattern) =>
+        !lines.some((line) => this.lineMatchesPattern(line, pattern)),
     );
   }
 

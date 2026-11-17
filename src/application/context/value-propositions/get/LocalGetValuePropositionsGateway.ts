@@ -5,10 +5,12 @@ import { IValuePropositionContextReader } from "../query/IValuePropositionContex
 
 export class LocalGetValuePropositionsGateway implements IGetValuePropositionsGateway {
   constructor(
-    private readonly valuePropositionContextReader: IValuePropositionContextReader
+    private readonly valuePropositionContextReader: IValuePropositionContextReader,
   ) {}
 
-  async getValuePropositions(_request: GetValuePropositionsRequest): Promise<GetValuePropositionsResponse> {
+  async getValuePropositions(
+    _request: GetValuePropositionsRequest,
+  ): Promise<GetValuePropositionsResponse> {
     const values = await this.valuePropositionContextReader.findAllActive();
     return { values };
   }

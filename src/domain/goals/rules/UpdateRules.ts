@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { GoalErrorMessages, GoalLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  GoalErrorMessages,
+  GoalLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 interface UpdateFields {
   title?: string;
@@ -45,7 +52,7 @@ export class OptionalTitleValidRule implements ValidationRule<UpdateFields> {
       errors.push(
         formatErrorMessage(GoalErrorMessages.TITLE_TOO_LONG, {
           max: GoalLimits.TITLE_MAX_LENGTH,
-        })
+        }),
       );
     }
 
@@ -73,7 +80,7 @@ export class OptionalObjectiveValidRule implements ValidationRule<UpdateFields> 
       errors.push(
         formatErrorMessage(GoalErrorMessages.OBJECTIVE_TOO_LONG, {
           max: GoalLimits.OBJECTIVE_MAX_LENGTH,
-        })
+        }),
       );
     }
 
@@ -101,17 +108,17 @@ export class OptionalSuccessCriteriaValidRule implements ValidationRule<UpdateFi
       errors.push(
         formatErrorMessage(GoalErrorMessages.TOO_MANY_CRITERIA, {
           max: GoalLimits.MAX_SUCCESS_CRITERIA,
-        })
+        }),
       );
     }
     const tooLong = fields.successCriteria.find(
-      (c) => c.length > GoalLimits.SUCCESS_CRITERION_MAX_LENGTH
+      (c) => c.length > GoalLimits.SUCCESS_CRITERION_MAX_LENGTH,
     );
     if (tooLong) {
       errors.push(
         formatErrorMessage(GoalErrorMessages.SUCCESS_CRITERION_TOO_LONG, {
           max: GoalLimits.SUCCESS_CRITERION_MAX_LENGTH,
-        })
+        }),
       );
     }
 
@@ -135,17 +142,17 @@ export class OptionalScopeValidRule implements ValidationRule<UpdateFields> {
         errors.push(
           formatErrorMessage(GoalErrorMessages.TOO_MANY_SCOPE_ITEMS, {
             max: GoalLimits.MAX_SCOPE_ITEMS,
-          })
+          }),
         );
       }
       const tooLongIn = fields.scopeIn.find(
-        (item) => item.length > GoalLimits.SCOPE_ITEM_MAX_LENGTH
+        (item) => item.length > GoalLimits.SCOPE_ITEM_MAX_LENGTH,
       );
       if (tooLongIn) {
         errors.push(
           formatErrorMessage(GoalErrorMessages.SCOPE_ITEM_TOO_LONG, {
             max: GoalLimits.SCOPE_ITEM_MAX_LENGTH,
-          })
+          }),
         );
       }
     }
@@ -156,17 +163,17 @@ export class OptionalScopeValidRule implements ValidationRule<UpdateFields> {
         errors.push(
           formatErrorMessage(GoalErrorMessages.TOO_MANY_SCOPE_ITEMS, {
             max: GoalLimits.MAX_SCOPE_ITEMS,
-          })
+          }),
         );
       }
       const tooLongOut = fields.scopeOut.find(
-        (item) => item.length > GoalLimits.SCOPE_ITEM_MAX_LENGTH
+        (item) => item.length > GoalLimits.SCOPE_ITEM_MAX_LENGTH,
       );
       if (tooLongOut) {
         errors.push(
           formatErrorMessage(GoalErrorMessages.SCOPE_ITEM_TOO_LONG, {
             max: GoalLimits.SCOPE_ITEM_MAX_LENGTH,
-          })
+          }),
         );
       }
     }

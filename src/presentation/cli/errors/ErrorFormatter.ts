@@ -31,7 +31,10 @@ export function formatError(error: Error | string | unknown): FormattedError {
     }
 
     // Check for error codes (common in Node.js errors)
-    if ("code" in error && (typeof error.code === "string" || typeof error.code === "number")) {
+    if (
+      "code" in error &&
+      (typeof error.code === "string" || typeof error.code === "number")
+    ) {
       formatted.code = error.code;
     }
 
@@ -60,7 +63,10 @@ export function isNotFoundError(error: Error | unknown): boolean {
  */
 export function isValidationError(error: Error | unknown): boolean {
   if (error instanceof Error) {
-    return error.name === "ValidationError" || error.message.toLowerCase().includes("invalid");
+    return (
+      error.name === "ValidationError" ||
+      error.message.toLowerCase().includes("invalid")
+    );
   }
   return false;
 }

@@ -5,7 +5,10 @@ import { IRelationRemovedReader } from "./IRelationRemovedReader.js";
 import { IEventBus } from "../../../messaging/IEventBus.js";
 import { Relation } from "../../../../domain/relations/Relation.js";
 import { RelationEvent } from "../../../../domain/relations/EventIndex.js";
-import { RelationErrorMessages, formatErrorMessage } from "../../../../domain/relations/Constants.js";
+import {
+  RelationErrorMessages,
+  formatErrorMessage,
+} from "../../../../domain/relations/Constants.js";
 import { ValidationRuleSet } from "../../../../domain/validation/ValidationRule.js";
 import { RELATION_ID_RULES } from "../../../../domain/relations/rules/RelationIdRules.js";
 
@@ -18,7 +21,7 @@ export class RemoveRelationCommandHandler {
     private readonly eventWriter: IRelationRemovedEventWriter,
     private readonly eventReader: IRelationRemovedEventReader,
     private readonly eventBus: IEventBus,
-    private readonly reader: IRelationRemovedReader
+    private readonly reader: IRelationRemovedReader,
   ) {}
 
   async execute(command: RemoveRelationCommand): Promise<void> {
@@ -30,23 +33,26 @@ export class RemoveRelationCommandHandler {
     if (!existingRelation) {
       throw new Error(
         formatErrorMessage(RelationErrorMessages.RELATION_NOT_FOUND, {
-          relationId: command.relationId
-        })
+          relationId: command.relationId,
+        }),
       );
     }
 
     // Check if already removed
-    if (existingRelation.status === 'removed') {
+    if (existingRelation.status === "removed") {
       throw new Error(
         formatErrorMessage(RelationErrorMessages.RELATION_ALREADY_REMOVED, {
-          relationId: command.relationId
-        })
+          relationId: command.relationId,
+        }),
       );
     }
 
     // Rehydrate aggregate from event history
     const history = await this.eventReader.readStream(command.relationId);
-    const relation = Relation.rehydrate(command.relationId, history as RelationEvent[]);
+    const relation = Relation.rehydrate(
+      command.relationId,
+      history as RelationEvent[],
+    );
 
     // Domain logic produces event
     const event = relation.remove(command.reason);

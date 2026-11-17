@@ -10,22 +10,23 @@ export class ComponentDeprecatedEventHandler implements IEventHandler {
   constructor(
     private readonly projector: IComponentDeprecatedProjector,
     private readonly relationDeactivationCascade: RelationDeactivationCascade,
-    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar
+    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar,
   ) {}
 
   async handle(event: BaseEvent): Promise<void> {
     const componentDeprecatedEvent = event as ComponentDeprecatedEvent;
     await this.projector.applyComponentDeprecated(componentDeprecatedEvent);
-    const deprecationReason = componentDeprecatedEvent.payload.reason ?? "no reason provided";
+    const deprecationReason =
+      componentDeprecatedEvent.payload.reason ?? "no reason provided";
     await this.relationMaintenanceGoalRegistrar.execute(
       EntityType.COMPONENT,
       componentDeprecatedEvent.aggregateId,
-      `component was deprecated: ${deprecationReason}`
+      `component was deprecated: ${deprecationReason}`,
     );
     await this.relationDeactivationCascade.execute(
       EntityType.COMPONENT,
       componentDeprecatedEvent.aggregateId,
-      `Automatically deactivated because component ${componentDeprecatedEvent.aggregateId} was deprecated: ${deprecationReason}`
+      `Automatically deactivated because component ${componentDeprecatedEvent.aggregateId} was deprecated: ${deprecationReason}`,
     );
   }
 }

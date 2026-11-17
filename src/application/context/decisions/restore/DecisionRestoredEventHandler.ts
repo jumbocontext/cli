@@ -10,7 +10,7 @@ export class DecisionRestoredEventHandler implements IEventHandler {
   constructor(
     private readonly projector: IDecisionRestoredProjector,
     private readonly relationReactivationCascade: RelationReactivationCascade,
-    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar
+    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar,
   ) {}
 
   async handle(event: BaseEvent): Promise<void> {
@@ -19,12 +19,12 @@ export class DecisionRestoredEventHandler implements IEventHandler {
     await this.relationReactivationCascade.execute(
       EntityType.DECISION,
       decisionRestoredEvent.aggregateId,
-      `Automatically reactivated because decision ${decisionRestoredEvent.aggregateId} was restored: ${decisionRestoredEvent.payload.reason}`
+      `Automatically reactivated because decision ${decisionRestoredEvent.aggregateId} was restored: ${decisionRestoredEvent.payload.reason}`,
     );
     await this.relationMaintenanceGoalRegistrar.execute(
       EntityType.DECISION,
       decisionRestoredEvent.aggregateId,
-      `decision was restored: ${decisionRestoredEvent.payload.reason}`
+      `decision was restored: ${decisionRestoredEvent.payload.reason}`,
     );
   }
 }

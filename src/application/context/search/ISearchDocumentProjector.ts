@@ -6,5 +6,8 @@ import { SearchDocumentSource } from "./SearchDocumentSource.js";
 export interface ISearchDocumentProjector {
   readonly eventTypes: readonly string[];
   getSource(event: BaseEvent): SearchDocumentSource;
-  project(event: BaseEvent, current: SearchDocument | null): SearchDocumentChange | null;
+  project(
+    event: BaseEvent,
+    current: SearchDocument | null,
+  ): SearchDocumentChange | null;
 }

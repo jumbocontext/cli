@@ -22,11 +22,11 @@ export class RemoveGuidelineCommandHandler {
   constructor(
     private readonly eventWriter: IGuidelineRemovedEventWriter,
     private readonly eventReader: IGuidelineRemovedEventReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
   async execute(
-    command: RemoveGuidelineCommand
+    command: RemoveGuidelineCommand,
   ): Promise<{ guidelineId: string }> {
     // 1. Validate command
     ValidationRuleSet.ensure(command.guidelineId, GUIDELINE_ID_RULES);
@@ -37,13 +37,13 @@ export class RemoveGuidelineCommandHandler {
       throw new Error(
         formatErrorMessage(GuidelineErrorMessages.NOT_FOUND, {
           id: command.guidelineId,
-        })
+        }),
       );
     }
 
     const guideline = Guideline.rehydrate(
       command.guidelineId,
-      history as GuidelineEvent[]
+      history as GuidelineEvent[],
     );
 
     // 3. Domain logic produces event

@@ -14,7 +14,7 @@ import { EntityType } from "../../../../domain/relations/Constants.js";
 export class AudienceRemovedEventHandler implements IEventHandler {
   constructor(
     private readonly projector: IAudienceRemovedProjector,
-    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar
+    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar,
   ) {}
 
   async handle(event: BaseEvent): Promise<void> {
@@ -22,7 +22,7 @@ export class AudienceRemovedEventHandler implements IEventHandler {
     await this.relationMaintenanceGoalRegistrar.execute(
       EntityType.AUDIENCE,
       audienceRemovedEvent.aggregateId,
-      "audience was removed"
+      "audience was removed",
     );
     await this.projector.applyAudienceRemoved(audienceRemovedEvent);
   }

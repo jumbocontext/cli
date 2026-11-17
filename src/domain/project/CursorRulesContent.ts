@@ -38,6 +38,12 @@ export class CursorRulesContent {
 
     const before = existingContent.substring(0, markerIndex);
 
-    return before + AgentFileAssetContent.extractSection(this.getFullContent(), this.SECTION_MARKER);
+    return (
+      before +
+      AgentFileAssetContent.extractSection(
+        this.getFullContent(),
+        this.SECTION_MARKER,
+      )
+    );
   }
 }

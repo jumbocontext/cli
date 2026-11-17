@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { DecisionErrorMessages, DecisionLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  DecisionErrorMessages,
+  DecisionLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class ContextRequiredRule implements ValidationRule<string> {
   validate(context: string): ValidationResult {
@@ -20,7 +27,11 @@ export class ContextMaxLengthRule implements ValidationRule<string> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(DecisionErrorMessages.CONTEXT_TOO_LONG, { max: this.maxLength })],
+        : [
+            formatErrorMessage(DecisionErrorMessages.CONTEXT_TOO_LONG, {
+              max: this.maxLength,
+            }),
+          ],
     };
   }
 }

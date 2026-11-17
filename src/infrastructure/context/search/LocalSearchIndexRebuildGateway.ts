@@ -14,16 +14,18 @@ export class LocalSearchIndexRebuildGateway implements ISearchIndexRebuildGatewa
     private readonly rebuildStore: ISearchIndexRebuildStore,
     private readonly reader: ISearchIndexReader,
     private readonly writer: ISearchIndexWriter,
-    private readonly projectorRegistry = new SearchDocumentProjectorRegistry()
+    private readonly projectorRegistry = new SearchDocumentProjectorRegistry(),
   ) {}
 
-  async rebuildSearchIndex(_request: SearchIndexRebuildRequest): Promise<SearchIndexRebuildResponse> {
+  async rebuildSearchIndex(
+    _request: SearchIndexRebuildRequest,
+  ): Promise<SearchIndexRebuildResponse> {
     const events = await this.eventStore.getAllEvents();
     const removedEntries = await this.rebuildStore.clear();
     const eventHandler = new SearchIndexEventHandler(
       this.projectorRegistry.createMemoryProjectors(),
       this.reader,
-      this.writer
+      this.writer,
     );
 
     for (const event of events) {
@@ -35,7 +37,10 @@ export class LocalSearchIndexRebuildGateway implements ISearchIndexRebuildGatewa
     return {
       success: true,
       eventsInspected: events.length,
-      documentsIndexed: Object.values(countsByCategory).reduce<number>((sum, count) => sum + (count ?? 0), 0),
+      documentsIndexed: Object.values(countsByCategory).reduce<number>(
+        (sum, count) => sum + (count ?? 0),
+        0,
+      ),
       removedEntries,
       countsByCategory,
     };

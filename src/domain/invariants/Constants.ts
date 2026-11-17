@@ -20,7 +20,8 @@ export const InvariantErrorMessages = {
   TITLE_REQUIRED: "Invariant title must be provided",
   TITLE_TOO_LONG: "Invariant title must be less than {max} characters",
   DESCRIPTION_REQUIRED: "Invariant description must be provided",
-  DESCRIPTION_TOO_LONG: "Invariant description must be less than {max} characters",
+  DESCRIPTION_TOO_LONG:
+    "Invariant description must be less than {max} characters",
   RATIONALE_TOO_LONG: "Rationale must be less than {max} characters",
 } as const;
 
@@ -41,10 +42,10 @@ export const InvariantLimits = {
  */
 export function formatErrorMessage(
   template: string,
-  replacements: Record<string, string | number>
+  replacements: Record<string, string | number>,
 ): string {
   return Object.entries(replacements).reduce(
     (msg, [key, value]) => msg.replace(`{${key}}`, String(value)),
-    template
+    template,
   );
 }

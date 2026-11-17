@@ -14,8 +14,8 @@ export interface DecisionView {
   readonly status: DecisionStatusType;
   readonly supersededBy: string | null;
   readonly reversalReason: string | null;
-  readonly reversedAt: string | null;  // ISO8601 timestamp when decision was reversed
+  readonly reversedAt: string | null; // ISO8601 timestamp when decision was reversed
   readonly version: number;
-  readonly createdAt: string;     // ISO8601
-  readonly updatedAt: string;     // ISO8601
+  readonly createdAt: string; // ISO8601
+  readonly updatedAt: string; // ISO8601
 }

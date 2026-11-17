@@ -1,4 +1,8 @@
-import type { ProcessManagerEvent, ProcessManagerOptions, ProcessManagerStatus } from "./IProcessManager.js";
+import type {
+  ProcessManagerEvent,
+  ProcessManagerOptions,
+  ProcessManagerStatus,
+} from "./IProcessManager.js";
 
 const EVENT_TEXT_FIELD_MAX_LENGTH = 2_048;
 
@@ -13,7 +17,16 @@ export class ProcessManagerEventEmitter {
     status: ProcessManagerStatus,
     category: string,
     message: string,
-    event: Omit<ProcessManagerEvent, "daemon" | "status" | "source" | "category" | "message" | "timestampMs" | "elapsedMs"> = {},
+    event: Omit<
+      ProcessManagerEvent,
+      | "daemon"
+      | "status"
+      | "source"
+      | "category"
+      | "message"
+      | "timestampMs"
+      | "elapsedMs"
+    > = {},
   ): void {
     this.options.emit?.({
       daemon: this.daemon,
@@ -53,11 +66,16 @@ export class ProcessManagerEventEmitter {
   }
 
   private elapsedMs(): number {
-    return Number((process.hrtime.bigint() - this.startedAt) / BigInt(1_000_000));
+    return Number(
+      (process.hrtime.bigint() - this.startedAt) / BigInt(1_000_000),
+    );
   }
 }
 
-export function limitProcessEventTextTail(value: string, maxLength = EVENT_TEXT_FIELD_MAX_LENGTH): string {
+export function limitProcessEventTextTail(
+  value: string,
+  maxLength = EVENT_TEXT_FIELD_MAX_LENGTH,
+): string {
   return limitTextTail(value, maxLength);
 }
 

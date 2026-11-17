@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { GoalErrorMessages, GoalLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  GoalErrorMessages,
+  GoalLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class FilePathMaxLengthRule implements ValidationRule<string[]> {
   constructor(private maxLength: number = GoalLimits.FILE_PATH_MAX_LENGTH) {}
@@ -11,11 +18,13 @@ export class FilePathMaxLengthRule implements ValidationRule<string[]> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(GoalErrorMessages.FILE_PATH_TOO_LONG, { max: this.maxLength })],
+        : [
+            formatErrorMessage(GoalErrorMessages.FILE_PATH_TOO_LONG, {
+              max: this.maxLength,
+            }),
+          ],
     };
   }
 }
 
-export const FILE_PATH_RULES = [
-  new FilePathMaxLengthRule(),
-];
+export const FILE_PATH_RULES = [new FilePathMaxLengthRule()];

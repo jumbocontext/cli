@@ -9,11 +9,11 @@ export class LocalGetTelemetryStatusGateway implements IGetTelemetryStatusGatewa
   constructor(
     private readonly settingsReader: ISettingsReader,
     private readonly telemetryEnvironmentReader: ITelemetryEnvironmentReader,
-    private readonly telemetryConsentStatusResolver: TelemetryConsentStatusResolver
+    private readonly telemetryConsentStatusResolver: TelemetryConsentStatusResolver,
   ) {}
 
   async getTelemetryStatus(
-    _request: GetTelemetryStatusRequest
+    _request: GetTelemetryStatusRequest,
   ): Promise<GetTelemetryStatusResponse> {
     // Check configuration BEFORE read() — read() auto-creates the settings
     // file with defaults, which would cause hasTelemetryConfiguration() to

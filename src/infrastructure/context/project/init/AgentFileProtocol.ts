@@ -16,7 +16,10 @@
 import path from "path";
 import { fileURLToPath } from "node:url";
 import fs from "fs-extra";
-import { AgentId, AvailableAgent } from "../../../../application/context/project/init/AgentSelection.js";
+import {
+  AgentId,
+  AvailableAgent,
+} from "../../../../application/context/project/init/AgentSelection.js";
 import { IAgentFileProtocol } from "../../../../application/context/project/init/IAgentFileProtocol.js";
 import { PlannedFileChange } from "../../../../application/context/project/init/PlannedFileChange.js";
 import { JumboMdContent } from "../../../../domain/project/JumboMdContent.js";
@@ -42,13 +45,15 @@ const DEFAULT_TEMPLATE_SKILLS_ROOT = path.resolve(
   "..",
   "..",
   "assets",
-  "skills"
+  "skills",
 );
 export class AgentFileProtocol implements IAgentFileProtocol {
   private readonly configurers: IConfigurer[];
   private readonly deprecatedFileCleaner = new DeprecatedFileCleaner();
 
-  constructor(private readonly templateSkillsRoot: string = DEFAULT_TEMPLATE_SKILLS_ROOT) {
+  constructor(
+    private readonly templateSkillsRoot: string = DEFAULT_TEMPLATE_SKILLS_ROOT,
+  ) {
     this.configurers = [
       new ClaudeConfigurer(),
       new AntigravityConfigurer(),
@@ -70,7 +75,11 @@ export class AgentFileProtocol implements IAgentFileProtocol {
       const exists = await fs.pathExists(jumboMdPath);
 
       if (!exists) {
-        await fs.writeFile(jumboMdPath, JumboMdContent.getFullContent(), "utf-8");
+        await fs.writeFile(
+          jumboMdPath,
+          JumboMdContent.getFullContent(),
+          "utf-8",
+        );
         return;
       }
 
@@ -80,11 +89,14 @@ export class AgentFileProtocol implements IAgentFileProtocol {
       if (replaced !== null) {
         await fs.writeFile(jumboMdPath, replaced, "utf-8");
       } else {
-        const updatedContent = content + "\n\n" + JumboMdContent.getJumboSection();
+        const updatedContent =
+          content + "\n\n" + JumboMdContent.getJumboSection();
         await fs.writeFile(jumboMdPath, updatedContent, "utf-8");
       }
     } catch (error) {
-      console.warn(`Warning: Failed to update JUMBO.md: ${error instanceof Error ? error.message : String(error)}`);
+      console.warn(
+        `Warning: Failed to update JUMBO.md: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -98,7 +110,11 @@ export class AgentFileProtocol implements IAgentFileProtocol {
       const exists = await fs.pathExists(agentsMdPath);
 
       if (!exists) {
-        await fs.writeFile(agentsMdPath, AgentsMdContent.getFullContent(), "utf-8");
+        await fs.writeFile(
+          agentsMdPath,
+          AgentsMdContent.getFullContent(),
+          "utf-8",
+        );
         return;
       }
 
@@ -108,11 +124,14 @@ export class AgentFileProtocol implements IAgentFileProtocol {
       if (replaced !== null) {
         await fs.writeFile(agentsMdPath, replaced, "utf-8");
       } else {
-        const updatedContent = content + "\n\n" + AgentsMdContent.getJumboSection();
+        const updatedContent =
+          content + "\n\n" + AgentsMdContent.getJumboSection();
         await fs.writeFile(agentsMdPath, updatedContent, "utf-8");
       }
     } catch (error) {
-      console.warn(`Warning: Failed to update AGENTS.md: ${error instanceof Error ? error.message : String(error)}`);
+      console.warn(
+        `Warning: Failed to update AGENTS.md: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -121,7 +140,7 @@ export class AgentFileProtocol implements IAgentFileProtocol {
    */
   async ensureAgentConfigurations(
     projectRoot: string,
-    selectedAgentIds?: readonly AgentId[]
+    selectedAgentIds?: readonly AgentId[],
   ): Promise<void> {
     for (const configurer of this.getConfigurers(selectedAgentIds)) {
       await configurer.configure(projectRoot);
@@ -141,7 +160,11 @@ export class AgentFileProtocol implements IAgentFileProtocol {
       const exists = await fs.pathExists(jumboMdPath);
 
       if (!exists) {
-        await fs.writeFile(jumboMdPath, JumboMdContent.getFullContent(), "utf-8");
+        await fs.writeFile(
+          jumboMdPath,
+          JumboMdContent.getFullContent(),
+          "utf-8",
+        );
         return;
       }
 
@@ -151,11 +174,14 @@ export class AgentFileProtocol implements IAgentFileProtocol {
       if (replaced !== null) {
         await fs.writeFile(jumboMdPath, replaced, "utf-8");
       } else {
-        const updatedContent = content + "\n\n" + JumboMdContent.getJumboSection();
+        const updatedContent =
+          content + "\n\n" + JumboMdContent.getJumboSection();
         await fs.writeFile(jumboMdPath, updatedContent, "utf-8");
       }
     } catch (error) {
-      console.warn(`Warning: Failed to repair JUMBO.md: ${error instanceof Error ? error.message : String(error)}`);
+      console.warn(
+        `Warning: Failed to repair JUMBO.md: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -169,7 +195,11 @@ export class AgentFileProtocol implements IAgentFileProtocol {
       const exists = await fs.pathExists(agentsMdPath);
 
       if (!exists) {
-        await fs.writeFile(agentsMdPath, AgentsMdContent.getFullContent(), "utf-8");
+        await fs.writeFile(
+          agentsMdPath,
+          AgentsMdContent.getFullContent(),
+          "utf-8",
+        );
         return;
       }
 
@@ -179,11 +209,14 @@ export class AgentFileProtocol implements IAgentFileProtocol {
       if (replaced !== null) {
         await fs.writeFile(agentsMdPath, replaced, "utf-8");
       } else {
-        const updatedContent = content + "\n\n" + AgentsMdContent.getJumboSection();
+        const updatedContent =
+          content + "\n\n" + AgentsMdContent.getJumboSection();
         await fs.writeFile(agentsMdPath, updatedContent, "utf-8");
       }
     } catch (error) {
-      console.warn(`Warning: Failed to repair AGENTS.md: ${error instanceof Error ? error.message : String(error)}`);
+      console.warn(
+        `Warning: Failed to repair AGENTS.md: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -192,7 +225,7 @@ export class AgentFileProtocol implements IAgentFileProtocol {
    */
   async repairAgentConfigurations(
     projectRoot: string,
-    selectedAgentIds?: readonly AgentId[]
+    selectedAgentIds?: readonly AgentId[],
   ): Promise<void> {
     for (const configurer of this.getConfigurers(selectedAgentIds)) {
       if (configurer.repair) {
@@ -215,7 +248,7 @@ export class AgentFileProtocol implements IAgentFileProtocol {
    */
   async getPlannedFileChanges(
     projectRoot: string,
-    selectedAgentIds?: readonly AgentId[]
+    selectedAgentIds?: readonly AgentId[],
   ): Promise<PlannedFileChange[]> {
     const changes: PlannedFileChange[] = [];
 
@@ -237,11 +270,15 @@ export class AgentFileProtocol implements IAgentFileProtocol {
 
     // Collect from all configurers
     for (const configurer of this.getConfigurers(selectedAgentIds)) {
-      const configurerChanges = await configurer.getPlannedFileChanges(projectRoot);
+      const configurerChanges =
+        await configurer.getPlannedFileChanges(projectRoot);
       changes.push(...configurerChanges);
     }
 
-    const skillChanges = await this.getSkillPlannedFileChanges(projectRoot, selectedAgentIds);
+    const skillChanges = await this.getSkillPlannedFileChanges(
+      projectRoot,
+      selectedAgentIds,
+    );
     changes.push(...skillChanges);
 
     return changes;
@@ -249,20 +286,31 @@ export class AgentFileProtocol implements IAgentFileProtocol {
 
   private async installSkillsFromTemplates(
     projectRoot: string,
-    selectedAgentIds?: readonly AgentId[]
+    selectedAgentIds?: readonly AgentId[],
   ): Promise<void> {
     const templateSkillNames = await this.getTemplateSkillNames();
     if (templateSkillNames.length === 0) {
       return;
     }
 
-    for (const platformSkillsRelativePath of this.getSkillPlatforms(selectedAgentIds)) {
-      const platformSkillsRoot = path.join(projectRoot, platformSkillsRelativePath);
+    for (const platformSkillsRelativePath of this.getSkillPlatforms(
+      selectedAgentIds,
+    )) {
+      const platformSkillsRoot = path.join(
+        projectRoot,
+        platformSkillsRelativePath,
+      );
       await fs.ensureDir(platformSkillsRoot);
 
       for (const skillName of templateSkillNames) {
-        const sourceSkillDirectory = path.join(this.templateSkillsRoot, skillName);
-        const destinationSkillDirectory = path.join(platformSkillsRoot, skillName);
+        const sourceSkillDirectory = path.join(
+          this.templateSkillsRoot,
+          skillName,
+        );
+        const destinationSkillDirectory = path.join(
+          platformSkillsRoot,
+          skillName,
+        );
 
         try {
           await fs.copy(sourceSkillDirectory, destinationSkillDirectory, {
@@ -273,7 +321,7 @@ export class AgentFileProtocol implements IAgentFileProtocol {
           console.warn(
             `Warning: Failed to install template skill '${skillName}' for ${platformSkillsRelativePath}: ${
               error instanceof Error ? error.message : String(error)
-            }`
+            }`,
           );
         }
       }
@@ -282,20 +330,31 @@ export class AgentFileProtocol implements IAgentFileProtocol {
 
   private async repairSkillsFromTemplates(
     projectRoot: string,
-    selectedAgentIds?: readonly AgentId[]
+    selectedAgentIds?: readonly AgentId[],
   ): Promise<void> {
     const templateSkillNames = await this.getTemplateSkillNames();
     if (templateSkillNames.length === 0) {
       return;
     }
 
-    for (const platformSkillsRelativePath of this.getSkillPlatforms(selectedAgentIds)) {
-      const platformSkillsRoot = path.join(projectRoot, platformSkillsRelativePath);
+    for (const platformSkillsRelativePath of this.getSkillPlatforms(
+      selectedAgentIds,
+    )) {
+      const platformSkillsRoot = path.join(
+        projectRoot,
+        platformSkillsRelativePath,
+      );
       await fs.ensureDir(platformSkillsRoot);
 
       for (const skillName of templateSkillNames) {
-        const sourceSkillDirectory = path.join(this.templateSkillsRoot, skillName);
-        const destinationSkillDirectory = path.join(platformSkillsRoot, skillName);
+        const sourceSkillDirectory = path.join(
+          this.templateSkillsRoot,
+          skillName,
+        );
+        const destinationSkillDirectory = path.join(
+          platformSkillsRoot,
+          skillName,
+        );
 
         try {
           await fs.remove(destinationSkillDirectory);
@@ -307,7 +366,7 @@ export class AgentFileProtocol implements IAgentFileProtocol {
           console.warn(
             `Warning: Failed to repair template skill '${skillName}' for ${platformSkillsRelativePath}: ${
               error instanceof Error ? error.message : String(error)
-            }`
+            }`,
           );
         }
       }
@@ -316,7 +375,7 @@ export class AgentFileProtocol implements IAgentFileProtocol {
 
   private async getSkillPlannedFileChanges(
     projectRoot: string,
-    selectedAgentIds?: readonly AgentId[]
+    selectedAgentIds?: readonly AgentId[],
   ): Promise<PlannedFileChange[]> {
     const templateSkillNames = await this.getTemplateSkillNames();
     if (templateSkillNames.length === 0) {
@@ -324,16 +383,20 @@ export class AgentFileProtocol implements IAgentFileProtocol {
     }
 
     const changes: PlannedFileChange[] = [];
-    for (const platformSkillsRelativePath of this.getSkillPlatforms(selectedAgentIds)) {
+    for (const platformSkillsRelativePath of this.getSkillPlatforms(
+      selectedAgentIds,
+    )) {
       for (const skillName of templateSkillNames) {
         const destinationSkillDirectory = path.join(
           projectRoot,
           platformSkillsRelativePath,
-          skillName
+          skillName,
         );
         const exists = await fs.pathExists(destinationSkillDirectory);
         changes.push({
-          path: path.join(platformSkillsRelativePath, skillName).replace(/\\/g, "/"),
+          path: path
+            .join(platformSkillsRelativePath, skillName)
+            .replace(/\\/g, "/"),
           action: exists ? "modify" : "create",
           description:
             "Sync Jumbo-managed skill from assets/skills (user-created skills are preserved)",
@@ -350,7 +413,9 @@ export class AgentFileProtocol implements IAgentFileProtocol {
       return [];
     }
 
-    const entries = await fs.readdir(this.templateSkillsRoot, { withFileTypes: true });
+    const entries = await fs.readdir(this.templateSkillsRoot, {
+      withFileTypes: true,
+    });
     return entries
       .filter((entry) => entry.isDirectory())
       .map((entry) => entry.name)
@@ -363,7 +428,9 @@ export class AgentFileProtocol implements IAgentFileProtocol {
     }
 
     const selectedAgentIdSet = new Set(selectedAgentIds);
-    return this.configurers.filter((configurer) => selectedAgentIdSet.has(configurer.agent.id));
+    return this.configurers.filter((configurer) =>
+      selectedAgentIdSet.has(configurer.agent.id),
+    );
   }
 
   private getSkillPlatforms(selectedAgentIds?: readonly AgentId[]): string[] {
@@ -375,6 +442,8 @@ export class AgentFileProtocol implements IAgentFileProtocol {
       }
     }
 
-    return Array.from(skillPlatforms).sort((left, right) => left.localeCompare(right));
+    return Array.from(skillPlatforms).sort((left, right) =>
+      left.localeCompare(right),
+    );
   }
 }

@@ -60,19 +60,24 @@ export class CursorConfigurer implements IConfigurer {
       const exists = await fs.pathExists(rulesPath);
 
       if (!exists) {
-        await fs.writeFile(rulesPath, CursorRulesContent.getFullContent(), "utf-8");
+        await fs.writeFile(
+          rulesPath,
+          CursorRulesContent.getFullContent(),
+          "utf-8",
+        );
         return;
       }
 
       const content = await fs.readFile(rulesPath, "utf-8");
 
       if (!content.includes(CursorRulesContent.getSectionMarker())) {
-        const updatedContent = content.trimEnd() + "\n\n" + CursorRulesContent.getFullContent();
+        const updatedContent =
+          content.trimEnd() + "\n\n" + CursorRulesContent.getFullContent();
         await fs.writeFile(rulesPath, updatedContent, "utf-8");
       }
     } catch (error) {
       console.warn(
-        `Warning: Failed to update .cursor/rules/jumbo.mdc: ${error instanceof Error ? error.message : String(error)}`
+        `Warning: Failed to update .cursor/rules/jumbo.mdc: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
@@ -86,12 +91,18 @@ export class CursorConfigurer implements IConfigurer {
 
       await fs.ensureDir(path.join(projectRoot, ".cursor"));
 
-      const jumboHooks = AgentFileAssetContent.readJson<CursorHooksDocument>("cursor-hooks.fragment.json");
+      const jumboHooks = AgentFileAssetContent.readJson<CursorHooksDocument>(
+        "cursor-hooks.fragment.json",
+      );
 
       const exists = await fs.pathExists(hooksPath);
 
       if (!exists) {
-        await fs.writeFile(hooksPath, JSON.stringify(jumboHooks, null, 2) + "\n", "utf-8");
+        await fs.writeFile(
+          hooksPath,
+          JSON.stringify(jumboHooks, null, 2) + "\n",
+          "utf-8",
+        );
         return;
       }
 
@@ -102,17 +113,26 @@ export class CursorConfigurer implements IConfigurer {
         try {
           existingHooks = JSON.parse(existingContent);
         } catch {
-          await fs.writeFile(hooksPath, JSON.stringify(jumboHooks, null, 2) + "\n", "utf-8");
+          await fs.writeFile(
+            hooksPath,
+            JSON.stringify(jumboHooks, null, 2) + "\n",
+            "utf-8",
+          );
           return;
         }
       }
 
-      const normalizedExistingHooks = this.normalizeExistingHooks(existingHooks);
+      const normalizedExistingHooks =
+        this.normalizeExistingHooks(existingHooks);
       const mergedHooks = this.mergeHooks(normalizedExistingHooks, jumboHooks);
-      await fs.writeFile(hooksPath, JSON.stringify(mergedHooks, null, 2) + "\n", "utf-8");
+      await fs.writeFile(
+        hooksPath,
+        JSON.stringify(mergedHooks, null, 2) + "\n",
+        "utf-8",
+      );
     } catch (error) {
       console.warn(
-        `Warning: Failed to configure Cursor hooks: ${error instanceof Error ? error.message : String(error)}`
+        `Warning: Failed to configure Cursor hooks: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
@@ -120,7 +140,10 @@ export class CursorConfigurer implements IConfigurer {
   /**
    * Merge hooks, preserving existing content and adding missing Jumbo hooks
    */
-  private mergeHooks(existing: CursorHooksDocument, jumbo: CursorHooksDocument): CursorHooksDocument {
+  private mergeHooks(
+    existing: CursorHooksDocument,
+    jumbo: CursorHooksDocument,
+  ): CursorHooksDocument {
     const result: CursorHooksDocument = { ...existing };
 
     if (jumbo.version !== undefined) {
@@ -128,7 +151,9 @@ export class CursorConfigurer implements IConfigurer {
     }
 
     if (jumbo.hooks) {
-      const mergedHooks: Record<string, CursorHook[]> = { ...(result.hooks ?? {}) };
+      const mergedHooks: Record<string, CursorHook[]> = {
+        ...(result.hooks ?? {}),
+      };
 
       for (const [hookType, hooks] of Object.entries(jumbo.hooks)) {
         if (hooks && Array.isArray(hooks)) {
@@ -146,7 +171,10 @@ export class CursorConfigurer implements IConfigurer {
   /**
    * Merge hook arrays, deduplicating by command content
    */
-  private mergeHookArray(existing: CursorHook[], additions: CursorHook[]): CursorHook[] {
+  private mergeHookArray(
+    existing: CursorHook[],
+    additions: CursorHook[],
+  ): CursorHook[] {
     const merged = [...existing];
     const existingCommands = new Set(existing.map((h) => JSON.stringify(h)));
 
@@ -186,7 +214,10 @@ export class CursorConfigurer implements IConfigurer {
       const normalizedEntries = hookEntries
         .map((entry) => this.normalizeHookEntry(entry))
         .filter((entry): entry is CursorHook => entry !== null)
-        .filter((entry) => !(hookType === "preCompact" && this.isJumboPauseHook(entry)));
+        .filter(
+          (entry) =>
+            !(hookType === "preCompact" && this.isJumboPauseHook(entry)),
+        );
 
       if (normalizedEntries.length > 0) {
         normalizedHooks[hookType] = normalizedEntries;
@@ -243,7 +274,11 @@ export class CursorConfigurer implements IConfigurer {
       const exists = await fs.pathExists(rulesPath);
 
       if (!exists) {
-        await fs.writeFile(rulesPath, CursorRulesContent.getFullContent(), "utf-8");
+        await fs.writeFile(
+          rulesPath,
+          CursorRulesContent.getFullContent(),
+          "utf-8",
+        );
         return;
       }
 
@@ -253,12 +288,13 @@ export class CursorConfigurer implements IConfigurer {
       if (replaced !== null) {
         await fs.writeFile(rulesPath, replaced, "utf-8");
       } else if (!content.includes("JUMBO.md")) {
-        const updatedContent = content.trimEnd() + "\n\n" + CursorRulesContent.getFullContent();
+        const updatedContent =
+          content.trimEnd() + "\n\n" + CursorRulesContent.getFullContent();
         await fs.writeFile(rulesPath, updatedContent, "utf-8");
       }
     } catch (error) {
       console.warn(
-        `Warning: Failed to repair .cursor/rules/jumbo.mdc: ${error instanceof Error ? error.message : String(error)}`
+        `Warning: Failed to repair .cursor/rules/jumbo.mdc: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
@@ -266,7 +302,9 @@ export class CursorConfigurer implements IConfigurer {
   /**
    * Return what changes this configurer will make without executing.
    */
-  async getPlannedFileChanges(projectRoot: string): Promise<PlannedFileChange[]> {
+  async getPlannedFileChanges(
+    projectRoot: string,
+  ): Promise<PlannedFileChange[]> {
     const changes: PlannedFileChange[] = [];
 
     const rulesPath = path.join(projectRoot, ".cursor", "rules", "jumbo.mdc");

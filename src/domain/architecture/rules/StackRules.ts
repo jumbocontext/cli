@@ -1,14 +1,27 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { ArchitectureErrorMessages, ArchitectureLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  ArchitectureErrorMessages,
+  ArchitectureLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class StackItemMaxLengthRule implements ValidationRule<string[]> {
-  constructor(private maxLength: number = ArchitectureLimits.STACK_ITEM_MAX_LENGTH) {}
+  constructor(
+    private maxLength: number = ArchitectureLimits.STACK_ITEM_MAX_LENGTH,
+  ) {}
 
   validate(stack: string[]): ValidationResult {
     const errors: string[] = [];
     for (const item of stack) {
       if (item.length > this.maxLength) {
-        errors.push(formatErrorMessage(ArchitectureErrorMessages.STACK_ITEM_TOO_LONG, { max: this.maxLength }));
+        errors.push(
+          formatErrorMessage(ArchitectureErrorMessages.STACK_ITEM_TOO_LONG, {
+            max: this.maxLength,
+          }),
+        );
         break; // Only report once
       }
     }
@@ -29,7 +42,11 @@ export class StackMaxCountRule implements ValidationRule<string[]> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(ArchitectureErrorMessages.TOO_MANY_STACK_ITEMS, { max: this.maxCount })],
+        : [
+            formatErrorMessage(ArchitectureErrorMessages.TOO_MANY_STACK_ITEMS, {
+              max: this.maxCount,
+            }),
+          ],
     };
   }
 }

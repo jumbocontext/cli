@@ -5,12 +5,7 @@ export interface ProcessManagerOptions {
 }
 
 export type ProcessManagerStatus =
-  | "idle"
-  | "processing"
-  | "completed"
-  | "skipped"
-  | "exhausted"
-  | "failed";
+  "idle" | "processing" | "completed" | "skipped" | "exhausted" | "failed";
 
 export interface ProcessManagerEvent {
   readonly daemon: string;

@@ -4,7 +4,10 @@ import { IGoalCodifyingStartedEventReader } from "./IGoalCodifyingStartedEventRe
 import { IGoalCodifyReader } from "./IGoalCodifyReader.js";
 import { IEventBus } from "../../../messaging/IEventBus.js";
 import { Goal } from "../../../../domain/goals/Goal.js";
-import { GoalErrorMessages, formatErrorMessage } from "../../../../domain/goals/Constants.js";
+import {
+  GoalErrorMessages,
+  formatErrorMessage,
+} from "../../../../domain/goals/Constants.js";
 import { GoalClaimPolicy } from "../claims/GoalClaimPolicy.js";
 import { IWorkerIdentityReader } from "../../../host/workers/IWorkerIdentityReader.js";
 import { ISettingsReader } from "../../../settings/ISettingsReader.js";
@@ -26,7 +29,7 @@ export class CodifyGoalCommandHandler {
     private readonly claimPolicy: GoalClaimPolicy,
     private readonly workerIdentityReader: IWorkerIdentityReader,
     private readonly settingsReader: ISettingsReader,
-    private readonly goalContextQueryHandler: GoalContextQueryHandler
+    private readonly goalContextQueryHandler: GoalContextQueryHandler,
   ) {}
 
   async execute(command: CodifyGoalCommand): Promise<ContextualGoalView> {
@@ -34,7 +37,9 @@ export class CodifyGoalCommandHandler {
     const view = await this.goalReader.findById(command.goalId);
     if (!view) {
       throw new Error(
-        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, { id: command.goalId })
+        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, {
+          id: command.goalId,
+        }),
       );
     }
 
@@ -42,13 +47,17 @@ export class CodifyGoalCommandHandler {
     const workerId = this.workerIdentityReader.workerId;
     const settings = await this.settingsReader.read();
     const claimDurationMs = settings.claims.claimDurationMinutes * 60 * 1000;
-    const entryResult = this.claimPolicy.prepareEntryClaim(command.goalId, workerId, claimDurationMs);
+    const entryResult = this.claimPolicy.prepareEntryClaim(
+      command.goalId,
+      workerId,
+      claimDurationMs,
+    );
 
     if (!entryResult.allowed) {
       throw new Error(
         formatErrorMessage(GoalErrorMessages.GOAL_CLAIMED_BY_ANOTHER_WORKER, {
           expiresAt: entryResult.existingClaim.claimExpiresAt,
-        })
+        }),
       );
     }
 

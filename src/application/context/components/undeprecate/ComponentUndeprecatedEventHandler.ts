@@ -10,7 +10,7 @@ export class ComponentUndeprecatedEventHandler implements IEventHandler {
   constructor(
     private readonly projector: IComponentUndeprecatedProjector,
     private readonly relationReactivationCascade: RelationReactivationCascade,
-    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar
+    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar,
   ) {}
 
   async handle(event: BaseEvent): Promise<void> {
@@ -19,12 +19,12 @@ export class ComponentUndeprecatedEventHandler implements IEventHandler {
     await this.relationReactivationCascade.execute(
       EntityType.COMPONENT,
       componentUndeprecatedEvent.aggregateId,
-      `Automatically reactivated because component ${componentUndeprecatedEvent.aggregateId} was undeprecated: ${componentUndeprecatedEvent.payload.reason}`
+      `Automatically reactivated because component ${componentUndeprecatedEvent.aggregateId} was undeprecated: ${componentUndeprecatedEvent.payload.reason}`,
     );
     await this.relationMaintenanceGoalRegistrar.execute(
       EntityType.COMPONENT,
       componentUndeprecatedEvent.aggregateId,
-      `component was undeprecated: ${componentUndeprecatedEvent.payload.reason}`
+      `component was undeprecated: ${componentUndeprecatedEvent.payload.reason}`,
     );
   }
 }

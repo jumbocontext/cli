@@ -1,11 +1,11 @@
 import {
   ValidationRule,
-  ValidationResult
+  ValidationResult,
 } from "../../validation/ValidationRule.js";
 import {
   ComponentErrorMessages,
   ComponentLimits,
-  formatErrorMessage
+  formatErrorMessage,
 } from "../Constants.js";
 
 export class PathRequiredRule implements ValidationRule<string> {
@@ -27,12 +27,13 @@ export class PathMaxLengthRule implements ValidationRule<string> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(ComponentErrorMessages.PATH_TOO_LONG, { max: this.maxLength })],
+        : [
+            formatErrorMessage(ComponentErrorMessages.PATH_TOO_LONG, {
+              max: this.maxLength,
+            }),
+          ],
     };
   }
 }
 
-export const PATH_RULES = [
-  new PathRequiredRule(),
-  new PathMaxLengthRule(),
-];
+export const PATH_RULES = [new PathRequiredRule(), new PathMaxLengthRule()];

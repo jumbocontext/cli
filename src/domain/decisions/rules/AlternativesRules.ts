@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { DecisionErrorMessages, DecisionLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  DecisionErrorMessages,
+  DecisionLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class AlternativesMaxCountRule implements ValidationRule<string[]> {
   constructor(private maxCount: number = DecisionLimits.MAX_ALTERNATIVES) {}
@@ -10,13 +17,19 @@ export class AlternativesMaxCountRule implements ValidationRule<string[]> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(DecisionErrorMessages.TOO_MANY_ALTERNATIVES, { max: this.maxCount })],
+        : [
+            formatErrorMessage(DecisionErrorMessages.TOO_MANY_ALTERNATIVES, {
+              max: this.maxCount,
+            }),
+          ],
     };
   }
 }
 
 export class AlternativeMaxLengthRule implements ValidationRule<string[]> {
-  constructor(private maxLength: number = DecisionLimits.ALTERNATIVE_MAX_LENGTH) {}
+  constructor(
+    private maxLength: number = DecisionLimits.ALTERNATIVE_MAX_LENGTH,
+  ) {}
 
   validate(alternatives: string[]): ValidationResult {
     const errors: string[] = [];
@@ -24,7 +37,9 @@ export class AlternativeMaxLengthRule implements ValidationRule<string[]> {
     for (const alternative of alternatives) {
       if (alternative.length > this.maxLength) {
         errors.push(
-          formatErrorMessage(DecisionErrorMessages.ALTERNATIVE_TOO_LONG, { max: this.maxLength })
+          formatErrorMessage(DecisionErrorMessages.ALTERNATIVE_TOO_LONG, {
+            max: this.maxLength,
+          }),
         );
         break; // Only report once
       }

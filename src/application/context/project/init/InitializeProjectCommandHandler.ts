@@ -1,17 +1,3 @@
-/**
- * InitializeProjectCommandHandler - Command handler for project initialization.
- *
- * This handler:
- * 1. Validates preconditions (not already initialized)
- * 2. Creates the Project aggregate
- * 3. Executes domain logic (initialize)
- * 4. Persists event to event store
- * 5. Publishes event to event bus for projection updates
- * 6. Creates/updates AGENTS.md with Jumbo instructions
- * 7. Configures all supported agents (markdown files, settings, hooks, template-managed skills)
- * 8. Ensures .gitignore excludes Jumbo internal state
- */
-
 import { InitializeProjectCommand } from "./InitializeProjectCommand.js";
 import { IProjectInitializedEventWriter } from "./IProjectInitializedEventWriter.js";
 import { IEventBus } from "../../../messaging/IEventBus.js";
@@ -23,6 +9,7 @@ import { ISettingsInitializer } from "../../../settings/ISettingsInitializer.js"
 import { IProjectIdentityResolver } from "../../../identity/IProjectIdentityResolver.js";
 import { Project } from "../../../../domain/project/Project.js";
 import { ProjectErrorMessages } from "../../../../domain/project/Constants.js";
+import { ProjectNotInitializedError } from "../../../host/ProjectNotInitializedError.js";
 
 export class InitializeProjectCommandHandler {
   constructor(
@@ -32,47 +19,42 @@ export class InitializeProjectCommandHandler {
     private readonly agentFileProtocol: IAgentFileProtocol,
     private readonly settingsInitializer: ISettingsInitializer,
     private readonly gitignoreProtocol: IGitignoreProtocol,
-    private readonly projectIdentityResolver: IProjectIdentityResolver
+    private readonly projectIdentityResolver: IProjectIdentityResolver,
   ) {}
 
   async execute(
     command: InitializeProjectCommand,
     projectRoot: string,
-    selectedAgentIds?: readonly AgentId[]
+    selectedAgentIds?: readonly AgentId[],
   ): Promise<{ projectId: string }> {
-    // Check if project already exists (precondition)
-    const existingProject = await this.reader.getProject();
+    const existingProject = await this.reader
+      .getProject()
+      .catch((error) => {
+        if (error instanceof ProjectNotInitializedError) return null;
+        throw error;
+      });
     if (existingProject) {
       throw new Error(ProjectErrorMessages.ALREADY_INITIALIZED);
     }
 
-    // 1. Create new aggregate
     const project = Project.create();
     const projectId = project.snapshot.id;
+    const event = project.initialize(command.name, command.purpose);
 
-    // 2. Domain logic produces event
-    const event = project.initialize(
-      command.name,
-      command.purpose,
-    );
-
-    // 3. Persist event to file store
-    await this.eventWriter.append(event);
-
-    // 4. Publish event to bus (projections will update via subscriptions)
-    await this.eventBus.publish(event);
-
-    // 5. Persist project settings identity for future updates and rebuilds
     await this.settingsInitializer.ensureSettingsFileExists();
     await this.projectIdentityResolver.persistProjectId(projectId);
 
-    // 6. Create/update AGENTS.md (side effect)
+    await this.eventWriter.append(event);
+
+    await this.eventBus.publish(event);
+
     await this.agentFileProtocol.ensureAgentsMd(projectRoot);
 
-    // 7. Configure all supported agents (side effect)
-    await this.agentFileProtocol.ensureAgentConfigurations(projectRoot, selectedAgentIds);
+    await this.agentFileProtocol.ensureAgentConfigurations(
+      projectRoot,
+      selectedAgentIds,
+    );
 
-    // 8. Ensure .gitignore excludes Jumbo internal state (side effect)
     await this.gitignoreProtocol.ensureExclusions(projectRoot);
 
     return { projectId };

@@ -13,7 +13,11 @@ export async function toggleCockpitDaemon(
   manager: ISubprocessManager,
   config: DaemonConfig,
   setDaemonStatuses: (statuses: readonly SubprocessSnapshot[]) => void,
-  setDaemonEventRows: (update: (currentRows: readonly DaemonEventRow[]) => readonly DaemonEventRow[]) => void,
+  setDaemonEventRows: (
+    update: (
+      currentRows: readonly DaemonEventRow[],
+    ) => readonly DaemonEventRow[],
+  ) => void,
 ): Promise<void> {
   const snapshot = manager.getStatus(name);
   if (snapshot.status === SubprocessStatus.RUNNING) {
@@ -27,6 +31,6 @@ export async function toggleCockpitDaemon(
     CockpitDaemonEvents.appendRows(
       currentRows,
       CockpitDaemonEvents.getRows(snapshots, Date.now()),
-    )
+    ),
   );
 }

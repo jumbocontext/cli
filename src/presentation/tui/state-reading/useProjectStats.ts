@@ -9,8 +9,7 @@ import { useTickingReadModel } from "./useTickingReadModel.js";
 export function useProjectStats(): StateSnapshot<ProjectStatsResponse> {
   const context = useContext(StateReaderContext);
   const controller = context?.controllers.projectStatsController as
-    | Pick<ProjectStatsController, "handle">
-    | undefined;
+    Pick<ProjectStatsController, "handle"> | undefined;
 
   return useTickingReadModel<ProjectStatsResponse>(
     useCallback(async () => {
@@ -22,6 +21,6 @@ export function useProjectStats(): StateSnapshot<ProjectStatsResponse> {
     }, [controller]),
     controller === undefined
       ? 0
-      : context?.tickMs ?? DEFAULT_STATE_READER_TICK_MS,
+      : (context?.tickMs ?? DEFAULT_STATE_READER_TICK_MS),
   );
 }

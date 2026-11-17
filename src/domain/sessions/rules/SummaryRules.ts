@@ -9,9 +9,7 @@ import {
 } from "../Constants.js";
 
 export class SummaryMaxLengthRule implements ValidationRule<string> {
-  constructor(
-    private maxLength: number = SessionLimits.SUMMARY_MAX_LENGTH
-  ) {}
+  constructor(private maxLength: number = SessionLimits.SUMMARY_MAX_LENGTH) {}
 
   validate(summary: string): ValidationResult {
     const isValid = summary.length <= this.maxLength;

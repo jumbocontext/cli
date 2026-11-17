@@ -10,8 +10,13 @@ export class LocalSearchGateway implements ISearchGateway {
   constructor(private readonly providers: readonly ISearchProvider[]) {}
 
   async search(request: SearchRequest): Promise<SearchResponse> {
-    const providerHits = await Promise.all(this.providers.map((provider) => provider.search(request.criteria)));
-    const hits = this.limitHits(this.sortHits(this.filterHits(providerHits.flat(), request)), request);
+    const providerHits = await Promise.all(
+      this.providers.map((provider) => provider.search(request.criteria)),
+    );
+    const hits = this.limitHits(
+      this.sortHits(this.filterHits(providerHits.flat(), request)),
+      request,
+    );
 
     if (!request.criteria.groupByCategory) {
       return { hits };
@@ -20,7 +25,10 @@ export class LocalSearchGateway implements ISearchGateway {
     return { hits, groups: this.groupByCategory(hits) };
   }
 
-  private filterHits(hits: readonly SearchHit[], request: SearchRequest): SearchHit[] {
+  private filterHits(
+    hits: readonly SearchHit[],
+    request: SearchRequest,
+  ): SearchHit[] {
     if (!request.criteria.category) {
       return [...hits];
     }
@@ -32,10 +40,16 @@ export class LocalSearchGateway implements ISearchGateway {
     return [...hits].sort((left, right) => right.score - left.score);
   }
 
-  private limitHits(hits: readonly SearchHit[], request: SearchRequest): SearchHit[] {
+  private limitHits(
+    hits: readonly SearchHit[],
+    request: SearchRequest,
+  ): SearchHit[] {
     const limit = Math.min(
-      Math.max(request.criteria.limit ?? SearchResultLimit.DEFAULT, SearchResultLimit.MIN),
-      SearchResultLimit.MAX
+      Math.max(
+        request.criteria.limit ?? SearchResultLimit.DEFAULT,
+        SearchResultLimit.MIN,
+      ),
+      SearchResultLimit.MAX,
     );
 
     return hits.slice(0, limit);

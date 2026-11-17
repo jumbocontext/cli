@@ -3,12 +3,15 @@ import { ReviewGoalRequest } from "./ReviewGoalRequest.js";
 import { ReviewGoalResponse } from "./ReviewGoalResponse.js";
 import { SubmitGoalForReviewCommandHandler } from "./SubmitGoalForReviewCommandHandler.js";
 import { IGoalSubmitForReviewReader } from "./IGoalSubmitForReviewReader.js";
-import { GoalErrorMessages, formatErrorMessage } from "../../../../domain/goals/Constants.js";
+import {
+  GoalErrorMessages,
+  formatErrorMessage,
+} from "../../../../domain/goals/Constants.js";
 
 export class LocalReviewGoalGateway implements IReviewGoalGateway {
   constructor(
     private readonly commandHandler: SubmitGoalForReviewCommandHandler,
-    private readonly goalReader: IGoalSubmitForReviewReader
+    private readonly goalReader: IGoalSubmitForReviewReader,
   ) {}
 
   async reviewGoal(request: ReviewGoalRequest): Promise<ReviewGoalResponse> {
@@ -16,17 +19,23 @@ export class LocalReviewGoalGateway implements IReviewGoalGateway {
     const goalView = await this.goalReader.findById(request.goalId);
     if (!goalView) {
       throw new Error(
-        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, { id: request.goalId })
+        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, {
+          id: request.goalId,
+        }),
       );
     }
 
     // 2. Delegate state change to command handler (validates status, acquires reviewer claim, returns enriched context)
-    const goalContextView = await this.commandHandler.execute({ goalId: request.goalId });
+    const goalContextView = await this.commandHandler.execute({
+      goalId: request.goalId,
+    });
 
     // 3. Get updated goal view after state change
     const updatedGoalView = await this.goalReader.findById(request.goalId);
     if (!updatedGoalView) {
-      throw new Error(`Goal not found after review submission: ${request.goalId}`);
+      throw new Error(
+        `Goal not found after review submission: ${request.goalId}`,
+      );
     }
 
     return {

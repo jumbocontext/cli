@@ -6,7 +6,10 @@
  */
 
 import { Database } from "better-sqlite3";
-import { IDependencyViewReader, DependencyListFilter } from "../../../../application/context/dependencies/get/IDependencyViewReader.js";
+import {
+  IDependencyViewReader,
+  DependencyListFilter,
+} from "../../../../application/context/dependencies/get/IDependencyViewReader.js";
 import { DependencyView } from "../../../../application/context/dependencies/DependencyView.js";
 import { DependencySearchCriteria } from "../../../../application/context/dependencies/search/DependencySearchCriteria.js";
 import { DependencyRecord } from "../DependencyRecord.js";
@@ -55,7 +58,9 @@ export class SqliteDependencyViewReader implements IDependencyViewReader {
     query += " ORDER BY createdAt DESC";
 
     const rows = this.db.prepare(query).all(...params);
-    return rows.map((row) => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   async findByIds(ids: string[]): Promise<DependencyView[]> {
@@ -64,7 +69,9 @@ export class SqliteDependencyViewReader implements IDependencyViewReader {
     const placeholders = ids.map(() => "?").join(",");
     const query = `SELECT * FROM dependency_views WHERE dependencyId IN (${placeholders}) ORDER BY createdAt DESC`;
     const rows = this.db.prepare(query).all(...ids);
-    return rows.map((row) => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   async search(criteria: DependencySearchCriteria): Promise<DependencyView[]> {
@@ -77,7 +84,9 @@ export class SqliteDependencyViewReader implements IDependencyViewReader {
     }
 
     if (criteria.ecosystem !== undefined) {
-      clauses.push("COALESCE(ecosystem, CASE WHEN providerId IS NOT NULL AND providerId != '' THEN 'legacy-component' ELSE 'unknown' END) LIKE ?");
+      clauses.push(
+        "COALESCE(ecosystem, CASE WHEN providerId IS NOT NULL AND providerId != '' THEN 'legacy-component' ELSE 'unknown' END) LIKE ?",
+      );
       params.push(this.toLikePattern(criteria.ecosystem));
     }
 
@@ -126,7 +135,9 @@ export class SqliteDependencyViewReader implements IDependencyViewReader {
     query += " ORDER BY createdAt DESC";
 
     const rows = this.db.prepare(query).all(...params);
-    return rows.map((row) => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   private toLikePattern(input: string): string {

@@ -10,7 +10,10 @@
  * - query: substring match across description and responsibility fields (supports * wildcards)
  */
 
-import { ComponentTypeValue, ComponentStatusValue } from "../../../../domain/components/Constants.js";
+import {
+  ComponentTypeValue,
+  ComponentStatusValue,
+} from "../../../../domain/components/Constants.js";
 
 export interface ComponentSearchCriteria {
   readonly name?: string;

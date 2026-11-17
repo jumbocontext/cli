@@ -5,10 +5,7 @@
  * Captures who the project serves and their priority level.
  */
 
-import {
-  BaseAggregate,
-  AggregateState,
-} from "../BaseAggregate.js";
+import { BaseAggregate, AggregateState } from "../BaseAggregate.js";
 import { UUID, BaseEvent } from "../BaseEvent.js";
 import { AudienceId } from "./AudienceId.js";
 import { ValidationRuleSet } from "../validation/ValidationRule.js";
@@ -127,7 +124,7 @@ export class Audience extends BaseAggregate<AudienceState, AudienceEvent> {
   add(
     name: string,
     description: string,
-    priority: AudiencePriorityType
+    priority: AudiencePriorityType,
   ): AudienceAddedEvent {
     // State validation - can't add twice
     if (this.state.version > 0) {
@@ -147,7 +144,7 @@ export class Audience extends BaseAggregate<AudienceState, AudienceEvent> {
         description,
         priority,
       },
-      Audience.apply
+      Audience.apply,
     );
   }
 
@@ -164,7 +161,7 @@ export class Audience extends BaseAggregate<AudienceState, AudienceEvent> {
   update(
     name?: string,
     description?: string,
-    priority?: AudiencePriorityType
+    priority?: AudiencePriorityType,
   ): AudienceUpdatedEvent {
     // State validation - must exist before updating
     if (this.state.version === 0) {
@@ -209,7 +206,7 @@ export class Audience extends BaseAggregate<AudienceState, AudienceEvent> {
     return this.makeEvent<AudienceUpdatedEvent>(
       AudienceEventType.UPDATED,
       payload,
-      Audience.apply
+      Audience.apply,
     );
   }
 
@@ -239,7 +236,7 @@ export class Audience extends BaseAggregate<AudienceState, AudienceEvent> {
         name: this.state.name,
         removedReason: reason,
       },
-      Audience.apply
+      Audience.apply,
     );
   }
 }

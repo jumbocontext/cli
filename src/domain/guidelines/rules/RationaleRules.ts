@@ -24,7 +24,7 @@ export class RationaleRequiredRule implements ValidationRule<string> {
 
 export class RationaleMaxLengthRule implements ValidationRule<string> {
   constructor(
-    private maxLength: number = GuidelineLimits.RATIONALE_MAX_LENGTH
+    private maxLength: number = GuidelineLimits.RATIONALE_MAX_LENGTH,
   ) {}
 
   validate(rationale: string): ValidationResult {

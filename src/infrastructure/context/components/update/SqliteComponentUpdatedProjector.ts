@@ -10,9 +10,14 @@ import { IComponentUpdatedProjector } from "../../../../application/context/comp
 import { IComponentUpdateReader } from "../../../../application/context/components/update/IComponentUpdateReader.js";
 import { ComponentUpdatedEvent } from "../../../../domain/components/EventIndex.js";
 import { ComponentView } from "../../../../application/context/components/ComponentView.js";
-import { ComponentTypeValue, ComponentStatusValue } from "../../../../domain/components/Constants.js";
+import {
+  ComponentTypeValue,
+  ComponentStatusValue,
+} from "../../../../domain/components/Constants.js";
 
-export class SqliteComponentUpdatedProjector implements IComponentUpdatedProjector, IComponentUpdateReader {
+export class SqliteComponentUpdatedProjector
+  implements IComponentUpdatedProjector, IComponentUpdateReader
+{
   constructor(private db: Database) {}
 
   async applyComponentUpdated(event: ComponentUpdatedEvent): Promise<void> {
@@ -20,31 +25,31 @@ export class SqliteComponentUpdatedProjector implements IComponentUpdatedProject
     const params: unknown[] = [];
 
     if (event.payload.description !== undefined) {
-      updates.push('description = ?');
+      updates.push("description = ?");
       params.push(event.payload.description);
     }
     if (event.payload.responsibility !== undefined) {
-      updates.push('responsibility = ?');
+      updates.push("responsibility = ?");
       params.push(event.payload.responsibility);
     }
     if (event.payload.path !== undefined) {
-      updates.push('path = ?');
+      updates.push("path = ?");
       params.push(event.payload.path);
     }
     if (event.payload.type !== undefined) {
-      updates.push('type = ?');
+      updates.push("type = ?");
       params.push(event.payload.type);
     }
 
-    updates.push('version = ?');
+    updates.push("version = ?");
     params.push(event.version);
-    updates.push('updatedAt = ?');
+    updates.push("updatedAt = ?");
     params.push(event.timestamp);
     params.push(event.aggregateId);
 
     const stmt = this.db.prepare(`
       UPDATE component_views
-      SET ${updates.join(', ')}
+      SET ${updates.join(", ")}
       WHERE componentId = ?
     `);
 
@@ -52,7 +57,9 @@ export class SqliteComponentUpdatedProjector implements IComponentUpdatedProject
   }
 
   async findById(id: string): Promise<ComponentView | null> {
-    const row = this.db.prepare('SELECT * FROM component_views WHERE componentId = ?').get(id);
+    const row = this.db
+      .prepare("SELECT * FROM component_views WHERE componentId = ?")
+      .get(id);
     return row ? this.mapRowToView(row as Record<string, unknown>) : null;
   }
 

@@ -20,26 +20,36 @@ type NormalizedTraversalRequest = RelationTraversalQuery & {
 export class LocalTraverseRelationsGateway implements ITraverseRelationsGateway {
   constructor(
     private readonly relationViewReader: IRelationViewReader,
-    private readonly nodeResolver = new RelationNodeReferenceResolver(relationViewReader),
+    private readonly nodeResolver = new RelationNodeReferenceResolver(
+      relationViewReader,
+    ),
     private readonly queryNormalizer = new RelationTraversalQueryNormalizer(),
-    private readonly traversalPolicy = new RelationTraversalPolicy()
+    private readonly traversalPolicy = new RelationTraversalPolicy(),
   ) {}
 
-  async traverse(request: TraverseRelationsRequest): Promise<RelationTraversalResult> {
+  async traverse(
+    request: TraverseRelationsRequest,
+  ): Promise<RelationTraversalResult> {
     const normalized = this.normalize(request);
-    const root = await this.resolveRoot(normalized.entityId, normalized.entityType);
+    const root = await this.resolveRoot(
+      normalized.entityId,
+      normalized.entityType,
+    );
     const visited = new Set<string>([this.traversalPolicy.nodeKey(root)]);
     const nodes = new Map<string, RelationTraversalNode>();
     const edges = new Map<string, RelationView>();
     let frontier: RelationNodeReference[] = [root];
     let truncated = false;
 
-    traversal:
-    for (let distance = 1; distance <= normalized.depth && frontier.length > 0; distance++) {
+    traversal: for (
+      let distance = 1;
+      distance <= normalized.depth && frontier.length > 0;
+      distance++
+    ) {
       const next = new Map<string, RelationNodeReference>();
 
       for (const current of [...frontier].sort((left, right) =>
-        this.traversalPolicy.compareNodes(left, right)
+        this.traversalPolicy.compareNodes(left, right),
       )) {
         const adjacent = await this.relationViewReader.findAll({
           entity: current,
@@ -51,7 +61,7 @@ export class LocalTraverseRelationsGateway implements ITraverseRelationsGateway 
         });
 
         for (const edge of [...adjacent].sort((left, right) =>
-          this.traversalPolicy.compareEdges(left, right)
+          this.traversalPolicy.compareEdges(left, right),
         )) {
           if (edges.has(edge.relationId)) continue;
 
@@ -59,13 +69,16 @@ export class LocalTraverseRelationsGateway implements ITraverseRelationsGateway 
           const related = this.traversalPolicy.relatedNode(
             current,
             edge,
-            normalized.direction
+            normalized.direction,
           );
           if (related) {
             const relatedKey = this.traversalPolicy.nodeKey(related);
             if (!visited.has(relatedKey)) {
               visited.add(relatedKey);
-              const traversalNode: RelationTraversalNode = { ...related, distance };
+              const traversalNode: RelationTraversalNode = {
+                ...related,
+                distance,
+              };
               nodes.set(relatedKey, traversalNode);
               next.set(relatedKey, related);
             }
@@ -81,12 +94,13 @@ export class LocalTraverseRelationsGateway implements ITraverseRelationsGateway 
       frontier = [...next.values()];
     }
 
-    const stableNodes = [...nodes.values()].sort((left, right) =>
-      left.distance - right.distance ||
-      this.traversalPolicy.compareNodes(left, right)
+    const stableNodes = [...nodes.values()].sort(
+      (left, right) =>
+        left.distance - right.distance ||
+        this.traversalPolicy.compareNodes(left, right),
     );
     const stableEdges = [...edges.values()].sort((left, right) =>
-      this.traversalPolicy.compareEdges(left, right)
+      this.traversalPolicy.compareEdges(left, right),
     );
 
     return {
@@ -94,13 +108,18 @@ export class LocalTraverseRelationsGateway implements ITraverseRelationsGateway 
       nodes: stableNodes,
       edges: stableEdges,
       requestedDepth: normalized.depth,
-      reachedDepth: stableNodes.reduce((maximum, node) => Math.max(maximum, node.distance), 0),
+      reachedDepth: stableNodes.reduce(
+        (maximum, node) => Math.max(maximum, node.distance),
+        0,
+      ),
       limit: normalized.limit,
       truncated,
     };
   }
 
-  private normalize(request: TraverseRelationsRequest): NormalizedTraversalRequest {
+  private normalize(
+    request: TraverseRelationsRequest,
+  ): NormalizedTraversalRequest {
     const entityId = request.entityId?.trim();
     if (!entityId) throw new Error("Entity ID must be provided.");
 
@@ -120,7 +139,7 @@ export class LocalTraverseRelationsGateway implements ITraverseRelationsGateway 
 
   private async resolveRoot(
     entityId: string,
-    explicitType: EntityTypeValue | undefined
+    explicitType: EntityTypeValue | undefined,
   ): Promise<RelationNodeReference> {
     return this.nodeResolver.resolve(entityId, explicitType);
   }

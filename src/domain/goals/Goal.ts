@@ -2,8 +2,42 @@ import { BaseAggregate, AggregateState } from "../BaseAggregate.js";
 import { UUID } from "../BaseEvent.js";
 import { GoalId } from "./GoalId.js";
 import { ValidationRuleSet } from "../validation/ValidationRule.js";
-import { GoalEvent, GoalAddedEvent, GoalRefinedEvent, GoalStartedEvent, GoalUpdatedEvent, GoalBlockedEvent, GoalUnblockedEvent, GoalCompletedEvent, GoalResetEvent, GoalRemovedEvent, GoalPausedEvent, GoalPostponedEvent, GoalReinstatedEvent, GoalResumedEvent, GoalProgressUpdatedEvent, GoalSubmittedForReviewEvent, GoalQualifiedEvent, GoalRefinementStartedEvent, GoalCommittedEvent, GoalRejectedEvent, GoalSubmittedEvent, GoalCodifyingStartedEvent, GoalClosedEvent, GoalApprovedEvent, GoalStatusMigratedEvent } from "./EventIndex.js";
-import { GoalEventType, GoalStatus, GoalStatusType, WAITING_STATES, IN_PROGRESS_STATES, TERMINAL_STATES, DETERMINISTIC_RESET_TARGETS } from "./Constants.js";
+import {
+  GoalEvent,
+  GoalAddedEvent,
+  GoalRefinedEvent,
+  GoalStartedEvent,
+  GoalUpdatedEvent,
+  GoalBlockedEvent,
+  GoalUnblockedEvent,
+  GoalCompletedEvent,
+  GoalResetEvent,
+  GoalRemovedEvent,
+  GoalPausedEvent,
+  GoalPostponedEvent,
+  GoalReinstatedEvent,
+  GoalResumedEvent,
+  GoalProgressUpdatedEvent,
+  GoalSubmittedForReviewEvent,
+  GoalQualifiedEvent,
+  GoalRefinementStartedEvent,
+  GoalCommittedEvent,
+  GoalRejectedEvent,
+  GoalSubmittedEvent,
+  GoalCodifyingStartedEvent,
+  GoalClosedEvent,
+  GoalApprovedEvent,
+  GoalStatusMigratedEvent,
+} from "./EventIndex.js";
+import {
+  GoalEventType,
+  GoalStatus,
+  GoalStatusType,
+  WAITING_STATES,
+  IN_PROGRESS_STATES,
+  TERMINAL_STATES,
+  DETERMINISTIC_RESET_TARGETS,
+} from "./Constants.js";
 import { GoalPausedReasonsType } from "./GoalPausedReasons.js";
 import { OBJECTIVE_RULES } from "./rules/ObjectiveRules.js";
 import { TITLE_RULES } from "./rules/TitleRules.js";
@@ -43,14 +77,14 @@ export interface GoalState extends AggregateState {
   scopeOut: string[];
   status: GoalStatusType;
   version: number;
-  note?: string;  // Optional: populated when blocked or completed
-  reviewIssues?: string;  // Optional: populated when rejected with review findings
-  progress: string[];  // Tracks completed sub-tasks (append-only)
+  note?: string; // Optional: populated when blocked or completed
+  reviewIssues?: string; // Optional: populated when rejected with review findings
+  progress: string[]; // Tracks completed sub-tasks (append-only)
   nextGoalId?: UUID;
   prerequisiteGoals?: UUID[];
-  branch?: string;  // Optional: git branch for multi-agent collaboration
-  worktree?: string;  // Optional: git worktree path for multi-agent collaboration
-  lastWaitingStatus?: GoalStatusType;  // Tracks the waiting state entered from when transitioning to in-progress
+  branch?: string; // Optional: git branch for multi-agent collaboration
+  worktree?: string; // Optional: git worktree path for multi-agent collaboration
+  lastWaitingStatus?: GoalStatusType; // Tracks the waiting state entered from when transitioning to in-progress
 }
 
 export class Goal extends BaseAggregate<GoalState, GoalEvent> {
@@ -90,7 +124,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
 
       case GoalEventType.REFINED: {
         const e = event as GoalRefinedEvent;
-        state.status = e.payload.status;  // "refined"
+        state.status = e.payload.status; // "refined"
         state.version = e.version;
         break;
       }
@@ -100,14 +134,14 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
         if (WAITING_STATES.has(state.status)) {
           state.lastWaitingStatus = state.status;
         }
-        state.status = e.payload.status;  // "in-refinement"
+        state.status = e.payload.status; // "in-refinement"
         state.version = e.version;
         break;
       }
 
       case GoalEventType.COMMITTED: {
         const e = event as GoalCommittedEvent;
-        state.status = e.payload.status;  // "refined"
+        state.status = e.payload.status; // "refined"
         state.version = e.version;
         break;
       }
@@ -117,7 +151,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
         if (WAITING_STATES.has(state.status)) {
           state.lastWaitingStatus = state.status;
         }
-        state.status = e.payload.status;  // "doing"
+        state.status = e.payload.status; // "doing"
         state.version = e.version;
         break;
       }
@@ -158,24 +192,24 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
 
       case GoalEventType.BLOCKED: {
         const e = event as GoalBlockedEvent;
-        state.status = e.payload.status;  // 'blocked'
-        state.note = e.payload.note;       // Reason for blocking
+        state.status = e.payload.status; // 'blocked'
+        state.note = e.payload.note; // Reason for blocking
         state.version = e.version;
         break;
       }
 
       case GoalEventType.UNBLOCKED: {
         const e = event as GoalUnblockedEvent;
-        state.status = e.payload.status;  // 'unblocked'
-        state.note = e.payload.note;       // Optional resolution note
+        state.status = e.payload.status; // 'unblocked'
+        state.note = e.payload.note; // Optional resolution note
         state.version = e.version;
         break;
       }
 
       case GoalEventType.PAUSED: {
         const e = event as GoalPausedEvent;
-        state.status = e.payload.status;  // 'paused'
-        state.note = e.payload.note;       // Optional note about pausing
+        state.status = e.payload.status; // 'paused'
+        state.note = e.payload.note; // Optional note about pausing
         state.version = e.version;
         break;
       }
@@ -196,24 +230,24 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
 
       case GoalEventType.RESUMED: {
         const e = event as GoalResumedEvent;
-        state.status = e.payload.status;  // 'doing'
-        state.note = e.payload.note;       // Optional note about resuming
+        state.status = e.payload.status; // 'doing'
+        state.note = e.payload.note; // Optional note about resuming
         state.version = e.version;
         break;
       }
 
       case GoalEventType.COMPLETED: {
         const e = event as GoalCompletedEvent;
-        state.status = e.payload.status;  // 'completed'
+        state.status = e.payload.status; // 'completed'
         state.version = e.version;
         break;
       }
 
       case GoalEventType.RESET: {
         const e = event as GoalResetEvent;
-        state.status = e.payload.status;  // Dynamic target waiting state
-        state.note = undefined;            // Clear any notes from previous states
-        state.reviewIssues = undefined;    // Clear review issues from previous rejection
+        state.status = e.payload.status; // Dynamic target waiting state
+        state.note = undefined; // Clear any notes from previous states
+        state.reviewIssues = undefined; // Clear review issues from previous rejection
         state.lastWaitingStatus = undefined; // Clear tracking on reset
         state.version = e.version;
         break;
@@ -232,21 +266,21 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
         if (WAITING_STATES.has(state.status)) {
           state.lastWaitingStatus = state.status;
         }
-        state.status = e.payload.status;  // 'in-review'
+        state.status = e.payload.status; // 'in-review'
         state.version = e.version;
         break;
       }
 
       case GoalEventType.QUALIFIED: {
         const e = event as GoalQualifiedEvent;
-        state.status = e.payload.status;  // 'qualified'
+        state.status = e.payload.status; // 'qualified'
         state.version = e.version;
         break;
       }
 
       case GoalEventType.REJECTED: {
         const e = event as GoalRejectedEvent;
-        state.status = e.payload.status;  // 'rejected'
+        state.status = e.payload.status; // 'rejected'
         // Backward compatibility: legacy persisted events use 'auditFindings'
         state.reviewIssues = e.payload.reviewIssues ?? e.payload.auditFindings;
         state.version = e.version;
@@ -255,7 +289,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
 
       case GoalEventType.SUBMITTED: {
         const e = event as GoalSubmittedEvent;
-        state.status = e.payload.status;  // 'submitted'
+        state.status = e.payload.status; // 'submitted'
         state.version = e.version;
         break;
       }
@@ -265,28 +299,28 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
         if (WAITING_STATES.has(state.status)) {
           state.lastWaitingStatus = state.status;
         }
-        state.status = e.payload.status;  // 'codifying'
+        state.status = e.payload.status; // 'codifying'
         state.version = e.version;
         break;
       }
 
       case GoalEventType.CLOSED: {
         const e = event as GoalClosedEvent;
-        state.status = e.payload.status;  // 'done'
+        state.status = e.payload.status; // 'done'
         state.version = e.version;
         break;
       }
 
       case GoalEventType.APPROVED: {
         const e = event as GoalApprovedEvent;
-        state.status = e.payload.status;  // 'approved'
+        state.status = e.payload.status; // 'approved'
         state.version = e.version;
         break;
       }
 
       case GoalEventType.STATUS_MIGRATED: {
         const e = event as GoalStatusMigratedEvent;
-        state.status = e.payload.status;  // new status value after migration
+        state.status = e.payload.status; // new status value after migration
         state.version = e.version;
         break;
       }
@@ -348,7 +382,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
     nextGoalId?: UUID,
     prerequisiteGoals?: UUID[],
     branch?: string,
-    worktree?: string
+    worktree?: string,
   ): GoalAddedEvent {
     // State validation: goal can only be defined once (version must be 0)
     ValidationRuleSet.ensure(this.state, [new CanAddRule()]);
@@ -371,11 +405,12 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
         scopeOut: scopeOut || [],
         status: GoalStatus.TODO,
         ...(nextGoalId && { nextGoalId }),
-        ...(prerequisiteGoals && prerequisiteGoals.length > 0 && { prerequisiteGoals }),
+        ...(prerequisiteGoals &&
+          prerequisiteGoals.length > 0 && { prerequisiteGoals }),
         ...(branch && { branch }),
         ...(worktree && { worktree }),
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalAddedEvent;
   }
 
@@ -406,7 +441,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
         claimedAt: claimInfo.claimedAt,
         claimExpiresAt: claimInfo.claimExpiresAt,
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalRefinementStartedEvent;
   }
 
@@ -429,7 +464,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
         status: GoalStatus.REFINED,
         committedAt: new Date().toISOString(),
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalCommittedEvent;
   }
 
@@ -463,7 +498,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
           claimExpiresAt: claimInfo.claimExpiresAt,
         }),
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalStartedEvent;
   }
 
@@ -480,7 +515,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
     nextGoalId?: UUID,
     prerequisiteGoals?: UUID[],
     branch?: string,
-    worktree?: string
+    worktree?: string,
   ): GoalUpdatedEvent {
     // 1. State validation using rules - cannot update completed goals
     ValidationRuleSet.ensure(this.state, [new CanUpdateRule()]);
@@ -493,16 +528,21 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
 
     // 3. Input validation using rules (validates at least one field and validates provided fields)
     // Skip UPDATE_RULES if only metadata fields are being updated
-    if (!hasNextGoalIdUpdate && !hasPrerequisiteGoalsUpdate && !hasBranchUpdate && !hasWorktreeUpdate) {
+    if (
+      !hasNextGoalIdUpdate &&
+      !hasPrerequisiteGoalsUpdate &&
+      !hasBranchUpdate &&
+      !hasWorktreeUpdate
+    ) {
       ValidationRuleSet.ensure(
         { title, objective, successCriteria, scopeIn, scopeOut },
-        UPDATE_RULES
+        UPDATE_RULES,
       );
     } else if (title || objective || successCriteria || scopeIn || scopeOut) {
       // If both standard fields and chaining fields provided, validate standard fields
       ValidationRuleSet.ensure(
         { title, objective, successCriteria, scopeIn, scopeOut },
-        UPDATE_RULES
+        UPDATE_RULES,
       );
     }
 
@@ -520,7 +560,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
         ...(branch !== undefined && { branch }),
         ...(worktree !== undefined && { worktree }),
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalUpdatedEvent;
   }
 
@@ -546,7 +586,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
         status: GoalStatus.BLOCKED,
         note,
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalBlockedEvent;
   }
 
@@ -565,7 +605,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
 
     // 2. Input validation: note is optional but must be valid if provided
     // Sanitize note (trim whitespace, convert empty string to undefined)
-    const sanitizedNote = note && note.trim() !== '' ? note.trim() : undefined;
+    const sanitizedNote = note && note.trim() !== "" ? note.trim() : undefined;
 
     if (sanitizedNote) {
       ValidationRuleSet.ensure(sanitizedNote, OPTIONAL_NOTE_RULES);
@@ -578,7 +618,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
         status: GoalStatus.UNBLOCKED,
         note: sanitizedNote,
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalUnblockedEvent;
   }
 
@@ -595,9 +635,9 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
     return this.makeEvent(
       GoalEventType.COMPLETED,
       {
-        status: GoalStatus.COMPLETED
+        status: GoalStatus.COMPLETED,
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalCompletedEvent;
   }
 
@@ -624,9 +664,9 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
     return this.makeEvent(
       GoalEventType.RESET,
       {
-        status: targetStatus
+        status: targetStatus,
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalResetEvent;
   }
 
@@ -637,7 +677,9 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
    */
   private computeResetTarget(): GoalStatusType {
     // Check deterministic mapping first (IN_REFINEMENT, IN_REVIEW, CODIFYING, DONE)
-    const deterministicTarget = DETERMINISTIC_RESET_TARGETS.get(this.state.status);
+    const deterministicTarget = DETERMINISTIC_RESET_TARGETS.get(
+      this.state.status,
+    );
     if (deterministicTarget) {
       return deterministicTarget;
     }
@@ -663,9 +705,9 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
     return this.makeEvent(
       GoalEventType.REMOVED,
       {
-        removedAt: new Date().toISOString()
+        removedAt: new Date().toISOString(),
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalRemovedEvent;
   }
 
@@ -684,7 +726,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
 
     // 2. Input validation: note is optional but must be valid if provided
     // Sanitize note (trim whitespace, convert empty string to undefined)
-    const sanitizedNote = note && note.trim() !== '' ? note.trim() : undefined;
+    const sanitizedNote = note && note.trim() !== "" ? note.trim() : undefined;
 
     if (sanitizedNote) {
       ValidationRuleSet.ensure(sanitizedNote, OPTIONAL_NOTE_RULES);
@@ -698,7 +740,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
         reason,
         note: sanitizedNote,
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalPausedEvent;
   }
 
@@ -715,7 +757,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
     return this.makeEvent(
       GoalEventType.POSTPONED,
       { status: GoalStatus.POSTPONED },
-      Goal.apply
+      Goal.apply,
     ) as GoalPostponedEvent;
   }
 
@@ -732,7 +774,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
     return this.makeEvent(
       GoalEventType.REINSTATED,
       { status: GoalStatus.TODO },
-      Goal.apply
+      Goal.apply,
     ) as GoalReinstatedEvent;
   }
 
@@ -751,14 +793,14 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
       claimedBy: string;
       claimedAt: string;
       claimExpiresAt: string;
-    }
+    },
   ): GoalResumedEvent {
     // 1. State validation: can only resume from paused status
     ValidationRuleSet.ensure(this.state, [new CanResumeRule()]);
 
     // 2. Input validation: note is optional but must be valid if provided
     // Sanitize note (trim whitespace, convert empty string to undefined)
-    const sanitizedNote = note && note.trim() !== '' ? note.trim() : undefined;
+    const sanitizedNote = note && note.trim() !== "" ? note.trim() : undefined;
 
     if (sanitizedNote) {
       ValidationRuleSet.ensure(sanitizedNote, OPTIONAL_NOTE_RULES);
@@ -777,7 +819,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
           claimExpiresAt: claimInfo.claimExpiresAt,
         }),
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalResumedEvent;
   }
 
@@ -800,7 +842,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
         status: GoalStatus.SUBMITTED,
         submittedAt: new Date().toISOString(),
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalSubmittedEvent;
   }
 
@@ -833,7 +875,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
           claimExpiresAt: claimInfo.claimExpiresAt,
         }),
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalSubmittedForReviewEvent;
   }
 
@@ -856,7 +898,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
         status: GoalStatus.QUALIFIED,
         approvedAt: new Date().toISOString(),
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalApprovedEvent;
   }
 
@@ -892,7 +934,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
         rejectedAt: new Date().toISOString(),
         reviewIssues,
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalRejectedEvent;
   }
 
@@ -923,7 +965,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
         claimedAt: claimInfo.claimedAt,
         claimExpiresAt: claimInfo.claimExpiresAt,
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalCodifyingStartedEvent;
   }
 
@@ -946,7 +988,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
         status: GoalStatus.DONE,
         closedAt: new Date().toISOString(),
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalClosedEvent;
   }
 
@@ -974,7 +1016,7 @@ export class Goal extends BaseAggregate<GoalState, GoalEvent> {
       {
         taskDescription: trimmed,
       },
-      Goal.apply
+      Goal.apply,
     ) as GoalProgressUpdatedEvent;
   }
 }

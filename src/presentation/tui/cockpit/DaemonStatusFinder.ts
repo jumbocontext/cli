@@ -13,12 +13,14 @@ function find(
   statuses: readonly SubprocessSnapshot[],
   name: DaemonName,
 ): SubprocessSnapshot {
-  return statuses.find((status) => status.name === name) ?? {
-    name,
-    status: SubprocessStatus.STOPPED,
-    config: DEFAULT_WORKER_DAEMON_CONFIG,
-    stdout: [],
-    stderr: [],
-    events: [],
-  };
+  return (
+    statuses.find((status) => status.name === name) ?? {
+      name,
+      status: SubprocessStatus.STOPPED,
+      config: DEFAULT_WORKER_DAEMON_CONFIG,
+      stdout: [],
+      stderr: [],
+      events: [],
+    }
+  );
 }

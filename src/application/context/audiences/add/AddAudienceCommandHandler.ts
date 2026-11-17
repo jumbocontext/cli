@@ -16,7 +16,7 @@ import { Audience } from "../../../../domain/audiences/Audience.js";
 export class AddAudienceCommandHandler {
   constructor(
     private readonly eventWriter: IAudienceAddedEventWriter,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
   async execute(command: AddAudienceCommand): Promise<{ audienceId: string }> {
@@ -28,7 +28,7 @@ export class AddAudienceCommandHandler {
     const event = audience.add(
       command.name,
       command.description,
-      command.priority
+      command.priority,
     );
 
     // 3. Persist event to file store

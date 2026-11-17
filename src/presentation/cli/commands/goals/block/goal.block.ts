@@ -4,43 +4,88 @@
  * Blocks a goal with a reason when progress is impeded.
  */
 
-import { CommandMetadata } from "../../registry/CommandMetadata.js";
-import { IApplicationContainer } from "../../../../../application/host/IApplicationContainer.js";
+import type { Command } from "commander";
+import type { CommandExample } from "../../registry/CommandMetadata.js";
+import type { BlockGoalController } from "../../../../../application/context/goals/block/BlockGoalController.js";
+import { LeafContainerBuilder } from "../../../../../infrastructure/host/LeafContainerBuilder.js";
 import { Renderer } from "../../../rendering/Renderer.js";
+import {
+  formatSubcommandHelp,
+  metadataFromCommand,
+} from "../../../help/SubcommandHelpFormatter.js";
+import { COMMAND_CATEGORY } from "../../../help/CommandCategories.js";
 import { GoalBlockOutputBuilder } from "./GoalBlockOutputBuilder.js";
 
 /**
- * Command metadata for auto-registration
+ * Help copy owned by this leaf, shown in the EXAMPLES section of `--help`.
  */
-export const metadata: CommandMetadata = {
-  description: "Mark a goal as blocked with reason",
-  category: "work",
-  requiredOptions: [
-    {
-      flags: "-i, --id <id>",
-      description: "ID of the goal to block"
-    },
-    {
-      flags: "-N, --note <reason>",
-      description: "Reason why the goal is blocked"
-    }
-  ],
-  examples: [
-    {
-      command: "jumbo goal block --id abc123 --note \"Waiting for API credentials\"",
-      description: "Block a goal with a reason"
-    }
-  ],
-  related: ["goal unblock", "goal start", "goal add"],
-  requiresProject: true
-};
-
-export async function goalBlock(
-  options: {
-    id: string;
-    note: string;
+const EXAMPLES: CommandExample[] = [
+  {
+    command: 'jumbo goal block --id abc123 --note "Waiting for API credentials"',
+    description: "Block a goal with a reason",
   },
-  container: IApplicationContainer
+];
+
+/**
+ * Examples and related commands are the only help copy this leaf owns;
+ * flags, descriptions, and the command description derive from the
+ * canonical registration chain via metadataFromCommand().
+ */
+const RELATED_COMMANDS = ["goal unblock", "goal start", "goal add"];
+
+/**
+ * The abstract ports the `goal block` leaf requires. Satisfied structurally
+ * by the LeafContainerBuilder composition below; a missing `with*Feature()`
+ * call fails to compile here, at the leaf that made the demand.
+ */
+interface GoalBlockDependencies {
+  readonly blockGoalController: BlockGoalController;
+}
+
+/**
+ * Composes exactly the feature the `goal block` leaf uses.
+ */
+async function createGoalBlockDependencies(): Promise<GoalBlockDependencies> {
+  return new LeafContainerBuilder().withBlockGoalFeature().build();
+}
+
+/** Registers the `goal block` leaf under the parent supplied by its group. */
+export function registerGoalBlockCommand(goal: Command): void {
+  const command = goal
+    .command("block")
+    .description("Mark a goal as blocked with reason")
+    .requiredOption("-i, --id <id>", "ID of the goal to block")
+    .requiredOption("-N, --note <reason>", "Reason why the goal is blocked");
+
+  command.helpInformation = () =>
+    formatSubcommandHelp({
+      path: "goal block",
+      metadata: metadataFromCommand(command, {
+        category: COMMAND_CATEGORY.work,
+        examples: EXAMPLES,
+        related: RELATED_COMMANDS,
+      }),
+    });
+
+  let dependencies: GoalBlockDependencies | undefined;
+
+  command.hook("preAction", async () => {
+    dependencies = await createGoalBlockDependencies();
+  });
+
+  command.action(async (options: { id: string; note: string }) => {
+    if (!dependencies) throw new Error("Goal block dependencies were not initialized.");
+    await goalBlock(options, dependencies);
+  });
+}
+
+/**
+ * Command handler
+ * Called by Commander with parsed options
+ */
+export async function goalBlock(
+  options: { id: string; note: string },
+  container: GoalBlockDependencies,
 ) {
   const renderer = Renderer.getInstance();
   const outputBuilder = new GoalBlockOutputBuilder();
@@ -55,9 +100,10 @@ export async function goalBlock(
     const output = outputBuilder.buildSuccess(goalId, note);
     renderer.info(output.toHumanReadable());
   } catch (error) {
-    const output = outputBuilder.buildFailureError(error instanceof Error ? error : String(error));
+    const output = outputBuilder.buildFailureError(
+      error instanceof Error ? error : String(error),
+    );
     renderer.info(output.toHumanReadable());
     process.exit(1);
   }
-  // NO CLEANUP - infrastructure manages itself!
 }

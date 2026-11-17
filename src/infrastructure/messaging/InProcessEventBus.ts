@@ -39,8 +39,8 @@ export class InProcessEventBus implements IEventBus {
         handler.handle(event).catch((err) => {
           // Log error but don't throw - projections can be rebuilt
           console.error(`Handler error for event ${event.type}:`, err);
-        })
-      )
+        }),
+      ),
     );
   }
 }

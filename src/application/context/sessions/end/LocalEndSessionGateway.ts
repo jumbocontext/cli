@@ -4,9 +4,7 @@ import { EndSessionResponse } from "./EndSessionResponse.js";
 import { EndSessionCommandHandler } from "./EndSessionCommandHandler.js";
 
 export class LocalEndSessionGateway implements IEndSessionGateway {
-  constructor(
-    private readonly commandHandler: EndSessionCommandHandler
-  ) {}
+  constructor(private readonly commandHandler: EndSessionCommandHandler) {}
 
   async endSession(request: EndSessionRequest): Promise<EndSessionResponse> {
     const result = await this.commandHandler.execute({

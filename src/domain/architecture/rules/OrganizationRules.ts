@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { ArchitectureErrorMessages, ArchitectureLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  ArchitectureErrorMessages,
+  ArchitectureLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class OrganizationRequiredRule implements ValidationRule<string> {
   validate(organization: string): ValidationResult {
@@ -12,7 +19,9 @@ export class OrganizationRequiredRule implements ValidationRule<string> {
 }
 
 export class OrganizationMaxLengthRule implements ValidationRule<string> {
-  constructor(private maxLength: number = ArchitectureLimits.ORGANIZATION_MAX_LENGTH) {}
+  constructor(
+    private maxLength: number = ArchitectureLimits.ORGANIZATION_MAX_LENGTH,
+  ) {}
 
   validate(organization: string): ValidationResult {
     const isValid = organization.length <= this.maxLength;
@@ -20,7 +29,12 @@ export class OrganizationMaxLengthRule implements ValidationRule<string> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(ArchitectureErrorMessages.ORGANIZATION_TOO_LONG, { max: this.maxLength })],
+        : [
+            formatErrorMessage(
+              ArchitectureErrorMessages.ORGANIZATION_TOO_LONG,
+              { max: this.maxLength },
+            ),
+          ],
     };
   }
 }

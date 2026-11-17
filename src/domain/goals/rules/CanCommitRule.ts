@@ -1,6 +1,13 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
 import { GoalState } from "../Goal.js";
-import { GoalStatus, GoalErrorMessages, formatErrorMessage } from "../Constants.js";
+import {
+  GoalStatus,
+  GoalErrorMessages,
+  formatErrorMessage,
+} from "../Constants.js";
 
 /**
  * Validates that a goal can be committed.
@@ -15,10 +22,11 @@ export class CanCommitRule implements ValidationRule<GoalState> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(
-            GoalErrorMessages.CANNOT_COMMIT_IN_STATUS,
-            { status: state.status }
-          )],
+        : [
+            formatErrorMessage(GoalErrorMessages.CANNOT_COMMIT_IN_STATUS, {
+              status: state.status,
+            }),
+          ],
     };
   }
 }

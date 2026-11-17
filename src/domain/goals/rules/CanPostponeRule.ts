@@ -1,6 +1,13 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
 import { GoalState } from "../Goal.js";
-import { GoalErrorMessages, GoalStatus, formatErrorMessage } from "../Constants.js";
+import {
+  GoalErrorMessages,
+  GoalStatus,
+  formatErrorMessage,
+} from "../Constants.js";
 
 /** Allows postponement only while a goal is still defined. */
 export class CanPostponeRule implements ValidationRule<GoalState> {
@@ -11,10 +18,11 @@ export class CanPostponeRule implements ValidationRule<GoalState> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(
-            GoalErrorMessages.CANNOT_POSTPONE_IN_STATUS,
-            { status: state.status }
-          )],
+        : [
+            formatErrorMessage(GoalErrorMessages.CANNOT_POSTPONE_IN_STATUS, {
+              status: state.status,
+            }),
+          ],
     };
   }
 }

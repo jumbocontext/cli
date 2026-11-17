@@ -7,10 +7,12 @@ import { IComponentUndeprecateReader } from "./IComponentUndeprecateReader.js";
 export class LocalUndeprecateComponentGateway implements IUndeprecateComponentGateway {
   constructor(
     private readonly commandHandler: UndeprecateComponentCommandHandler,
-    private readonly reader: IComponentUndeprecateReader
+    private readonly reader: IComponentUndeprecateReader,
   ) {}
 
-  async undeprecateComponent(request: UndeprecateComponentRequest): Promise<UndeprecateComponentResponse> {
+  async undeprecateComponent(
+    request: UndeprecateComponentRequest,
+  ): Promise<UndeprecateComponentResponse> {
     await this.commandHandler.execute({
       componentId: request.componentId,
       reason: request.reason,

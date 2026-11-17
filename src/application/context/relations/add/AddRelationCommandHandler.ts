@@ -13,7 +13,7 @@ export class AddRelationCommandHandler {
   constructor(
     private readonly eventWriter: IRelationAddedEventWriter,
     private readonly eventBus: IEventBus,
-    private readonly reader: IRelationAddedReader
+    private readonly reader: IRelationAddedReader,
   ) {}
 
   async execute(command: AddRelationCommand): Promise<{ relationId: string }> {
@@ -23,7 +23,7 @@ export class AddRelationCommandHandler {
       command.fromEntityId,
       command.toEntityType,
       command.toEntityId,
-      command.relationType
+      command.relationType,
     );
 
     if (existingRelation) {
@@ -43,7 +43,7 @@ export class AddRelationCommandHandler {
       command.toEntityId,
       command.relationType,
       command.description,
-      command.strength
+      command.strength,
     );
 
     // Persist event to file store

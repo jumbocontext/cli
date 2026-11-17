@@ -11,14 +11,17 @@ import { SearchResultLimit } from "../../../application/context/search/SearchRes
 import { SearchIndexRecord } from "./SearchIndexRecord.js";
 import { SearchIndexRecordMapper } from "./SearchIndexRecordMapper.js";
 
-export class SqliteSearchIndexStore implements ISearchIndexWriter, ISearchIndexReader, ISearchIndexRebuildStore {
+export class SqliteSearchIndexStore
+  implements ISearchIndexWriter, ISearchIndexReader, ISearchIndexRebuildStore
+{
   private readonly mapper = new SearchIndexRecordMapper();
 
   constructor(private readonly db: Database) {}
 
   async upsert(document: SearchDocument): Promise<void> {
     this.db
-      .prepare(`
+      .prepare(
+        `
         INSERT INTO search_index_entries (
           sourceType, sourceId, category, title, summary, content,
           facets, metadata, version, createdAt, updatedAt
@@ -33,7 +36,8 @@ export class SqliteSearchIndexStore implements ISearchIndexWriter, ISearchIndexR
           metadata = excluded.metadata,
           version = excluded.version,
           updatedAt = excluded.updatedAt
-      `)
+      `,
+      )
       .run(
         document.source.type,
         document.source.id,
@@ -45,19 +49,25 @@ export class SqliteSearchIndexStore implements ISearchIndexWriter, ISearchIndexR
         JSON.stringify(document.metadata),
         document.version,
         document.createdAt,
-        document.updatedAt
+        document.updatedAt,
       );
   }
 
   async remove(source: SearchDocumentSource): Promise<void> {
     this.db
-      .prepare("DELETE FROM search_index_entries WHERE sourceType = ? AND sourceId = ?")
+      .prepare(
+        "DELETE FROM search_index_entries WHERE sourceType = ? AND sourceId = ?",
+      )
       .run(source.type, source.id);
   }
 
-  async findBySource(source: SearchDocumentSource): Promise<SearchDocument | null> {
+  async findBySource(
+    source: SearchDocumentSource,
+  ): Promise<SearchDocument | null> {
     const row = this.db
-      .prepare("SELECT * FROM search_index_entries WHERE sourceType = ? AND sourceId = ?")
+      .prepare(
+        "SELECT * FROM search_index_entries WHERE sourceType = ? AND sourceId = ?",
+      )
       .get(source.type, source.id) as SearchIndexRecord | undefined;
 
     return row ? this.mapper.toDocument(row) : null;
@@ -68,20 +78,27 @@ export class SqliteSearchIndexStore implements ISearchIndexWriter, ISearchIndexR
     return result.changes;
   }
 
-  async countByCategory(): Promise<Readonly<Partial<Record<SearchCategory, number>>>> {
+  async countByCategory(): Promise<
+    Readonly<Partial<Record<SearchCategory, number>>>
+  > {
     const rows = this.db
-      .prepare(`
+      .prepare(
+        `
         SELECT category, COUNT(*) AS count
         FROM search_index_entries
         GROUP BY category
         ORDER BY category ASC
-      `)
+      `,
+      )
       .all() as Array<{ category: SearchCategory; count: number }>;
 
-    return rows.reduce<Partial<Record<SearchCategory, number>>>((counts, row) => {
-      counts[row.category] = row.count;
-      return counts;
-    }, {});
+    return rows.reduce<Partial<Record<SearchCategory, number>>>(
+      (counts, row) => {
+        counts[row.category] = row.count;
+        return counts;
+      },
+      {},
+    );
   }
 
   async search(criteria: SearchCriteria): Promise<SearchHit[]> {
@@ -106,11 +123,15 @@ export class SqliteSearchIndexStore implements ISearchIndexWriter, ISearchIndexR
 
     const where = clauses.length > 0 ? `WHERE ${clauses.join(" AND ")}` : "";
     const limit = Math.min(
-      Math.max(criteria.limit ?? SearchResultLimit.DEFAULT, SearchResultLimit.MIN),
-      SearchResultLimit.MAX
+      Math.max(
+        criteria.limit ?? SearchResultLimit.DEFAULT,
+        SearchResultLimit.MIN,
+      ),
+      SearchResultLimit.MAX,
     );
     const rows = this.db
-      .prepare(`
+      .prepare(
+        `
         SELECT *,
           CASE
             WHEN ? IS NOT NULL AND LOWER(title) LIKE ? THEN 30
@@ -122,7 +143,8 @@ export class SqliteSearchIndexStore implements ISearchIndexWriter, ISearchIndexR
         ${where}
         ORDER BY score DESC, updatedAt DESC, title ASC
         LIMIT ?
-      `)
+      `,
+      )
       .all(
         query ?? null,
         query ? `%${query.toLowerCase()}%` : "",
@@ -131,7 +153,7 @@ export class SqliteSearchIndexStore implements ISearchIndexWriter, ISearchIndexR
         query ?? null,
         query ? `%${query.toLowerCase()}%` : "",
         ...params,
-        limit
+        limit,
       ) as (SearchIndexRecord & { score: number })[];
 
     return rows.map((row) => this.mapper.toHit(row, query, row.score));

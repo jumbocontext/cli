@@ -12,7 +12,9 @@ import { RelationAddedEvent } from "../../../../domain/relations/add/RelationAdd
 import { RelationView } from "../../../../application/context/relations/RelationView.js";
 import { EntityTypeValue } from "../../../../domain/relations/Constants.js";
 
-export class SqliteRelationAddedProjector implements IRelationAddedProjector, IRelationAddedReader {
+export class SqliteRelationAddedProjector
+  implements IRelationAddedProjector, IRelationAddedReader
+{
   constructor(private db: Database) {}
 
   async applyRelationAdded(event: RelationAddedEvent): Promise<void> {
@@ -33,10 +35,10 @@ export class SqliteRelationAddedProjector implements IRelationAddedProjector, IR
       event.payload.relationType,
       event.payload.strength,
       event.payload.description,
-      'active',
+      "active",
       event.version,
       event.timestamp,
-      event.timestamp
+      event.timestamp,
     );
   }
 
@@ -45,9 +47,11 @@ export class SqliteRelationAddedProjector implements IRelationAddedProjector, IR
     fromEntityId: string,
     toEntityType: EntityTypeValue,
     toEntityId: string,
-    relationType: string
+    relationType: string,
   ): Promise<RelationView | null> {
-    const row = this.db.prepare(`
+    const row = this.db
+      .prepare(
+        `
       SELECT * FROM relation_views
       WHERE fromEntityType = ?
         AND fromEntityId = ?
@@ -55,7 +59,15 @@ export class SqliteRelationAddedProjector implements IRelationAddedProjector, IR
         AND toEntityId = ?
         AND relationType = ?
         AND status != 'removed'
-    `).get(fromEntityType, fromEntityId, toEntityType, toEntityId, relationType) as Record<string, unknown> | undefined;
+    `,
+      )
+      .get(
+        fromEntityType,
+        fromEntityId,
+        toEntityType,
+        toEntityId,
+        relationType,
+      ) as Record<string, unknown> | undefined;
 
     return row ? this.mapRowToView(row) : null;
   }
@@ -68,9 +80,9 @@ export class SqliteRelationAddedProjector implements IRelationAddedProjector, IR
       toEntityType: row.toEntityType as EntityTypeValue,
       toEntityId: row.toEntityId as string,
       relationType: row.relationType as string,
-      strength: row.strength as RelationView['strength'],
+      strength: row.strength as RelationView["strength"],
       description: row.description as string,
-      status: row.status as 'active' | 'deactivated' | 'removed',
+      status: row.status as "active" | "deactivated" | "removed",
       version: row.version as number,
       createdAt: row.createdAt as string,
       updatedAt: row.updatedAt as string,

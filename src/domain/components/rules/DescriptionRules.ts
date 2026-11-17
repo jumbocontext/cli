@@ -1,11 +1,11 @@
 import {
   ValidationRule,
-  ValidationResult
+  ValidationResult,
 } from "../../validation/ValidationRule.js";
 import {
   ComponentErrorMessages,
   ComponentLimits,
-  formatErrorMessage
+  formatErrorMessage,
 } from "../Constants.js";
 
 export class DescriptionRequiredRule implements ValidationRule<string> {
@@ -19,7 +19,9 @@ export class DescriptionRequiredRule implements ValidationRule<string> {
 }
 
 export class DescriptionMaxLengthRule implements ValidationRule<string> {
-  constructor(private maxLength: number = ComponentLimits.DESCRIPTION_MAX_LENGTH) {}
+  constructor(
+    private maxLength: number = ComponentLimits.DESCRIPTION_MAX_LENGTH,
+  ) {}
 
   validate(description: string): ValidationResult {
     const isValid = description.length <= this.maxLength;
@@ -27,7 +29,11 @@ export class DescriptionMaxLengthRule implements ValidationRule<string> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(ComponentErrorMessages.DESCRIPTION_TOO_LONG, { max: this.maxLength })],
+        : [
+            formatErrorMessage(ComponentErrorMessages.DESCRIPTION_TOO_LONG, {
+              max: this.maxLength,
+            }),
+          ],
     };
   }
 }

@@ -15,15 +15,20 @@ export class SqliteGoalProgressUpdatedProjector
 {
   constructor(private db: Database) {}
 
-  async applyGoalProgressUpdated(event: GoalProgressUpdatedEvent): Promise<void> {
+  async applyGoalProgressUpdated(
+    event: GoalProgressUpdatedEvent,
+  ): Promise<void> {
     // First, read the current progress array
     const selectStmt = this.db.prepare(`
       SELECT progress FROM goal_views WHERE goalId = ?
     `);
-    const row = selectStmt.get(event.aggregateId) as { progress: string | null } | undefined;
+    const row = selectStmt.get(event.aggregateId) as
+      { progress: string | null } | undefined;
 
     // Parse existing progress or start with empty array
-    const currentProgress: string[] = row?.progress ? JSON.parse(row.progress) : [];
+    const currentProgress: string[] = row?.progress
+      ? JSON.parse(row.progress)
+      : [];
 
     // Append the new task description
     currentProgress.push(event.payload.taskDescription);
@@ -41,14 +46,19 @@ export class SqliteGoalProgressUpdatedProjector
       JSON.stringify(currentProgress),
       event.version,
       event.timestamp,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 
-  async findById(goalId: string): Promise<{ goalId: string; status: string; progress: string[] } | null> {
+  async findById(
+    goalId: string,
+  ): Promise<{ goalId: string; status: string; progress: string[] } | null> {
     const row = this.db
-      .prepare("SELECT goalId, status, progress FROM goal_views WHERE goalId = ?")
-      .get(goalId) as { goalId: string; status: string; progress: string | null } | undefined;
+      .prepare(
+        "SELECT goalId, status, progress FROM goal_views WHERE goalId = ?",
+      )
+      .get(goalId) as
+      { goalId: string; status: string; progress: string | null } | undefined;
 
     if (!row) {
       return null;

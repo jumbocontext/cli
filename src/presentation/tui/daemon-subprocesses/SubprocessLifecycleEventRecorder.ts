@@ -68,14 +68,18 @@ export class SubprocessLifecycleEventRecorder {
     process: ManagedSubprocess,
     errorMessage = process.stderr[process.stderr.length - 1],
   ): void {
-    const status = process.status === SubprocessStatus.STOPPED
-      ? DaemonEventStatus.STOPPED
-      : DaemonEventStatus.FAILED;
+    const status =
+      process.status === SubprocessStatus.STOPPED
+        ? DaemonEventStatus.STOPPED
+        : DaemonEventStatus.FAILED;
     this.recordLifecycleEvent(process, {
       status,
       exitCode: process.exitCode ?? undefined,
-      errorMessage: status === DaemonEventStatus.FAILED ? errorMessage : undefined,
-      ...(status === DaemonEventStatus.STOPPED ? SUBPROCESS_EVENT_COPY.stopped : SUBPROCESS_EVENT_COPY.failed),
+      errorMessage:
+        status === DaemonEventStatus.FAILED ? errorMessage : undefined,
+      ...(status === DaemonEventStatus.STOPPED
+        ? SUBPROCESS_EVENT_COPY.stopped
+        : SUBPROCESS_EVENT_COPY.failed),
     });
   }
 
@@ -84,7 +88,10 @@ export class SubprocessLifecycleEventRecorder {
     event: DaemonEventSnapshot,
   ): void {
     const boundedEvent = this.outputEventParser.boundEvent(event);
-    this.logger.info(SubprocessCopy.eventLog, { daemon: process.name, event: boundedEvent });
+    this.logger.info(SubprocessCopy.eventLog, {
+      daemon: process.name,
+      event: boundedEvent,
+    });
     const coalescedIndex = this.findCoalescedEventIndex(process, boundedEvent);
     if (coalescedIndex !== -1) {
       process.events.splice(coalescedIndex, 1);
@@ -101,7 +108,9 @@ export class SubprocessLifecycleEventRecorder {
       return error;
     }
 
-    const bounded = new Error(this.outputEventParser.boundTextField(error.message));
+    const bounded = new Error(
+      this.outputEventParser.boundTextField(error.message),
+    );
     bounded.name = error.name;
     bounded.stack = this.outputEventParser.boundOptionalTextField(error.stack);
     return bounded;
@@ -112,7 +121,10 @@ export class SubprocessLifecycleEventRecorder {
     event: Omit<DaemonEventSnapshot, "daemon" | "source" | "timestampMs">,
   ): void {
     const lastEvent = process.events[process.events.length - 1];
-    if (lastEvent?.source === process.name && lastEvent.status === event.status) {
+    if (
+      lastEvent?.source === process.name &&
+      lastEvent.status === event.status
+    ) {
       return;
     }
 
@@ -128,13 +140,19 @@ export class SubprocessLifecycleEventRecorder {
     process: ManagedSubprocess,
     event: DaemonEventSnapshot,
   ): number {
-    if (event.category === undefined || !COALESCED_EVENT_CATEGORIES.has(event.category)) {
+    if (
+      event.category === undefined ||
+      !COALESCED_EVENT_CATEGORIES.has(event.category)
+    ) {
       return -1;
     }
 
     for (let index = process.events.length - 1; index >= 0; index--) {
       const candidate = process.events[index];
-      if (candidate.category === undefined || !COALESCED_EVENT_CATEGORIES.has(candidate.category)) {
+      if (
+        candidate.category === undefined ||
+        !COALESCED_EVENT_CATEGORIES.has(candidate.category)
+      ) {
         return -1;
       }
       if (
@@ -151,7 +169,9 @@ export class SubprocessLifecycleEventRecorder {
     return -1;
   }
 
-  private findOldestRemovableEventIndex(events: readonly DaemonEventSnapshot[]): number {
+  private findOldestRemovableEventIndex(
+    events: readonly DaemonEventSnapshot[],
+  ): number {
     let retainedOutcomeIndex = -1;
     for (let index = events.length - 1; index >= 0; index--) {
       const category = events[index].category;
@@ -160,7 +180,9 @@ export class SubprocessLifecycleEventRecorder {
         break;
       }
     }
-    const removableIndex = events.findIndex((_event, index) => index !== retainedOutcomeIndex);
+    const removableIndex = events.findIndex(
+      (_event, index) => index !== retainedOutcomeIndex,
+    );
     return removableIndex === -1 ? 0 : removableIndex;
   }
 }

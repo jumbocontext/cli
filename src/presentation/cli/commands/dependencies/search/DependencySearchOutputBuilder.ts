@@ -9,7 +9,12 @@
 import { DependencyView } from "../../../../../application/context/dependencies/DependencyView.js";
 import { TerminalOutput } from "../../../output/TerminalOutput.js";
 import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
-import { contentLine, heading, metaField, wrapContent } from "../../../rendering/OutputLayout.js";
+import {
+  contentLine,
+  heading,
+  metaField,
+  wrapContent,
+} from "../../../rendering/OutputLayout.js";
 import { BrandColors, Colors } from "../../../rendering/StyleConfig.js";
 
 export type DependencySearchOutputFormat = "default" | "compact";
@@ -17,11 +22,16 @@ export type DependencySearchOutputFormat = "default" | "compact";
 export class DependencySearchOutputBuilder {
   private builder = new TerminalOutputBuilder();
 
-  build(dependencies: DependencyView[], format: DependencySearchOutputFormat): TerminalOutput {
+  build(
+    dependencies: DependencyView[],
+    format: DependencySearchOutputFormat,
+  ): TerminalOutput {
     this.builder.reset();
 
     if (dependencies.length === 0) {
-      this.builder.addPrompt(Colors.muted("No dependencies matched the search criteria."));
+      this.builder.addPrompt(
+        Colors.muted("No dependencies matched the search criteria."),
+      );
       return this.builder.build();
     }
 
@@ -31,14 +41,22 @@ export class DependencySearchOutputBuilder {
 
     if (format === "compact") {
       for (const d of dependencies) {
-        lines.push(contentLine(`${Colors.muted(d.dependencyId)}  ${BrandColors.accentCyan(d.name)}  ${Colors.muted(`${d.ecosystem}:${d.packageName}`)}`));
+        lines.push(
+          contentLine(
+            `${Colors.muted(d.dependencyId)}  ${BrandColors.accentCyan(d.name)}  ${Colors.muted(`${d.ecosystem}:${d.packageName}`)}`,
+          ),
+        );
       }
     } else {
       for (let i = 0; i < dependencies.length; i++) {
         const d = dependencies[i];
         if (i > 0) lines.push("");
         const version = d.versionConstraint ? `@${d.versionConstraint}` : "";
-        lines.push(contentLine(`${BrandColors.accentCyan(`${d.ecosystem}:${d.packageName}${version}`)} ${Colors.dim(`[${d.status}]`)}`));
+        lines.push(
+          contentLine(
+            `${BrandColors.accentCyan(`${d.ecosystem}:${d.packageName}${version}`)} ${Colors.dim(`[${d.status}]`)}`,
+          ),
+        );
         lines.push(metaField("Name", Colors.primary(d.name), 10));
         if (d.contract) {
           lines.push(...wrapContent(d.contract));
@@ -54,7 +72,10 @@ export class DependencySearchOutputBuilder {
     return this.builder.build();
   }
 
-  buildStructuredOutput(dependencies: DependencyView[], format: DependencySearchOutputFormat): TerminalOutput {
+  buildStructuredOutput(
+    dependencies: DependencyView[],
+    format: DependencySearchOutputFormat,
+  ): TerminalOutput {
     this.builder.reset();
 
     if (format === "compact") {

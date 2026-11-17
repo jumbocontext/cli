@@ -20,7 +20,7 @@ export class CopilotInstructionsContent {
   static getCopilotSection(): string {
     return AgentFileAssetContent.extractSection(
       this.getCopilotInstructions(),
-      this.getCopilotSectionMarker()
+      this.getCopilotSectionMarker(),
     );
   }
 
@@ -46,7 +46,10 @@ export class CopilotInstructionsContent {
    * @returns Updated content, or null if no marker found
    */
   static replaceCopilotSection(existingContent: string): string | null {
-    const allMarkers = [this.getCopilotSectionMarker(), this.getLegacyCopilotSectionMarker()];
+    const allMarkers = [
+      this.getCopilotSectionMarker(),
+      this.getLegacyCopilotSectionMarker(),
+    ];
 
     let matchedMarker: string | null = null;
     let markerIndex = -1;
@@ -63,7 +66,9 @@ export class CopilotInstructionsContent {
     if (matchedMarker === null || markerIndex === -1) return null;
 
     // Find the next ## heading after the marker (or EOF)
-    const afterMarker = existingContent.substring(markerIndex + matchedMarker.length);
+    const afterMarker = existingContent.substring(
+      markerIndex + matchedMarker.length,
+    );
     const nextHeadingMatch = afterMarker.match(/\n## /);
     const endIndex = nextHeadingMatch
       ? markerIndex + matchedMarker.length + nextHeadingMatch.index!

@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { AudiencePainErrorMessages, AudiencePainLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  AudiencePainErrorMessages,
+  AudiencePainLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class TitleRequiredRule implements ValidationRule<string> {
   validate(title: string): ValidationResult {
@@ -12,7 +19,9 @@ export class TitleRequiredRule implements ValidationRule<string> {
 }
 
 export class TitleMaxLengthRule implements ValidationRule<string> {
-  constructor(private maxLength: number = AudiencePainLimits.TITLE_MAX_LENGTH) {}
+  constructor(
+    private maxLength: number = AudiencePainLimits.TITLE_MAX_LENGTH,
+  ) {}
 
   validate(title: string): ValidationResult {
     const isValid = title.length <= this.maxLength;
@@ -20,12 +29,13 @@ export class TitleMaxLengthRule implements ValidationRule<string> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(AudiencePainErrorMessages.TITLE_TOO_LONG, { max: this.maxLength })],
+        : [
+            formatErrorMessage(AudiencePainErrorMessages.TITLE_TOO_LONG, {
+              max: this.maxLength,
+            }),
+          ],
     };
   }
 }
 
-export const TITLE_RULES = [
-  new TitleRequiredRule(),
-  new TitleMaxLengthRule(),
-];
+export const TITLE_RULES = [new TitleRequiredRule(), new TitleMaxLengthRule()];

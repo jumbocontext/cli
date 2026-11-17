@@ -9,7 +9,12 @@
 import { DecisionView } from "../../../../../application/context/decisions/DecisionView.js";
 import { TerminalOutput } from "../../../output/TerminalOutput.js";
 import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
-import { contentLine, heading, metaField, wrapContent } from "../../../rendering/OutputLayout.js";
+import {
+  contentLine,
+  heading,
+  metaField,
+  wrapContent,
+} from "../../../rendering/OutputLayout.js";
 import { BrandColors, Colors } from "../../../rendering/StyleConfig.js";
 
 export type DecisionSearchOutputFormat = "default" | "compact";
@@ -17,11 +22,16 @@ export type DecisionSearchOutputFormat = "default" | "compact";
 export class DecisionSearchOutputBuilder {
   private builder = new TerminalOutputBuilder();
 
-  build(decisions: DecisionView[], format: DecisionSearchOutputFormat): TerminalOutput {
+  build(
+    decisions: DecisionView[],
+    format: DecisionSearchOutputFormat,
+  ): TerminalOutput {
     this.builder.reset();
 
     if (decisions.length === 0) {
-      this.builder.addPrompt(Colors.muted("No decisions matched the search criteria."));
+      this.builder.addPrompt(
+        Colors.muted("No decisions matched the search criteria."),
+      );
       return this.builder.build();
     }
 
@@ -31,24 +41,44 @@ export class DecisionSearchOutputBuilder {
 
     if (format === "compact") {
       for (const d of decisions) {
-        lines.push(contentLine(`${Colors.muted(d.decisionId)}  ${BrandColors.accentCyan(d.title)}  ${Colors.dim(`[${d.status}]`)}`));
+        lines.push(
+          contentLine(
+            `${Colors.muted(d.decisionId)}  ${BrandColors.accentCyan(d.title)}  ${Colors.dim(`[${d.status}]`)}`,
+          ),
+        );
       }
     } else {
       for (let i = 0; i < decisions.length; i++) {
         const d = decisions[i];
         if (i > 0) lines.push("");
-        lines.push(contentLine(`${BrandColors.accentCyan(d.title)} ${Colors.dim(`[${d.status}]`)}`));
+        lines.push(
+          contentLine(
+            `${BrandColors.accentCyan(d.title)} ${Colors.dim(`[${d.status}]`)}`,
+          ),
+        );
         if (d.context) {
           lines.push(...wrapContent(this.truncate(d.context)));
         }
         if (d.rationale) {
-          lines.push(metaField("Rationale", Colors.primary(this.truncate(d.rationale)), 11));
+          lines.push(
+            metaField(
+              "Rationale",
+              Colors.primary(this.truncate(d.rationale)),
+              11,
+            ),
+          );
         }
         if (d.supersededBy) {
           lines.push(metaField("Superseded", Colors.muted(d.supersededBy), 11));
         }
         if (d.reversalReason) {
-          lines.push(metaField("Reversal", Colors.warning(this.truncate(d.reversalReason)), 11));
+          lines.push(
+            metaField(
+              "Reversal",
+              Colors.warning(this.truncate(d.reversalReason)),
+              11,
+            ),
+          );
         }
         lines.push(metaField("ID", Colors.muted(d.decisionId), 11));
       }
@@ -58,7 +88,10 @@ export class DecisionSearchOutputBuilder {
     return this.builder.build();
   }
 
-  buildStructuredOutput(decisions: DecisionView[], format: DecisionSearchOutputFormat): TerminalOutput {
+  buildStructuredOutput(
+    decisions: DecisionView[],
+    format: DecisionSearchOutputFormat,
+  ): TerminalOutput {
     this.builder.reset();
 
     if (format === "compact") {

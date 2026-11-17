@@ -5,8 +5,69 @@
  * Produces: description, USAGE, FLAGS, INHERITED FLAGS, EXAMPLES, LEARN MORE.
  */
 
-import { RegisteredCommand, CommandOption, CommandExample } from "../commands/registry/CommandMetadata.js";
-import { normalizePath } from "../commands/registry/PathNormalizer.js";
+import type { Command } from "commander";
+import {
+  CommandOption,
+  CommandExample,
+  CommandMetadata,
+} from "../commands/registry/CommandMetadata.js";
+
+/**
+ * Leaf-owned facts that cannot be read back from a Commander command:
+ * grouping, examples, and related commands.
+ */
+export interface SupplementalCommandMetadata {
+  category?: CommandMetadata["category"];
+  examples?: CommandExample[];
+  related?: string[];
+  hidden?: boolean;
+  topLevelAliases?: string[];
+}
+
+/**
+ * Derives a CommandMetadata from a Commander command's canonical option
+ * definitions, so option flags and descriptions are declared exactly once —
+ * in the registration chain — and help output cannot drift from them.
+ */
+export function metadataFromCommand(
+  command: Command,
+  supplemental: SupplementalCommandMetadata,
+): CommandMetadata {
+  const declaredOptions = command.options.map((opt) => {
+    const option: CommandOption = {
+      flags: opt.flags,
+      description: opt.description,
+    };
+    if (opt.defaultValue !== undefined) {
+      option.default = opt.defaultValue;
+    }
+    if (opt.hidden) {
+      option.hidden = true;
+    }
+    // Commander's `mandatory` marks options declared with requiredOption();
+    // its `required` only means the option's value is non-optional.
+    return { option, required: opt.mandatory };
+  });
+
+  const requiredOptions = declaredOptions
+    .filter((declared) => declared.required)
+    .map((declared) => declared.option);
+  const optionalOptions = declaredOptions
+    .filter((declared) => !declared.required)
+    .map((declared) => declared.option);
+
+  return {
+    description: command.description(),
+    ...supplemental,
+    requiredOptions,
+    options: optionalOptions,
+  };
+}
+
+/** Split a command path like "goals list" into its parts. */
+function normalizePath(path: string): string[] {
+  return path.split(/\s+/).filter((part) => part.length > 0);
+}
 
 /** Indent for flag lines (2 spaces, matching gh style). */
 const FLAG_INDENT = "  ";
@@ -20,7 +81,7 @@ const MIN_GAP = 2;
  */
 function computePadWidth(allOptions: CommandOption[]): number {
   const longest = allOptions
-    .filter(opt => !opt.hidden)
+    .filter((opt) => !opt.hidden)
     .reduce((max, opt) => Math.max(max, opt.flags.length), 0);
   return longest + MIN_GAP;
 }
@@ -28,7 +89,11 @@ function computePadWidth(allOptions: CommandOption[]): number {
 /**
  * Format a single flag line with alignment.
  */
-function formatFlagLine(flags: string, description: string, padWidth: number): string {
+function formatFlagLine(
+  flags: string,
+  description: string,
+  padWidth: number,
+): string {
   const padded = flags.padEnd(padWidth);
   return `${FLAG_INDENT}${padded}${description}`;
 }
@@ -36,10 +101,14 @@ function formatFlagLine(flags: string, description: string, padWidth: number): s
 /**
  * Format flags from CommandOption[] into aligned lines.
  */
-function formatFlags(options: CommandOption[], required: boolean, padWidth: number): string[] {
+function formatFlags(
+  options: CommandOption[],
+  required: boolean,
+  padWidth: number,
+): string[] {
   return options
-    .filter(opt => !opt.hidden)
-    .map(opt => {
+    .filter((opt) => !opt.hidden)
+    .map((opt) => {
       let desc = opt.description;
       if (required) {
         desc += " (required)";
@@ -71,11 +140,12 @@ function formatExamples(examples: CommandExample[]): string[] {
  * @param aliasName - If rendering help for an alias, the alias name (replaces path in USAGE)
  */
 export function formatSubcommandHelp(
-  registeredCommand: RegisteredCommand,
-  aliasName?: string
+  registeredCommand: { path: string; metadata: CommandMetadata },
+  aliasName?: string,
 ): string {
   const metadata = registeredCommand.metadata;
-  const commandName = aliasName ?? normalizePath(registeredCommand.path).join(" ");
+  const commandName =
+    aliasName ?? normalizePath(registeredCommand.path).join(" ");
 
   // Compute consistent pad width across all flags (including --help)
   const allOptions: CommandOption[] = [
@@ -94,7 +164,11 @@ export function formatSubcommandHelp(
   sections.push(`USAGE\n  jumbo ${commandName} [flags]`);
 
   // FLAGS (required + optional combined)
-  const requiredFlags = formatFlags(metadata.requiredOptions ?? [], true, padWidth);
+  const requiredFlags = formatFlags(
+    metadata.requiredOptions ?? [],
+    true,
+    padWidth,
+  );
   const optionalFlags = formatFlags(metadata.options ?? [], false, padWidth);
   const allFlags = [...requiredFlags, ...optionalFlags];
 
@@ -103,7 +177,10 @@ export function formatSubcommandHelp(
   }
 
   // INHERITED FLAGS
-  sections.push("INHERITED FLAGS\n" + formatFlagLine("--help", "Show help for command", padWidth));
+  sections.push(
+    "INHERITED FLAGS\n" +
+      formatFlagLine("--help", "Show help for command", padWidth),
+  );
 
   // EXAMPLES
   if (metadata.examples && metadata.examples.length > 0) {
@@ -116,7 +193,7 @@ export function formatSubcommandHelp(
   ];
   if (metadata.related && metadata.related.length > 0) {
     learnMoreLines.push(
-      "  Related: " + metadata.related.map(cmd => `jumbo ${cmd}`).join(", ")
+      "  Related: " + metadata.related.map((cmd) => `jumbo ${cmd}`).join(", "),
     );
   }
   sections.push("LEARN MORE\n" + learnMoreLines.join("\n"));

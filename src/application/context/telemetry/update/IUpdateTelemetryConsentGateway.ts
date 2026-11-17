@@ -3,6 +3,6 @@ import { UpdateTelemetryConsentResponse } from "./UpdateTelemetryConsentResponse
 
 export interface IUpdateTelemetryConsentGateway {
   updateTelemetryConsent(
-    request: UpdateTelemetryConsentRequest
+    request: UpdateTelemetryConsentRequest,
   ): Promise<UpdateTelemetryConsentResponse>;
 }

@@ -9,7 +9,9 @@ import { InvariantUpdatedEvent } from "../../../../domain/invariants/update/Inva
 import { InvariantView } from "../../../../application/context/invariants/InvariantView.js";
 import { UUID } from "../../../../domain/BaseEvent.js";
 
-export class SqliteInvariantUpdatedProjector implements IInvariantUpdatedProjector, IInvariantUpdateReader {
+export class SqliteInvariantUpdatedProjector
+  implements IInvariantUpdatedProjector, IInvariantUpdateReader
+{
   constructor(private db: Database) {}
 
   async applyInvariantUpdated(event: InvariantUpdatedEvent): Promise<void> {
@@ -25,11 +27,13 @@ export class SqliteInvariantUpdatedProjector implements IInvariantUpdatedProject
 
     stmt.run(
       event.payload.title !== undefined ? event.payload.title : null,
-      event.payload.description !== undefined ? event.payload.description : null,
+      event.payload.description !== undefined
+        ? event.payload.description
+        : null,
       event.payload.rationale !== undefined ? event.payload.rationale : null,
       event.version,
       event.timestamp,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 

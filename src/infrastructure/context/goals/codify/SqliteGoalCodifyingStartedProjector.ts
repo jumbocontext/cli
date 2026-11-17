@@ -21,7 +21,9 @@ export class SqliteGoalCodifyingStartedProjector
 
   constructor(private db: Database) {}
 
-  async applyGoalCodifyingStarted(event: GoalCodifyingStartedEvent): Promise<void> {
+  async applyGoalCodifyingStarted(
+    event: GoalCodifyingStartedEvent,
+  ): Promise<void> {
     const stmt = this.db.prepare(`
       UPDATE goal_views
       SET status = ?,
@@ -40,7 +42,7 @@ export class SqliteGoalCodifyingStartedProjector
       event.payload.claimExpiresAt || null,
       event.version,
       event.timestamp,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 

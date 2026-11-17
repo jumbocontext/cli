@@ -7,10 +7,12 @@ import { IRelationRemovedReader } from "./IRelationRemovedReader.js";
 export class LocalRemoveRelationGateway implements IRemoveRelationGateway {
   constructor(
     private readonly commandHandler: RemoveRelationCommandHandler,
-    private readonly reader: IRelationRemovedReader
+    private readonly reader: IRelationRemovedReader,
   ) {}
 
-  async removeRelation(request: RemoveRelationRequest): Promise<RemoveRelationResponse> {
+  async removeRelation(
+    request: RemoveRelationRequest,
+  ): Promise<RemoveRelationResponse> {
     // Fetch relation details before removal for display
     const relation = await this.reader.findById(request.relationId);
 
@@ -21,11 +23,13 @@ export class LocalRemoveRelationGateway implements IRemoveRelationGateway {
 
     const response: RemoveRelationResponse = {
       relationId: request.relationId,
-      ...(relation ? {
-        from: `${relation.fromEntityType}:${relation.fromEntityId}`,
-        relationType: relation.relationType,
-        to: `${relation.toEntityType}:${relation.toEntityId}`,
-      } : {}),
+      ...(relation
+        ? {
+            from: `${relation.fromEntityType}:${relation.fromEntityId}`,
+            relationType: relation.relationType,
+            to: `${relation.toEntityType}:${relation.toEntityId}`,
+          }
+        : {}),
     };
 
     return response;

@@ -1,4 +1,7 @@
-import type { WorkerDaemonConfig, WorkerDaemonName } from "./WorkerDaemonCatalog.js";
+import type {
+  WorkerDaemonConfig,
+  WorkerDaemonName,
+} from "./WorkerDaemonCatalog.js";
 
 export const DEFAULT_WORKER_DAEMON_TERMINATION_TIMEOUT_MS = 5_000;
 
@@ -34,7 +37,10 @@ export type WorkerDaemonTerminationResult =
     }
   | {
       readonly status: "no-pid";
-      readonly strategy: Extract<WorkerDaemonTerminationStrategy, { readonly kind: "no-pid" }>;
+      readonly strategy: Extract<
+        WorkerDaemonTerminationStrategy,
+        { readonly kind: "no-pid" }
+      >;
     };
 
 export type WorkerDaemonTerminationEscalation =
@@ -57,7 +63,10 @@ export interface WorkerDaemonProcess {
   readonly pid?: number;
   readonly stdout?: WorkerDaemonOutputStream;
   readonly stderr?: WorkerDaemonOutputStream;
-  on(event: "close", listener: (code: number | null, signal: string | null) => void): this;
+  on(
+    event: "close",
+    listener: (code: number | null, signal: string | null) => void,
+  ): this;
   on(event: "error", listener: (error: Error) => void): this;
 }
 
@@ -70,5 +79,7 @@ export interface IWorkerDaemonProcessController {
     process: WorkerDaemonProcess,
     timeoutMs?: number,
   ): Promise<WorkerDaemonTerminationResult>;
-  getTerminationStrategy(process: WorkerDaemonProcess): WorkerDaemonTerminationStrategy;
+  getTerminationStrategy(
+    process: WorkerDaemonProcess,
+  ): WorkerDaemonTerminationStrategy;
 }

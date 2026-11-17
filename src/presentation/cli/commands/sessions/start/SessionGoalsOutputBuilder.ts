@@ -9,36 +9,36 @@ import { YamlFormatter } from "../../../formatting/YamlFormatter.js";
  * Matches GoalListOutputBuilder's STATUS_ORDER.
  */
 const STATUS_ORDER: Readonly<Record<string, number>> = {
-  "approved": 0,
+  approved: 0,
   "in-review": 1,
-  "submitted": 2,
-  "paused": 3,
-  "doing": 4,
-  "blocked": 5,
-  "unblocked": 6,
-  "rejected": 7,
+  submitted: 2,
+  paused: 3,
+  doing: 4,
+  blocked: 5,
+  unblocked: 6,
+  rejected: 7,
   "in-refinement": 8,
-  "codifying": 9,
-  "refined": 10,
-  "defined": 11,
+  codifying: 9,
+  refined: 10,
+  defined: 11,
 };
 
 /**
  * Next-step hints per goal status.
  */
 const STATUS_HINTS: Readonly<Record<string, string>> = {
-  "defined": "jumbo goal refine --id <id>",
-  "refined": "jumbo goal start --id <id>",
-  "doing": "jumbo goal submit --id <id>",
-  "paused": "jumbo goal resume --id <id>",
-  "blocked": "jumbo goal unblock --id <id>",
-  "unblocked": "jumbo goal start --id <id>",
+  defined: "jumbo goal refine --id <id>",
+  refined: "jumbo goal start --id <id>",
+  doing: "jumbo goal submit --id <id>",
+  paused: "jumbo goal resume --id <id>",
+  blocked: "jumbo goal unblock --id <id>",
+  unblocked: "jumbo goal start --id <id>",
   "in-review": "Awaiting QA review",
-  "approved": "jumbo goal codify --id <id>",
-  "rejected": "jumbo goal start --id <id>",
-  "submitted": "jumbo goal review --id <id>",
+  approved: "jumbo goal codify --id <id>",
+  rejected: "jumbo goal start --id <id>",
+  submitted: "jumbo goal review --id <id>",
   "in-refinement": "Awaiting refinement completion",
-  "codifying": "Awaiting codification completion",
+  codifying: "Awaiting codification completion",
 };
 
 interface GoalGroupEntry {
@@ -104,7 +104,7 @@ export class SessionGoalsOutputBuilder {
       "@LLM: Prompt the user for input about what goal to work on. ",
       "For example, \"I can see we've recently worked on X, Y, Z. ",
       "Everything was completed without blockers. Goals A, B, and N ",
-      "are available. Do you want to start with A, or something else?\"",
+      'are available. Do you want to start with A, or something else?"',
       "Each goal group includes a hint with the suggested next-step command.",
       "IMPORTANT: Run the suggested command for the chosen goal before doing any work!",
     ];
@@ -121,7 +121,7 @@ export class SessionGoalsOutputBuilder {
     }
 
     const orderedStatuses = [...groupMap.keys()].sort(
-      (a, b) => (STATUS_ORDER[a] ?? 99) - (STATUS_ORDER[b] ?? 99)
+      (a, b) => (STATUS_ORDER[a] ?? 99) - (STATUS_ORDER[b] ?? 99),
     );
 
     const grouped: GroupedGoals = {};

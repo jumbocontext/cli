@@ -12,13 +12,15 @@ import {
   DependencyAddedEvent,
   DependencyAddedEventPayload,
   ExternalDependencyPayload,
-  LegacyComponentDependencyPayload
+  LegacyComponentDependencyPayload,
 } from "../../../../domain/dependencies/add/DependencyAddedEvent.js";
 import { DependencyView } from "../../../../application/context/dependencies/DependencyView.js";
 import { DependencyRecordMapper } from "../DependencyRecordMapper.js";
 import { DependencyRecord } from "../DependencyRecord.js";
 
-export class SqliteDependencyAddedProjector implements IDependencyAddedProjector, IDependencyAddReader {
+export class SqliteDependencyAddedProjector
+  implements IDependencyAddedProjector, IDependencyAddReader
+{
   private readonly mapper = new DependencyRecordMapper();
 
   constructor(private db: Database) {}
@@ -44,15 +46,17 @@ export class SqliteDependencyAddedProjector implements IDependencyAddedProjector
       externalPayload.versionConstraint,
       externalPayload.endpoint,
       externalPayload.contract,
-      'active',
+      "active",
       event.version,
       event.timestamp,
-      event.timestamp
+      event.timestamp,
     );
   }
 
   async findById(id: string): Promise<DependencyView | null> {
-    const row = this.db.prepare('SELECT * FROM dependency_views WHERE dependencyId = ?').get(id);
+    const row = this.db
+      .prepare("SELECT * FROM dependency_views WHERE dependencyId = ?")
+      .get(id);
     return row ? this.mapRowToView(row as Record<string, unknown>) : null;
   }
 
@@ -60,27 +64,39 @@ export class SqliteDependencyAddedProjector implements IDependencyAddedProjector
     ecosystem: string,
     packageName: string,
   ): Promise<DependencyView | null> {
-    const row = this.db.prepare(`
+    const row = this.db
+      .prepare(
+        `
       SELECT * FROM dependency_views
       WHERE ecosystem = ? AND packageName = ? AND status != 'removed'
       ORDER BY createdAt DESC
       LIMIT 1
-    `).get(ecosystem, packageName);
+    `,
+      )
+      .get(ecosystem, packageName);
     return row ? this.mapRowToView(row as Record<string, unknown>) : null;
   }
 
   async findByConsumerId(consumerId: string): Promise<DependencyView[]> {
     const rows = this.db
-      .prepare('SELECT * FROM dependency_views WHERE consumerId = ? ORDER BY createdAt DESC')
+      .prepare(
+        "SELECT * FROM dependency_views WHERE consumerId = ? ORDER BY createdAt DESC",
+      )
       .all(consumerId);
-    return rows.map(row => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   async findByProviderId(providerId: string): Promise<DependencyView[]> {
     const rows = this.db
-      .prepare('SELECT * FROM dependency_views WHERE providerId = ? ORDER BY createdAt DESC')
+      .prepare(
+        "SELECT * FROM dependency_views WHERE providerId = ? ORDER BY createdAt DESC",
+      )
       .all(providerId);
-    return rows.map(row => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   private mapRowToView(row: Record<string, unknown>): DependencyView {
@@ -107,8 +123,14 @@ export class SqliteDependencyAddedProjector implements IDependencyAddedProjector
     };
   }
 
-  private upcastPayload(payload: DependencyAddedEventPayload): ExternalDependencyPayload {
-    if ("name" in payload && "ecosystem" in payload && "packageName" in payload) {
+  private upcastPayload(
+    payload: DependencyAddedEventPayload,
+  ): ExternalDependencyPayload {
+    if (
+      "name" in payload &&
+      "ecosystem" in payload &&
+      "packageName" in payload
+    ) {
       return payload;
     }
 
@@ -123,7 +145,9 @@ export class SqliteDependencyAddedProjector implements IDependencyAddedProjector
     };
   }
 
-  private asLegacyPayload(payload: DependencyAddedEventPayload): LegacyComponentDependencyPayload | null {
+  private asLegacyPayload(
+    payload: DependencyAddedEventPayload,
+  ): LegacyComponentDependencyPayload | null {
     if ("consumerId" in payload && "providerId" in payload) {
       return payload;
     }

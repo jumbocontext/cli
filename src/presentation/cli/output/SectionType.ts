@@ -1,1 +1,1 @@
-export type SectionType = 'prompt' | 'data' | 'annotation' | 'group';
+export type SectionType = "prompt" | "data" | "annotation" | "group";

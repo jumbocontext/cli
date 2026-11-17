@@ -9,7 +9,9 @@ import { ArchitectureDeprecatedEvent } from "../../../../domain/architecture/dep
 export class SqliteArchitectureDeprecatedProjector implements IArchitectureDeprecatedProjector {
   constructor(private db: Database) {}
 
-  async applyArchitectureDeprecated(event: ArchitectureDeprecatedEvent): Promise<void> {
+  async applyArchitectureDeprecated(
+    event: ArchitectureDeprecatedEvent,
+  ): Promise<void> {
     const stmt = this.db.prepare(`
       UPDATE architecture_views
       SET deprecated = 1, version = ?, updatedAt = ?

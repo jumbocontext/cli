@@ -10,11 +10,11 @@ import { GoalEventType, GoalStatusType } from "../Constants.js";
 export interface GoalResumedEvent extends BaseEvent {
   readonly type: typeof GoalEventType.RESUMED;
   readonly payload: {
-    readonly status: GoalStatusType;     // Will be 'doing'
-    readonly note?: string;              // Optional note about resumption
+    readonly status: GoalStatusType; // Will be 'doing'
+    readonly note?: string; // Optional note about resumption
     // Claim fields - populated when worker claims the goal
-    readonly claimedBy?: string;         // WorkerId of the claiming worker
-    readonly claimedAt?: string;         // ISO 8601 timestamp when claim was created
-    readonly claimExpiresAt?: string;    // ISO 8601 timestamp when claim expires
+    readonly claimedBy?: string; // WorkerId of the claiming worker
+    readonly claimedAt?: string; // ISO 8601 timestamp when claim was created
+    readonly claimExpiresAt?: string; // ISO 8601 timestamp when claim expires
   };
 }

@@ -95,7 +95,7 @@ export class MigrationRunner {
    */
   private getMigrationsFromDirectory(
     migrationsDir: string,
-    namespace: string
+    namespace: string,
   ): MigrationRecord[] {
     if (!fs.existsSync(migrationsDir)) {
       return [];
@@ -109,7 +109,7 @@ export class MigrationRunner {
         const match = f.match(/^(\d+)-(.+)\.sql$/);
         if (!match) {
           throw new Error(
-            `Invalid migration filename: ${f} in ${namespace}. Expected format: NNN-description.sql`
+            `Invalid migration filename: ${f} in ${namespace}. Expected format: NNN-description.sql`,
           );
         }
         return {
@@ -137,7 +137,7 @@ export class MigrationRunner {
    *                        migration folder.
    */
   runNamespaceMigrations(
-    namespaceDirs: Array<{ namespace: string; path: string }>
+    namespaceDirs: Array<{ namespace: string; path: string }>,
   ): void {
     // Collect all migrations from all namespaces
     const allMigrations: MigrationRecord[] = [];
@@ -156,7 +156,7 @@ export class MigrationRunner {
 
     // Filter to pending migrations
     const pending = allMigrations.filter(
-      (m) => !applied.has(`${m.namespace}:${m.version}`)
+      (m) => !applied.has(`${m.namespace}:${m.version}`),
     );
 
     if (pending.length === 0) {
@@ -168,7 +168,7 @@ export class MigrationRunner {
 
     for (const migration of pending) {
       console.error(
-        `  Applying migration ${migration.namespace}:${migration.version} (${migration.name})`
+        `  Applying migration ${migration.namespace}:${migration.version} (${migration.name})`,
       );
 
       const sql = fs.readFileSync(migration.path, "utf-8");
@@ -183,19 +183,19 @@ export class MigrationRunner {
         this.db
           .prepare(
             `INSERT INTO schema_migrations (namespace, version, name, applied_at, checksum)
-             VALUES (?, ?, ?, ?, ?)`
+             VALUES (?, ?, ?, ?, ?)`,
           )
           .run(
             migration.namespace,
             migration.version,
             migration.name,
             new Date().toISOString(),
-            checksum
+            checksum,
           );
       })();
 
       console.error(
-        `  ✓ Migration ${migration.namespace}:${migration.version} applied successfully`
+        `  ✓ Migration ${migration.namespace}:${migration.version} applied successfully`,
       );
     }
 
@@ -206,7 +206,7 @@ export class MigrationRunner {
    * Verify migration checksums (detect tampering)
    */
   verifyNamespaceMigrations(
-    namespaceDirs: Array<{ namespace: string; path: string }>
+    namespaceDirs: Array<{ namespace: string; path: string }>,
   ): boolean {
     let applied: Array<{
       namespace: string;
@@ -218,7 +218,7 @@ export class MigrationRunner {
     try {
       applied = this.db
         .prepare(
-          "SELECT namespace, version, name, checksum FROM schema_migrations ORDER BY namespace, version"
+          "SELECT namespace, version, name, checksum FROM schema_migrations ORDER BY namespace, version",
         )
         .all() as Array<{
         namespace: string;
@@ -249,7 +249,7 @@ export class MigrationRunner {
 
       if (!migration) {
         console.warn(
-          `⚠ Warning: Migration ${record.namespace}:${record.version} (${record.name}) has been deleted`
+          `⚠ Warning: Migration ${record.namespace}:${record.version} (${record.name}) has been deleted`,
         );
         continue;
       }
@@ -259,7 +259,7 @@ export class MigrationRunner {
 
       if (checksum !== record.checksum) {
         console.error(
-          `❌ ERROR: Migration ${record.namespace}:${record.version} (${record.name}) has been modified since it was applied!`
+          `❌ ERROR: Migration ${record.namespace}:${record.version} (${record.name}) has been modified since it was applied!`,
         );
         return false;
       }

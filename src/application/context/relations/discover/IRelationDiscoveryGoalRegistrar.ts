@@ -6,5 +6,8 @@ import { EntityTypeValue } from "../../../../domain/relations/Constants.js";
  * defined and refined goals for valid relations to the new entity.
  */
 export interface IRelationDiscoveryGoalRegistrar {
-  execute(entityType: EntityTypeValue, entityId: string): Promise<string | null>;
+  execute(
+    entityType: EntityTypeValue,
+    entityId: string,
+  ): Promise<string | null>;
 }

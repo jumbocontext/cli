@@ -13,7 +13,9 @@ import { DependencyView } from "../../../../application/context/dependencies/Dep
 import { DependencyRecordMapper } from "../DependencyRecordMapper.js";
 import { DependencyRecord } from "../DependencyRecord.js";
 
-export class SqliteDependencyUpdatedProjector implements IDependencyUpdatedProjector, IDependencyUpdateReader {
+export class SqliteDependencyUpdatedProjector
+  implements IDependencyUpdatedProjector, IDependencyUpdateReader
+{
   private readonly mapper = new DependencyRecordMapper();
 
   constructor(private db: Database) {}
@@ -23,27 +25,27 @@ export class SqliteDependencyUpdatedProjector implements IDependencyUpdatedProje
     const params: unknown[] = [];
 
     if (event.payload.endpoint !== undefined) {
-      updates.push('endpoint = ?');
+      updates.push("endpoint = ?");
       params.push(event.payload.endpoint);
     }
     if (event.payload.contract !== undefined) {
-      updates.push('contract = ?');
+      updates.push("contract = ?");
       params.push(event.payload.contract);
     }
     if (event.payload.status !== undefined) {
-      updates.push('status = ?');
+      updates.push("status = ?");
       params.push(event.payload.status);
     }
 
-    updates.push('version = ?');
+    updates.push("version = ?");
     params.push(event.version);
-    updates.push('updatedAt = ?');
+    updates.push("updatedAt = ?");
     params.push(event.timestamp);
     params.push(event.aggregateId);
 
     const stmt = this.db.prepare(`
       UPDATE dependency_views
-      SET ${updates.join(', ')}
+      SET ${updates.join(", ")}
       WHERE dependencyId = ?
     `);
 
@@ -51,7 +53,9 @@ export class SqliteDependencyUpdatedProjector implements IDependencyUpdatedProje
   }
 
   async findById(id: string): Promise<DependencyView | null> {
-    const row = this.db.prepare('SELECT * FROM dependency_views WHERE dependencyId = ?').get(id);
+    const row = this.db
+      .prepare("SELECT * FROM dependency_views WHERE dependencyId = ?")
+      .get(id);
     return row ? this.mapRowToView(row as Record<string, unknown>) : null;
   }
 

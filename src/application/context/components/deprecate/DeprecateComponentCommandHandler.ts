@@ -9,10 +9,12 @@ export class DeprecateComponentCommandHandler {
   constructor(
     private readonly eventWriter: IComponentDeprecatedEventWriter,
     private readonly eventBus: IEventBus,
-    private readonly reader: IComponentDeprecateReader
+    private readonly reader: IComponentDeprecateReader,
   ) {}
 
-  async execute(command: DeprecateComponentCommand): Promise<{ componentId: string }> {
+  async execute(
+    command: DeprecateComponentCommand,
+  ): Promise<{ componentId: string }> {
     // 1. Check component exists
     const existing = await this.reader.findById(command.componentId);
     if (!existing) {
@@ -21,7 +23,10 @@ export class DeprecateComponentCommandHandler {
 
     // 2. Rehydrate aggregate from event history
     const history = await this.eventWriter.readStream(command.componentId);
-    const component = Component.rehydrate(command.componentId, history as ComponentEvent[]);
+    const component = Component.rehydrate(
+      command.componentId,
+      history as ComponentEvent[],
+    );
 
     // 3. Domain logic produces event
     const event = component.deprecate(command.reason);

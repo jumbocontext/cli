@@ -19,9 +19,7 @@ export class FocusRequiredRule implements ValidationRule<string> {
 }
 
 export class FocusMaxLengthRule implements ValidationRule<string> {
-  constructor(
-    private maxLength: number = SessionLimits.FOCUS_MAX_LENGTH
-  ) {}
+  constructor(private maxLength: number = SessionLimits.FOCUS_MAX_LENGTH) {}
 
   validate(focus: string): ValidationResult {
     const isValid = focus.length <= this.maxLength;
@@ -38,7 +36,4 @@ export class FocusMaxLengthRule implements ValidationRule<string> {
   }
 }
 
-export const FOCUS_RULES = [
-  new FocusRequiredRule(),
-  new FocusMaxLengthRule(),
-];
+export const FOCUS_RULES = [new FocusRequiredRule(), new FocusMaxLengthRule()];

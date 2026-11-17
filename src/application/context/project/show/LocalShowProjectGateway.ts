@@ -11,7 +11,7 @@ export class LocalShowProjectGateway implements IShowProjectGateway {
     private readonly projectContextReader: IProjectContextReader,
     private readonly audienceContextReader: IAudienceContextReader,
     private readonly audiencePainContextReader: IAudiencePainContextReader,
-    private readonly valuePropositionContextReader: IValuePropositionContextReader
+    private readonly valuePropositionContextReader: IValuePropositionContextReader,
   ) {}
 
   async showProject(request: ShowProjectRequest): Promise<ShowProjectResponse> {

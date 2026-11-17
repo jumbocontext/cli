@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { GoalErrorMessages, GoalLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  GoalErrorMessages,
+  GoalLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class TitleRequiredRule implements ValidationRule<string> {
   validate(title: string): ValidationResult {
@@ -20,12 +27,13 @@ export class TitleMaxLengthRule implements ValidationRule<string> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(GoalErrorMessages.TITLE_TOO_LONG, { max: this.maxLength })],
+        : [
+            formatErrorMessage(GoalErrorMessages.TITLE_TOO_LONG, {
+              max: this.maxLength,
+            }),
+          ],
     };
   }
 }
 
-export const TITLE_RULES = [
-  new TitleRequiredRule(),
-  new TitleMaxLengthRule(),
-];
+export const TITLE_RULES = [new TitleRequiredRule(), new TitleMaxLengthRule()];

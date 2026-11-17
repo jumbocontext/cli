@@ -16,7 +16,9 @@ export class SqliteValuePropositionRemovedProjector
 {
   constructor(private db: Database) {}
 
-  async applyValuePropositionRemoved(event: ValuePropositionRemovedEvent): Promise<void> {
+  async applyValuePropositionRemoved(
+    event: ValuePropositionRemovedEvent,
+  ): Promise<void> {
     const stmt = this.db.prepare(`
       DELETE FROM value_proposition_views WHERE valuePropositionId = ?
     `);
@@ -25,7 +27,9 @@ export class SqliteValuePropositionRemovedProjector
 
   async findById(id: string): Promise<ValuePropositionView | null> {
     const row = this.db
-      .prepare("SELECT * FROM value_proposition_views WHERE valuePropositionId = ?")
+      .prepare(
+        "SELECT * FROM value_proposition_views WHERE valuePropositionId = ?",
+      )
       .get(id);
     return row ? this.mapRowToView(row as Record<string, unknown>) : null;
   }

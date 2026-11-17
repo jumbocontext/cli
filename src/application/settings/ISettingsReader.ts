@@ -14,7 +14,7 @@ export interface ISettingsReader {
   read(): Promise<Settings>;
 
   /**
-   * Persist updated settings to .jumbo/settings.jsonc.
+   * Persist updated settings to the project's convention-derived settings.json.
    *
    * @param settings - The full settings object to persist
    */

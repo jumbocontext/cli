@@ -19,7 +19,7 @@ export class UpdateDecisionCommandHandler {
   constructor(
     private readonly eventWriter: IDecisionUpdatedEventWriter,
     private readonly reader: IDecisionUpdateReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
   /**
@@ -29,7 +29,9 @@ export class UpdateDecisionCommandHandler {
    * @returns The decision ID
    * @throws Error if decision not found or validation fails
    */
-  async execute(command: UpdateDecisionCommand): Promise<{ decisionId: string }> {
+  async execute(
+    command: UpdateDecisionCommand,
+  ): Promise<{ decisionId: string }> {
     // 1. Check precondition: decision must exist
     const existingView = await this.reader.findById(command.decisionId);
     if (!existingView) {
@@ -38,7 +40,10 @@ export class UpdateDecisionCommandHandler {
 
     // 2. Rehydrate aggregate from event history
     const history = await this.eventWriter.readStream(command.decisionId);
-    const decision = Decision.rehydrate(command.decisionId, history as DecisionEvent[]);
+    const decision = Decision.rehydrate(
+      command.decisionId,
+      history as DecisionEvent[],
+    );
 
     // 3. Domain logic produces event
     const event = decision.update(
@@ -46,7 +51,7 @@ export class UpdateDecisionCommandHandler {
       command.context,
       command.rationale,
       command.alternatives,
-      command.consequences
+      command.consequences,
     );
 
     // 4. Persist event to file store

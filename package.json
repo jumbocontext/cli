@@ -30,20 +30,23 @@
   "author": "Josh Wheelock <hello@jumbocontext.com> (https://jumbocontext.com)",
   "main": "dist/index.js",
   "bin": {
-    "jumbo": "dist/cli.js"
+    "jumbo": "dist/app.js"
   },
   "files": [
     "dist",
     "assets"
   ],
   "scripts": {
-    "generate:commands": "node build/generate-command-registry.mjs",
-    "prebuild": "npm run generate:commands",
     "build": "tsc && npm run copy:migrations && npm run inject:telemetry",
     "inject:telemetry": "node build/inject-telemetry-config.mjs",
     "copy:migrations": "node build/copy-migrations.mjs",
     "dev": "tsc --watch",
+    "benchmark:startup": "node benchmarks/startup/cli-startup.mjs",
+    "test:benchmark:startup": "node --test benchmarks/startup/cli-startup.test.mjs",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.cjs",
+    "test:unit": "npm run test -- --selectProjects unit",
+    "test:integration": "npm run test -- --selectProjects integration",
+    "test:acceptance": "node --import tsx node_modules/@cucumber/cucumber/bin/cucumber.js",
     "lint": "eslint --config eslint.config.mjs \"src/**/*.ts\"",
     "format": "prettier --write \"src/**/*.ts\"",
     "prepublishOnly": "npm run build",
@@ -64,6 +67,7 @@
     "yaml": "^2.8.1"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^11.3.0",
     "@eslint/js": "^9.0.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/fs-extra": "^11.0.4",
@@ -74,8 +78,9 @@
     "fast-glob": "^3.3.3",
     "ink-testing-library": "^4.0.0",
     "jest": "^30.3.0",
-    "prettier": "^3.1.1",
+    "prettier": "^3.9.10",
     "ts-jest": "^29.4.9",
+    "tsx": "^4.23.15",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.0.0"
   },

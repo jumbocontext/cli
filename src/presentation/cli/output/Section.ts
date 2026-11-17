@@ -1,5 +1,5 @@
-import { SectionType } from './SectionType.js';
-import { Annotation } from './Annotation.js';
+import { SectionType } from "./SectionType.js";
+import { Annotation } from "./Annotation.js";
 
 export interface Section {
   type: SectionType;

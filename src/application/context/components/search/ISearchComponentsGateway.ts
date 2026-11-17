@@ -7,5 +7,7 @@ import { SearchComponentsRequest } from "./SearchComponentsRequest.js";
 import { SearchComponentsResponse } from "./SearchComponentsResponse.js";
 
 export interface ISearchComponentsGateway {
-  searchComponents(request: SearchComponentsRequest): Promise<SearchComponentsResponse>;
+  searchComponents(
+    request: SearchComponentsRequest,
+  ): Promise<SearchComponentsResponse>;
 }

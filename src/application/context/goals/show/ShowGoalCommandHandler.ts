@@ -9,7 +9,7 @@ import { ContextualGoalView } from "../get/ContextualGoalView.js";
  */
 export class ShowGoalCommandHandler {
   constructor(
-    private readonly goalContextQueryHandler: GoalContextQueryHandler
+    private readonly goalContextQueryHandler: GoalContextQueryHandler,
   ) {}
 
   async execute(command: ShowGoalCommand): Promise<ContextualGoalView> {

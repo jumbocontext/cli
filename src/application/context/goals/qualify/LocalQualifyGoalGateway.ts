@@ -5,14 +5,18 @@ import { QualifyGoalCommandHandler } from "./QualifyGoalCommandHandler.js";
 import { IGoalQualifyReader } from "./IGoalQualifyReader.js";
 import { GoalClaimPolicy } from "../claims/GoalClaimPolicy.js";
 import { IWorkerIdentityReader } from "../../../host/workers/IWorkerIdentityReader.js";
-import { GoalErrorMessages, GoalStatus, formatErrorMessage } from "../../../../domain/goals/Constants.js";
+import {
+  GoalErrorMessages,
+  GoalStatus,
+  formatErrorMessage,
+} from "../../../../domain/goals/Constants.js";
 
 export class LocalQualifyGoalGateway implements IQualifyGoalGateway {
   constructor(
     private readonly commandHandler: QualifyGoalCommandHandler,
     private readonly goalReader: IGoalQualifyReader,
     private readonly claimPolicy: GoalClaimPolicy,
-    private readonly workerIdentityReader: IWorkerIdentityReader
+    private readonly workerIdentityReader: IWorkerIdentityReader,
   ) {}
 
   async qualifyGoal(request: QualifyGoalRequest): Promise<QualifyGoalResponse> {
@@ -23,7 +27,7 @@ export class LocalQualifyGoalGateway implements IQualifyGoalGateway {
       throw new Error(
         formatErrorMessage(GoalErrorMessages.GOAL_CLAIMED_BY_ANOTHER_WORKER, {
           expiresAt: claimValidation.existingClaim.claimExpiresAt,
-        })
+        }),
       );
     }
 
@@ -31,14 +35,18 @@ export class LocalQualifyGoalGateway implements IQualifyGoalGateway {
     const goalView = await this.goalReader.findById(request.goalId);
     if (!goalView) {
       throw new Error(
-        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, { id: request.goalId })
+        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, {
+          id: request.goalId,
+        }),
       );
     }
 
     // 3. Validate goal is in "in-review" status
     if (goalView.status !== GoalStatus.INREVIEW) {
       throw new Error(
-        formatErrorMessage(GoalErrorMessages.CANNOT_QUALIFY_IN_STATUS, { status: goalView.status })
+        formatErrorMessage(GoalErrorMessages.CANNOT_QUALIFY_IN_STATUS, {
+          status: goalView.status,
+        }),
       );
     }
 

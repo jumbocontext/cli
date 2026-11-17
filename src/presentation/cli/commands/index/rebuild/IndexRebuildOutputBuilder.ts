@@ -1,7 +1,11 @@
 import { SearchIndexRebuildResponse } from "../../../../../application/context/search/SearchIndexRebuildResponse.js";
 import { TerminalOutput } from "../../../output/TerminalOutput.js";
 import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
-import { contentLine, heading, metaField } from "../../../rendering/OutputLayout.js";
+import {
+  contentLine,
+  heading,
+  metaField,
+} from "../../../rendering/OutputLayout.js";
 import { Colors, Symbols } from "../../../rendering/StyleConfig.js";
 
 export class IndexRebuildOutputBuilder {
@@ -12,12 +16,32 @@ export class IndexRebuildOutputBuilder {
     const lines: string[] = [];
     lines.push("");
     lines.push(heading("Search Index Rebuild"));
-    lines.push(contentLine(`${Symbols.check} ${Colors.success("Rebuild complete")}`));
+    lines.push(
+      contentLine(`${Symbols.check} ${Colors.success("Rebuild complete")}`),
+    );
     lines.push("");
     lines.push(metaField("Status", Colors.success("success"), 18));
-    lines.push(metaField("Events inspected", Colors.primary(String(response.eventsInspected)), 18));
-    lines.push(metaField("Documents indexed", Colors.primary(String(response.documentsIndexed)), 18));
-    lines.push(metaField("Removed entries", Colors.primary(String(response.removedEntries)), 18));
+    lines.push(
+      metaField(
+        "Events inspected",
+        Colors.primary(String(response.eventsInspected)),
+        18,
+      ),
+    );
+    lines.push(
+      metaField(
+        "Documents indexed",
+        Colors.primary(String(response.documentsIndexed)),
+        18,
+      ),
+    );
+    lines.push(
+      metaField(
+        "Removed entries",
+        Colors.primary(String(response.removedEntries)),
+        18,
+      ),
+    );
 
     const categories = Object.entries(response.countsByCategory);
     if (categories.length > 0) {
@@ -35,7 +59,9 @@ export class IndexRebuildOutputBuilder {
 
   buildFailure(error: Error | string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Search index rebuild failed.")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Search index rebuild failed.")}`,
+    );
     this.builder.addData(this.buildFailureData(error));
     return this.builder.build();
   }

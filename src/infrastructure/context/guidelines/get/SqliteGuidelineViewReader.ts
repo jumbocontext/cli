@@ -29,7 +29,9 @@ export class SqliteGuidelineViewReader implements IGuidelineViewReader {
     query += " ORDER BY category, createdAt ASC";
 
     const rows = this.db.prepare(query).all(...params);
-    return rows.map((row) => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   async findByIds(ids: string[]): Promise<GuidelineView[]> {
@@ -38,7 +40,9 @@ export class SqliteGuidelineViewReader implements IGuidelineViewReader {
     const placeholders = ids.map(() => "?").join(",");
     const query = `SELECT * FROM guideline_views WHERE guidelineId IN (${placeholders}) ORDER BY createdAt DESC`;
     const rows = this.db.prepare(query).all(...ids);
-    return rows.map((row) => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   async search(criteria: GuidelineSearchCriteria): Promise<GuidelineView[]> {
@@ -57,13 +61,17 @@ export class SqliteGuidelineViewReader implements IGuidelineViewReader {
 
     if (criteria.query !== undefined) {
       const pattern = this.toLikePattern(criteria.query);
-      clauses.push("(title LIKE ? OR description LIKE ? OR rationale LIKE ? OR examples LIKE ?)");
+      clauses.push(
+        "(title LIKE ? OR description LIKE ? OR rationale LIKE ? OR examples LIKE ?)",
+      );
       params.push(pattern, pattern, pattern, pattern);
     }
 
     const query = `SELECT * FROM guideline_views WHERE ${clauses.join(" AND ")} ORDER BY category, createdAt ASC`;
     const rows = this.db.prepare(query).all(...params);
-    return rows.map((row) => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   /**

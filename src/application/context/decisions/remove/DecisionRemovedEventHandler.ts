@@ -8,7 +8,10 @@ import { EntityType } from "../../../../domain/relations/Constants.js";
 export class DecisionRemovedEventHandler implements IEventHandler {
   constructor(
     private readonly projector: IDecisionRemovedProjector,
-    private readonly relationPruningCascade: Pick<RelationPruningCascade, "execute">
+    private readonly relationPruningCascade: Pick<
+      RelationPruningCascade,
+      "execute"
+    >,
   ) {}
 
   async handle(event: BaseEvent): Promise<void> {
@@ -17,7 +20,7 @@ export class DecisionRemovedEventHandler implements IEventHandler {
     await this.relationPruningCascade.execute(
       EntityType.DECISION,
       event.aggregateId,
-      `Automatically pruned because decision ${event.aggregateId} was removed`
+      `Automatically pruned because decision ${event.aggregateId} was removed`,
     );
   }
 }

@@ -16,26 +16,25 @@ export class LocalUpdateGuidelineGateway implements IUpdateGuidelineGateway {
     private readonly eventWriter: IGuidelineUpdatedEventWriter,
     private readonly eventReader: IGuidelineUpdatedEventReader,
     private readonly guidelineReader: IGuidelineUpdateReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
-  async updateGuideline(request: UpdateGuidelineRequest): Promise<UpdateGuidelineResponse> {
+  async updateGuideline(
+    request: UpdateGuidelineRequest,
+  ): Promise<UpdateGuidelineResponse> {
     // 1. Check if guideline exists
     const existingView = await this.guidelineReader.findById(request.id);
     if (!existingView) {
       throw new Error(
         formatErrorMessage(GuidelineErrorMessages.NOT_FOUND, {
           id: request.id,
-        })
+        }),
       );
     }
 
     // 2. Load event history and rehydrate aggregate
     const history = await this.eventReader.readStream(request.id);
-    const guideline = Guideline.rehydrate(
-      request.id,
-      history
-    );
+    const guideline = Guideline.rehydrate(request.id, history);
 
     // 3. Domain logic produces update event - only pass defined fields
     const changes: {
@@ -76,7 +75,9 @@ export class LocalUpdateGuidelineGateway implements IUpdateGuidelineGateway {
     return {
       guidelineId: request.id,
       updatedFields,
-      ...(view ? { category: view.category, title: view.title, version: view.version } : {}),
+      ...(view
+        ? { category: view.category, title: view.title, version: view.version }
+        : {}),
     };
   }
 }

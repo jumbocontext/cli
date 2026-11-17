@@ -1,8 +1,18 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { GoalView } from '../../../../../application/context/goals/GoalView.js';
-import { Colors, BrandColors, Symbols } from '../../../rendering/StyleConfig.js';
-import { heading, contentLine, metaField, divider, wrapContent } from '../../../rendering/OutputLayout.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { GoalView } from "../../../../../application/context/goals/GoalView.js";
+import {
+  Colors,
+  BrandColors,
+  Symbols,
+} from "../../../rendering/StyleConfig.js";
+import {
+  heading,
+  contentLine,
+  metaField,
+  divider,
+  wrapContent,
+} from "../../../rendering/OutputLayout.js";
 
 /**
  * Status ordering for goal list display.
@@ -10,38 +20,38 @@ import { heading, contentLine, metaField, divider, wrapContent } from '../../../
  * Includes ALL non-terminal GoalStatus values.
  */
 export const STATUS_ORDER: Readonly<Record<string, number>> = {
-  "approved": 0,
+  approved: 0,
   "in-review": 1,
-  "submitted": 2,
-  "paused": 3,
-  "doing": 4,
-  "blocked": 5,
-  "unblocked": 6,
-  "rejected": 7,
+  submitted: 2,
+  paused: 3,
+  doing: 4,
+  blocked: 5,
+  unblocked: 6,
+  rejected: 7,
   "in-refinement": 8,
-  "codifying": 9,
-  "refined": 10,
-  "defined": 11,
-  "postponed": 12
+  codifying: 9,
+  refined: 10,
+  defined: 11,
+  postponed: 12,
 };
 
 /**
  * Bracket-style heading labels for each status.
  */
 const STATUS_HEADINGS: Readonly<Record<string, string>> = {
-  "approved": "[APPROVED]",
+  approved: "[APPROVED]",
   "in-review": "[IN-REVIEW]",
-  "submitted": "[SUBMITTED]",
-  "paused": "[PAUSED]",
-  "doing": "[DOING]",
-  "blocked": "[BLOCKED]",
-  "unblocked": "[UNBLOCKED]",
-  "rejected": "[REJECTED]",
+  submitted: "[SUBMITTED]",
+  paused: "[PAUSED]",
+  doing: "[DOING]",
+  blocked: "[BLOCKED]",
+  unblocked: "[UNBLOCKED]",
+  rejected: "[REJECTED]",
   "in-refinement": "[IN-REFINEMENT]",
-  "codifying": "[CODIFYING]",
-  "refined": "[REFINED]",
-  "defined": "[DEFINED]",
-  "postponed": "[POSTPONED]"
+  codifying: "[CODIFYING]",
+  refined: "[REFINED]",
+  defined: "[DEFINED]",
+  postponed: "[POSTPONED]",
 };
 
 /**
@@ -96,12 +106,15 @@ export class GoalListOutputBuilder {
 
     // Sort within each group by createdAt ascending
     for (const group of groupedGoals.values()) {
-      group.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      group.sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      );
     }
 
     // Get statuses ordered by STATUS_ORDER
     const orderedStatuses = [...groupedGoals.keys()].sort(
-      (a, b) => (STATUS_ORDER[a] ?? 99) - (STATUS_ORDER[b] ?? 99)
+      (a, b) => (STATUS_ORDER[a] ?? 99) - (STATUS_ORDER[b] ?? 99),
     );
 
     const lines: string[] = [];
@@ -110,7 +123,8 @@ export class GoalListOutputBuilder {
 
     for (const status of orderedStatuses) {
       const goals = groupedGoals.get(status)!;
-      const statusHeading = STATUS_HEADINGS[status] ?? `[${status.toUpperCase()}]`;
+      const statusHeading =
+        STATUS_HEADINGS[status] ?? `[${status.toUpperCase()}]`;
       lines.push("");
       lines.push(divider());
       lines.push(contentLine(Colors.bold(statusHeading)));
@@ -144,22 +158,23 @@ export class GoalListOutputBuilder {
     this.builder.reset();
 
     const sortedGoals = [...activeGoals].sort((a: GoalView, b: GoalView) => {
-      const statusDiff = (STATUS_ORDER[a.status] ?? 99) - (STATUS_ORDER[b.status] ?? 99);
+      const statusDiff =
+        (STATUS_ORDER[a.status] ?? 99) - (STATUS_ORDER[b.status] ?? 99);
       if (statusDiff !== 0) return statusDiff;
       return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     });
 
     this.builder.addData({
-      goals: sortedGoals.map(goal => ({
+      goals: sortedGoals.map((goal) => ({
         goalId: goal.goalId,
         title: goal.title,
         objective: goal.objective,
         status: goal.status,
         note: goal.note,
         createdAt: goal.createdAt,
-        updatedAt: goal.updatedAt
+        updatedAt: goal.updatedAt,
       })),
-      count: sortedGoals.length
+      count: sortedGoals.length,
     });
     return this.builder.build();
   }
@@ -170,9 +185,11 @@ export class GoalListOutputBuilder {
    */
   buildFailureError(error: Error | string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Failed to list goals")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Failed to list goals")}`,
+    );
     this.builder.addData({
-      message: error instanceof Error ? error.message : error
+      message: error instanceof Error ? error.message : error,
     });
     return this.builder.build();
   }

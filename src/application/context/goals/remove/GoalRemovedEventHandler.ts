@@ -14,7 +14,7 @@ import { RelationPruningCascade } from "../../relations/prune/RelationPruningCas
 export class GoalRemovedEventHandler implements IEventHandler {
   constructor(
     private readonly projector: IGoalRemovedProjector,
-    private readonly relationPruningCascade: RelationPruningCascade
+    private readonly relationPruningCascade: RelationPruningCascade,
   ) {}
 
   async handle(event: BaseEvent): Promise<void> {
@@ -23,7 +23,7 @@ export class GoalRemovedEventHandler implements IEventHandler {
     await this.relationPruningCascade.execute(
       EntityType.GOAL,
       goalRemovedEvent.aggregateId,
-      `Automatically pruned because goal ${goalRemovedEvent.aggregateId} was removed`
+      `Automatically pruned because goal ${goalRemovedEvent.aggregateId} was removed`,
     );
   }
 }

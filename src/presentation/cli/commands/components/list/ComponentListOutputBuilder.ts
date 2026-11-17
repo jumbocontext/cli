@@ -1,8 +1,17 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { ComponentView } from '../../../../../application/context/components/ComponentView.js';
-import { Colors, BrandColors, Symbols } from '../../../rendering/StyleConfig.js';
-import { heading, contentLine, metaField, wrapContent } from '../../../rendering/OutputLayout.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { ComponentView } from "../../../../../application/context/components/ComponentView.js";
+import {
+  Colors,
+  BrandColors,
+  Symbols,
+} from "../../../rendering/StyleConfig.js";
+import {
+  heading,
+  contentLine,
+  metaField,
+  wrapContent,
+} from "../../../rendering/OutputLayout.js";
 
 export class ComponentListOutputBuilder {
   private builder = new TerminalOutputBuilder();
@@ -18,7 +27,11 @@ export class ComponentListOutputBuilder {
     for (let i = 0; i < components.length; i++) {
       const c = components[i];
       if (i > 0) lines.push("");
-      lines.push(contentLine(`${BrandColors.accentCyan(c.name)} ${Colors.muted(`(${c.type})`)} ${Colors.dim(`[${c.status}]`)}`));
+      lines.push(
+        contentLine(
+          `${BrandColors.accentCyan(c.name)} ${Colors.muted(`(${c.type})`)} ${Colors.dim(`[${c.status}]`)}`,
+        ),
+      );
       lines.push(...wrapContent(c.description));
       lines.push(metaField("Path", Colors.muted(c.path), 6));
       if (c.deprecationReason) {
@@ -31,7 +44,10 @@ export class ComponentListOutputBuilder {
     return this.builder.build();
   }
 
-  buildStructuredOutput(components: ComponentView[], filter: string): TerminalOutput {
+  buildStructuredOutput(
+    components: ComponentView[],
+    filter: string,
+  ): TerminalOutput {
     this.builder.reset();
     this.builder.addData({
       count: components.length,
@@ -54,7 +70,9 @@ export class ComponentListOutputBuilder {
 
   buildFailureError(error: Error | string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Failed to list components")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Failed to list components")}`,
+    );
     this.builder.addData({
       message: error instanceof Error ? error.message : error,
     });

@@ -4,5 +4,5 @@
  */
 export interface BlockGoalCommand {
   readonly goalId: string;
-  readonly note: string;  // Reason why the goal is blocked
+  readonly note: string; // Reason why the goal is blocked
 }

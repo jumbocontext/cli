@@ -1,9 +1,5 @@
 export type MemoryEntityType =
-  | "decision"
-  | "invariant"
-  | "component"
-  | "dependency"
-  | "guideline";
+  "decision" | "invariant" | "component" | "dependency" | "guideline";
 
 export interface DecisionEntityRow {
   readonly id: string;

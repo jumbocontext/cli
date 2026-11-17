@@ -4,5 +4,5 @@
  */
 export interface UnblockGoalCommand {
   readonly goalId: string;
-  readonly note?: string;  // Optional resolution note
+  readonly note?: string; // Optional resolution note
 }

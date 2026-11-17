@@ -6,7 +6,11 @@
  * with configurable labels so each daemon can customize its appearance.
  */
 
-import { Colors, BrandColors, Symbols } from "../../../rendering/StyleConfig.js";
+import {
+  Colors,
+  BrandColors,
+  Symbols,
+} from "../../../rendering/StyleConfig.js";
 import { playGlimmer } from "../../../animations/GlimmerEffect.js";
 import { startBrailleSpinner } from "../../../animations/BrailleSpinner.js";
 
@@ -40,7 +44,10 @@ export class DaemonDisplay {
   protected readonly runtimeConfig: DaemonRuntimeConfig;
   protected readonly write: (s: string) => void;
 
-  constructor(displayConfig: DaemonDisplayConfig, runtimeConfig: DaemonRuntimeConfig) {
+  constructor(
+    displayConfig: DaemonDisplayConfig,
+    runtimeConfig: DaemonRuntimeConfig,
+  ) {
     this.displayConfig = displayConfig;
     this.runtimeConfig = runtimeConfig;
     this.write = (s: string) => process.stderr.write(s);
@@ -51,10 +58,15 @@ export class DaemonDisplay {
     const { agentId, pollIntervalS, maxRetries } = this.runtimeConfig;
 
     this.line("");
-    await playGlimmer(this.displayConfig.title, `  ${JUMBO_BLUE}│${RESET} `, {
-      baseColor: JUMBO_BLUE,
-      highlightColor: BRIGHT_WHITE,
-    }, this.write);
+    await playGlimmer(
+      this.displayConfig.title,
+      `  ${JUMBO_BLUE}│${RESET} `,
+      {
+        baseColor: JUMBO_BLUE,
+        highlightColor: BRIGHT_WHITE,
+      },
+      this.write,
+    );
     this.out("\n");
 
     this.line(
@@ -65,12 +77,18 @@ export class DaemonDisplay {
 
   /** Start the idle braille spinner */
   startWaiting(): { stop: () => void } {
-    return startBrailleSpinner({ label: this.displayConfig.idleLabel, write: this.write });
+    return startBrailleSpinner({
+      label: this.displayConfig.idleLabel,
+      write: this.write,
+    });
   }
 
   /** Start the active processing braille spinner */
   startProcessing(): { stop: () => void } {
-    return startBrailleSpinner({ label: this.displayConfig.activeLabel, write: this.write });
+    return startBrailleSpinner({
+      label: this.displayConfig.activeLabel,
+      write: this.write,
+    });
   }
 
   /** Render goal discovery info */
@@ -102,11 +120,7 @@ export class DaemonDisplay {
   }
 
   /** Render goal exhaustion/skip warning */
-  renderGoalSkipped(
-    goalId: string,
-    status: string,
-    maxRetries: number,
-  ): void {
+  renderGoalSkipped(goalId: string, status: string, maxRetries: number): void {
     const sid = this.shortId(goalId);
     this.line(
       `  ${Colors.warning(Symbols.warning)} ${sid} did not reach '${this.displayConfig.completeStatus}' after ${maxRetries} attempts (status: ${status}). Skipping.`,
@@ -116,13 +130,17 @@ export class DaemonDisplay {
 
   /** Render unknown agent error */
   renderUnknownAgent(agent: string, supported: readonly string[]): void {
-    this.line(`${Colors.error(Symbols.cross)} Unknown agent '${agent}'. Supported: ${supported.join(", ")}`);
+    this.line(
+      `${Colors.error(Symbols.cross)} Unknown agent '${agent}'. Supported: ${supported.join(", ")}`,
+    );
   }
 
   /** Render shutdown message */
   renderShutdown(): void {
     this.line("");
-    this.line(`  ${Colors.dim(`${Symbols.arrow} ${this.displayConfig.daemonName} stopped.`)}`);
+    this.line(
+      `  ${Colors.dim(`${Symbols.arrow} ${this.displayConfig.daemonName} stopped.`)}`,
+    );
   }
 
   // --- Protected helpers ---

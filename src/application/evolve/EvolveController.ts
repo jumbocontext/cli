@@ -1,4 +1,3 @@
-import { IProjectRootResolver } from "../context/project/IProjectRootResolver.js";
 import { IAgentFileProtocol } from "../context/project/init/IAgentFileProtocol.js";
 import { ILogger } from "../logging/ILogger.js";
 import { IDatabaseRebuildService } from "../maintenance/db/rebuild/IDatabaseRebuildService.js";
@@ -17,18 +16,18 @@ export class EvolveController {
     private readonly runSchemaMigrations: SchemaMigrationAction,
     private readonly upgradeCommandHandler: UpgradeCommandHandler,
     private readonly migrateDependenciesCommandHandler: MigrateDependenciesCommandHandler,
-    private readonly projectRootResolver: IProjectRootResolver,
+    private readonly projectRoot: string,
     private readonly agentFileProtocol: IAgentFileProtocol,
     private readonly settingsInitializer: ISettingsInitializer,
     private readonly databaseRebuildService: IDatabaseRebuildService,
-    private readonly logger: ILogger
+    private readonly logger: ILogger,
   ) {}
 
   async handle(): Promise<EvolveResponse> {
     this.logger.info(`${this.tag} Starting evolve`);
     const steps: EvolveStepResult[] = [];
-    const projectRoot = this.projectRootResolver.resolve();
-    this.logger.debug(`${this.tag} Project root resolved`, { projectRoot });
+    const projectRoot = this.projectRoot;
+    this.logger.debug(`${this.tag} Using project root`, { projectRoot });
 
     const schemaMigrationSucceeded = await this.runStep(
       steps,
@@ -36,42 +35,34 @@ export class EvolveController {
       async () => {
         await this.runSchemaMigrations();
       },
-      "Applied pending schema migrations."
+      "Applied pending schema migrations.",
     );
 
     const goalStatusMigrationSucceeded = schemaMigrationSucceeded
-      ? await this.runStep(
-          steps,
-          "Goal status migration",
-          async () => {
-            const response = await this.upgradeCommandHandler.handle({
-              from: "v1",
-              to: "v2",
-            });
-            return `${response.migratedGoals} goals migrated, ${response.eventsAppended} events appended.`;
-          }
-        )
+      ? await this.runStep(steps, "Goal status migration", async () => {
+          const response = await this.upgradeCommandHandler.handle({
+            from: "v1",
+            to: "v2",
+          });
+          return `${response.migratedGoals} goals migrated, ${response.eventsAppended} events appended.`;
+        })
       : this.addSkippedStep(
           steps,
           "Goal status migration",
-          "Skipped because schema migrations failed."
+          "Skipped because schema migrations failed.",
         );
 
     const dependencyMigrationSucceeded = schemaMigrationSucceeded
-      ? await this.runStep(
-          steps,
-          "Legacy dependency migration",
-          async () => {
-            const response = await this.migrateDependenciesCommandHandler.handle({
-              dryRun: false,
-            });
-            return `${response.converted.length} converted, ${response.skipped.length} skipped.`;
-          }
-        )
+      ? await this.runStep(steps, "Legacy dependency migration", async () => {
+          const response = await this.migrateDependenciesCommandHandler.handle({
+            dryRun: false,
+          });
+          return `${response.converted.length} converted, ${response.skipped.length} skipped.`;
+        })
       : this.addSkippedStep(
           steps,
           "Legacy dependency migration",
-          "Skipped because schema migrations failed."
+          "Skipped because schema migrations failed.",
         );
 
     await this.runStep(
@@ -80,7 +71,7 @@ export class EvolveController {
       async () => {
         await this.agentFileProtocol.repairJumboMd(projectRoot);
       },
-      "Updated Jumbo instructions in JUMBO.md."
+      "Updated Jumbo instructions in JUMBO.md.",
     );
 
     await this.runStep(
@@ -89,7 +80,7 @@ export class EvolveController {
       async () => {
         await this.agentFileProtocol.repairAgentsMd(projectRoot);
       },
-      "Updated Jumbo instructions in AGENTS.md."
+      "Updated Jumbo instructions in AGENTS.md.",
     );
 
     const agentConfigurationStep = await this.executeStep(async () => {
@@ -99,22 +90,22 @@ export class EvolveController {
       this.createStepResult(
         "Agent configuration files",
         agentConfigurationStep,
-        "Updated CLAUDE.md, GEMINI.md, copilot-instructions.md, and other managed agent files."
-      )
+        "Updated CLAUDE.md, GEMINI.md, copilot-instructions.md, and other managed agent files.",
+      ),
     );
     steps.push(
       this.createStepResult(
         "Managed skills",
         agentConfigurationStep,
-        "Synced Jumbo-managed skills from assets/skills/."
-      )
+        "Synced Jumbo-managed skills from assets/skills/.",
+      ),
     );
     steps.push(
       this.createStepResult(
         "Harness configurations",
         agentConfigurationStep,
-        "Updated managed harness and hook configurations."
-      )
+        "Updated managed harness and hook configurations.",
+      ),
     );
 
     await this.runStep(
@@ -123,33 +114,38 @@ export class EvolveController {
       async () => {
         await this.settingsInitializer.ensureSettingsFileExists();
       },
-      "Ensured settings files are current."
+      "Ensured settings files are current.",
     );
 
-    if (schemaMigrationSucceeded && goalStatusMigrationSucceeded && dependencyMigrationSucceeded) {
-      await this.runStep(
-        steps,
-        "Database projections",
-        async () => {
-          const response = await this.databaseRebuildService.rebuild();
-          return `${response.eventsReplayed} events replayed.`;
-        }
-      );
+    if (
+      schemaMigrationSucceeded &&
+      goalStatusMigrationSucceeded &&
+      dependencyMigrationSucceeded
+    ) {
+      await this.runStep(steps, "Database projections", async () => {
+        const response = await this.databaseRebuildService.rebuild();
+        return `${response.eventsReplayed} events replayed.`;
+      });
     } else {
       this.addSkippedStep(
         steps,
         "Database projections",
-        "Skipped because one or more database migration steps failed."
+        "Skipped because one or more database migration steps failed.",
       );
     }
 
-    const failedSteps = steps.filter(s => s.status === "failed");
+    const failedSteps = steps.filter((s) => s.status === "failed");
     if (failedSteps.length > 0) {
-      this.logger.warn(`${this.tag} Evolve completed with ${failedSteps.length} failed step(s)`, {
-        failed: failedSteps.map(s => s.name),
-      });
+      this.logger.warn(
+        `${this.tag} Evolve completed with ${failedSteps.length} failed step(s)`,
+        {
+          failed: failedSteps.map((s) => s.name),
+        },
+      );
     } else {
-      this.logger.info(`${this.tag} Evolve completed successfully`, { totalSteps: steps.length });
+      this.logger.info(`${this.tag} Evolve completed successfully`, {
+        totalSteps: steps.length,
+      });
     }
 
     return { steps };
@@ -159,22 +155,27 @@ export class EvolveController {
     steps: EvolveStepResult[],
     name: string,
     operation: () => Promise<string | void>,
-    successDetail?: string
+    successDetail?: string,
   ): Promise<boolean> {
     this.logger.debug(`${this.tag} Running step: ${name}`);
     const result = await this.executeStep(operation);
     const stepResult = this.createStepResult(name, result, successDetail);
     steps.push(stepResult);
     if (stepResult.status === "failed") {
-      this.logger.error(`${this.tag} Step failed: ${name}`, undefined, { detail: stepResult.detail });
+      this.logger.error(`${this.tag} Step failed: ${name}`, undefined, {
+        detail: stepResult.detail,
+      });
     } else {
-      this.logger.debug(`${this.tag} Step completed: ${name}`, { status: stepResult.status, detail: stepResult.detail });
+      this.logger.debug(`${this.tag} Step completed: ${name}`, {
+        status: stepResult.status,
+        detail: stepResult.detail,
+      });
     }
     return result.status === "repaired";
   }
 
   private async executeStep(
-    operation: () => Promise<string | void>
+    operation: () => Promise<string | void>,
   ): Promise<{ status: "repaired" | "failed"; detail?: string }> {
     try {
       const detail = await operation();
@@ -183,9 +184,13 @@ export class EvolveController {
         detail: typeof detail === "string" ? detail : undefined,
       };
     } catch (error) {
-      this.logger.error(`${this.tag} Step execution error`, error instanceof Error ? error : undefined, {
-        errorValue: error instanceof Error ? undefined : String(error),
-      });
+      this.logger.error(
+        `${this.tag} Step execution error`,
+        error instanceof Error ? error : undefined,
+        {
+          errorValue: error instanceof Error ? undefined : String(error),
+        },
+      );
       return {
         status: "failed",
         detail: error instanceof Error ? error.message : String(error),
@@ -196,7 +201,7 @@ export class EvolveController {
   private addSkippedStep(
     steps: EvolveStepResult[],
     name: string,
-    detail: string
+    detail: string,
   ): false {
     steps.push({
       name,
@@ -209,7 +214,7 @@ export class EvolveController {
   private createStepResult(
     name: string,
     result: { status: "repaired" | "failed"; detail?: string },
-    successDetail?: string
+    successDetail?: string,
   ): EvolveStepResult {
     if (result.status === "failed") {
       return {

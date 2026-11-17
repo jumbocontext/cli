@@ -7,7 +7,7 @@ import { ISettingsReader } from "../../../../settings/ISettingsReader.js";
 export class LocalViewWorkerGateway implements IViewWorkerGateway {
   constructor(
     private readonly workerIdentityReader: IWorkerIdentityReader,
-    private readonly settingsReader: ISettingsReader
+    private readonly settingsReader: ISettingsReader,
   ) {}
 
   async viewWorker(_request: ViewWorkerRequest): Promise<ViewWorkerResponse> {

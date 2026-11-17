@@ -1,4 +1,7 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
 import { RelationErrorMessages, RelationLimits } from "../Constants.js";
 
 export class RelationTypeRequiredRule implements ValidationRule<string> {
@@ -13,7 +16,8 @@ export class RelationTypeRequiredRule implements ValidationRule<string> {
 
 export class RelationTypeMaxLengthRule implements ValidationRule<string> {
   validate(relationType: string): ValidationResult {
-    const isValid = relationType.length <= RelationLimits.RELATION_TYPE_MAX_LENGTH;
+    const isValid =
+      relationType.length <= RelationLimits.RELATION_TYPE_MAX_LENGTH;
     return {
       isValid,
       errors: isValid ? [] : [RelationErrorMessages.RELATION_TYPE_INVALID],
@@ -23,5 +27,5 @@ export class RelationTypeMaxLengthRule implements ValidationRule<string> {
 
 export const RELATION_TYPE_RULES = [
   new RelationTypeRequiredRule(),
-  new RelationTypeMaxLengthRule()
+  new RelationTypeMaxLengthRule(),
 ];

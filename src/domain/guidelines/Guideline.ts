@@ -5,10 +5,7 @@
  * Guidelines define rules for testing, coding style, process, communication, etc.
  */
 
-import {
-  BaseAggregate,
-  AggregateState,
-} from "../BaseAggregate.js";
+import { BaseAggregate, AggregateState } from "../BaseAggregate.js";
 import { UUID } from "../BaseEvent.js";
 import { GuidelineId } from "./GuidelineId.js";
 import { ValidationRuleSet } from "../validation/ValidationRule.js";
@@ -39,7 +36,7 @@ export interface GuidelineState extends AggregateState {
   description: string;
   rationale: string;
   examples: string[];
-  isRemoved: boolean;  // Track removal state
+  isRemoved: boolean; // Track removal state
   version: number;
 }
 
@@ -66,11 +63,15 @@ export class Guideline extends BaseAggregate<GuidelineState, GuidelineEvent> {
       }
       case GuidelineEventType.UPDATED: {
         const e = event as GuidelineUpdatedEvent;
-        if (e.payload.category !== undefined) state.category = e.payload.category;
+        if (e.payload.category !== undefined)
+          state.category = e.payload.category;
         if (e.payload.title !== undefined) state.title = e.payload.title;
-        if (e.payload.description !== undefined) state.description = e.payload.description;
-        if (e.payload.rationale !== undefined) state.rationale = e.payload.rationale;
-        if (e.payload.examples !== undefined) state.examples = e.payload.examples;
+        if (e.payload.description !== undefined)
+          state.description = e.payload.description;
+        if (e.payload.rationale !== undefined)
+          state.rationale = e.payload.rationale;
+        if (e.payload.examples !== undefined)
+          state.examples = e.payload.examples;
         state.version = e.version;
         break;
       }
@@ -94,7 +95,7 @@ export class Guideline extends BaseAggregate<GuidelineState, GuidelineEvent> {
       description: "",
       rationale: "",
       examples: [],
-      isRemoved: false,  // Default to not removed
+      isRemoved: false, // Default to not removed
       version: 0,
     };
     return new Guideline(state);
@@ -140,7 +141,7 @@ export class Guideline extends BaseAggregate<GuidelineState, GuidelineEvent> {
     title: string,
     description: string,
     rationale: string,
-    examples?: string[]
+    examples?: string[],
   ): GuidelineAddedEvent {
     // Input validation using rule pattern (synchronous validations)
     ValidationRuleSet.ensure(category, CATEGORY_RULES);
@@ -163,7 +164,7 @@ export class Guideline extends BaseAggregate<GuidelineState, GuidelineEvent> {
         rationale,
         examples: examples || [],
       },
-      Guideline.apply
+      Guideline.apply,
     );
   }
 
@@ -210,7 +211,7 @@ export class Guideline extends BaseAggregate<GuidelineState, GuidelineEvent> {
     return this.makeEvent<GuidelineUpdatedEvent>(
       GuidelineEventType.UPDATED,
       changes,
-      Guideline.apply
+      Guideline.apply,
     );
   }
 
@@ -230,10 +231,11 @@ export class Guideline extends BaseAggregate<GuidelineState, GuidelineEvent> {
     return this.makeEvent<GuidelineRemovedEvent>(
       GuidelineEventType.REMOVED,
       {
-        removedAt: new Date().toISOString() as import("../BaseEvent.js").ISO8601,
+        removedAt:
+          new Date().toISOString() as import("../BaseEvent.js").ISO8601,
         reason: reason || undefined,
       },
-      Guideline.apply
+      Guideline.apply,
     );
   }
 }

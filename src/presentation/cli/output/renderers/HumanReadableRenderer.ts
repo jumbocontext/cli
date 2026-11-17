@@ -1,6 +1,6 @@
-import { Section } from '../Section.js';
-import { TerminalOutput } from '../TerminalOutput.js';
-import { EntityRendererRegistry } from './EntityRendererRegistry.js';
+import { Section } from "../Section.js";
+import { TerminalOutput } from "../TerminalOutput.js";
+import { EntityRendererRegistry } from "./EntityRendererRegistry.js";
 
 /**
  * Renders TerminalOutput as human-readable terminal text.
@@ -11,26 +11,26 @@ export class HumanReadableRenderer {
 
   render(output: TerminalOutput): string {
     const sections = output.getSections();
-    const rendered = sections.map(section => this.renderSection(section));
-    return rendered.join('\n\n');
+    const rendered = sections.map((section) => this.renderSection(section));
+    return rendered.join("\n\n");
   }
 
   private renderSection(section: Section): string {
     switch (section.type) {
-      case 'prompt':
+      case "prompt":
         return this.renderPrompt(section.content as string);
 
-      case 'data':
+      case "data":
         return this.renderData(section);
 
-      case 'annotation':
+      case "annotation":
         return this.renderAnnotation(section);
 
-      case 'group':
+      case "group":
         return this.renderGroup(section);
 
       default:
-        return '';
+        return "";
     }
   }
 
@@ -77,8 +77,8 @@ export class HumanReadableRenderer {
     const renderer = rendererType ? this.registry.get(rendererType) : null;
 
     if (renderer) {
-      const renderedEntities = entities.map(entity =>
-        renderer.toHumanReadable(entity)
+      const renderedEntities = entities.map((entity) =>
+        renderer.toHumanReadable(entity),
       );
       parts.push(...renderedEntities);
     } else {
@@ -86,6 +86,6 @@ export class HumanReadableRenderer {
       parts.push(JSON.stringify(entities, null, 2));
     }
 
-    return parts.join('\n');
+    return parts.join("\n");
   }
 }

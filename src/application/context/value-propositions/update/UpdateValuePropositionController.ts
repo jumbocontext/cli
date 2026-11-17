@@ -3,11 +3,11 @@ import { UpdateValuePropositionResponse } from "./UpdateValuePropositionResponse
 import { IUpdateValuePropositionGateway } from "./IUpdateValuePropositionGateway.js";
 
 export class UpdateValuePropositionController {
-  constructor(
-    private readonly gateway: IUpdateValuePropositionGateway
-  ) {}
+  constructor(private readonly gateway: IUpdateValuePropositionGateway) {}
 
-  async handle(request: UpdateValuePropositionRequest): Promise<UpdateValuePropositionResponse> {
+  async handle(
+    request: UpdateValuePropositionRequest,
+  ): Promise<UpdateValuePropositionResponse> {
     return this.gateway.updateValueProposition(request);
   }
 }

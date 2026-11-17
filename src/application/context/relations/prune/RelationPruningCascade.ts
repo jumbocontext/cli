@@ -8,24 +8,30 @@ import { RemoveRelationCommandHandler } from "../remove/RemoveRelationCommandHan
 export class RelationPruningCascade {
   constructor(
     private readonly relationViewReader: IRelationViewReader,
-    private readonly removeRelationCommandHandler: RemoveRelationCommandHandler
+    private readonly removeRelationCommandHandler: RemoveRelationCommandHandler,
   ) {}
 
-  async execute(entityType: EntityTypeValue, entityId: string, reason: string): Promise<number> {
+  async execute(
+    entityType: EntityTypeValue,
+    entityId: string,
+    reason: string,
+  ): Promise<number> {
     const relations = await this.relationViewReader.findAll({
       entityType,
       entityId,
       status: "all",
     });
-    const relationsToPrune = relations.filter((relation) => relation.status !== "removed");
+    const relationsToPrune = relations.filter(
+      (relation) => relation.status !== "removed",
+    );
 
     await Promise.all(
       relationsToPrune.map((relation) =>
         this.removeRelationCommandHandler.execute({
           relationId: relation.relationId,
           reason,
-        })
-      )
+        }),
+      ),
     );
 
     return relationsToPrune.length;

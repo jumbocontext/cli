@@ -1,8 +1,13 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { ContextualGoalView } from '../../../../../application/context/goals/get/ContextualGoalView.js';
-import { Colors, Symbols } from '../../../rendering/StyleConfig.js';
-import { heading, contentLine, metaField, wrapBulletContinuation } from '../../../rendering/OutputLayout.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { ContextualGoalView } from "../../../../../application/context/goals/get/ContextualGoalView.js";
+import { Colors, Symbols } from "../../../rendering/StyleConfig.js";
+import {
+  heading,
+  contentLine,
+  metaField,
+  wrapBulletContinuation,
+} from "../../../rendering/OutputLayout.js";
 
 /**
  * Specialized builder for goal.update-progress command output.
@@ -29,7 +34,11 @@ export class GoalUpdateProgressOutputBuilder {
 
     lines.push("");
     lines.push(heading("Progress Updated"));
-    lines.push(contentLine(`${Symbols.check} ${Colors.success("Progress has been updated")}`));
+    lines.push(
+      contentLine(
+        `${Symbols.check} ${Colors.success("Progress has been updated")}`,
+      ),
+    );
     lines.push("");
     lines.push(metaField("Id", Colors.muted(goal.goalId), 6));
     lines.push(metaField("Added", Colors.primary(addedTask), 6));

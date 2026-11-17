@@ -4,11 +4,11 @@ import { AddGuidelineResponse } from "./AddGuidelineResponse.js";
 import { AddGuidelineCommandHandler } from "./AddGuidelineCommandHandler.js";
 
 export class LocalAddGuidelineGateway implements IAddGuidelineGateway {
-  constructor(
-    private readonly commandHandler: AddGuidelineCommandHandler
-  ) {}
+  constructor(private readonly commandHandler: AddGuidelineCommandHandler) {}
 
-  async addGuideline(request: AddGuidelineRequest): Promise<AddGuidelineResponse> {
+  async addGuideline(
+    request: AddGuidelineRequest,
+  ): Promise<AddGuidelineResponse> {
     const result = await this.commandHandler.execute({
       category: request.category,
       title: request.title,

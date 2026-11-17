@@ -13,9 +13,9 @@ import { GoalEventType, GoalStatusType } from "../Constants.js";
 export interface GoalStatusMigratedEvent extends BaseEvent {
   readonly type: typeof GoalEventType.STATUS_MIGRATED;
   readonly payload: {
-    readonly fromStatus: string;         // Legacy status value (e.g. 'to-do')
-    readonly toStatus: GoalStatusType;   // New status value (e.g. 'defined')
-    readonly status: GoalStatusType;     // Current status after migration
-    readonly migratedAt: string;         // ISO 8601 timestamp
+    readonly fromStatus: string; // Legacy status value (e.g. 'to-do')
+    readonly toStatus: GoalStatusType; // New status value (e.g. 'defined')
+    readonly status: GoalStatusType; // Current status after migration
+    readonly migratedAt: string; // ISO 8601 timestamp
   };
 }

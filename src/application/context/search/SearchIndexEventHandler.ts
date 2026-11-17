@@ -10,13 +10,19 @@ export class SearchIndexEventHandler implements IEventHandler {
   constructor(
     private readonly documentProjectors: readonly ISearchDocumentProjector[],
     private readonly reader: ISearchIndexReader,
-    private readonly writer: ISearchIndexWriter
+    private readonly writer: ISearchIndexWriter,
   ) {
-    this.eventTypes = [...new Set(documentProjectors.flatMap((projector) => projector.eventTypes))];
+    this.eventTypes = [
+      ...new Set(
+        documentProjectors.flatMap((projector) => projector.eventTypes),
+      ),
+    ];
   }
 
   async handle(event: BaseEvent): Promise<void> {
-    const documentProjector = this.documentProjectors.find((candidate) => candidate.eventTypes.includes(event.type));
+    const documentProjector = this.documentProjectors.find((candidate) =>
+      candidate.eventTypes.includes(event.type),
+    );
     if (!documentProjector) return;
 
     const source = documentProjector.getSource(event);

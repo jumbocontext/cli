@@ -3,9 +3,7 @@ import { UpdateGoalResponse } from "./UpdateGoalResponse.js";
 import { IUpdateGoalGateway } from "./IUpdateGoalGateway.js";
 
 export class UpdateGoalController {
-  constructor(
-    private readonly gateway: IUpdateGoalGateway
-  ) {}
+  constructor(private readonly gateway: IUpdateGoalGateway) {}
 
   async handle(request: UpdateGoalRequest): Promise<UpdateGoalResponse> {
     return this.gateway.updateGoal(request);

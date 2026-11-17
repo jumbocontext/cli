@@ -7,7 +7,7 @@ import { IGoalRemoveReader } from "./IGoalRemoveReader.js";
 export class LocalRemoveGoalGateway implements IRemoveGoalGateway {
   constructor(
     private readonly commandHandler: RemoveGoalCommandHandler,
-    private readonly goalReader: IGoalRemoveReader
+    private readonly goalReader: IGoalRemoveReader,
   ) {}
 
   async removeGoal(request: RemoveGoalRequest): Promise<RemoveGoalResponse> {
@@ -15,7 +15,9 @@ export class LocalRemoveGoalGateway implements IRemoveGoalGateway {
     const view = await this.goalReader.findById(request.goalId);
 
     // Execute command
-    const result = await this.commandHandler.execute({ goalId: request.goalId });
+    const result = await this.commandHandler.execute({
+      goalId: request.goalId,
+    });
 
     return {
       goalId: result.goalId,

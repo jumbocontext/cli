@@ -11,16 +11,18 @@ import {
 export class LocalRemoveAudienceGateway implements IRemoveAudienceGateway {
   constructor(
     private readonly commandHandler: RemoveAudienceCommandHandler,
-    private readonly reader: IAudienceRemoveReader
+    private readonly reader: IAudienceRemoveReader,
   ) {}
 
-  async removeAudience(request: RemoveAudienceRequest): Promise<RemoveAudienceResponse> {
+  async removeAudience(
+    request: RemoveAudienceRequest,
+  ): Promise<RemoveAudienceResponse> {
     const view = await this.reader.findById(request.audienceId);
     if (!view) {
       throw new Error(
         formatErrorMessage(AudienceErrorMessages.NOT_FOUND_WITH_ID, {
           id: request.audienceId,
-        })
+        }),
       );
     }
 

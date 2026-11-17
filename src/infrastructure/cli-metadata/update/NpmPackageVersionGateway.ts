@@ -3,9 +3,7 @@ import type { ITelemetryClient } from "../../../application/telemetry/ITelemetry
 import type { CliPackageVersionLookupResult } from "../../../application/cli-metadata/update/CliPackageVersionLookupResult.js";
 import { CliUpdateFailureReason } from "../../../application/cli-metadata/update/CliUpdateFailureReason.js";
 import type { ICliPackageVersionGateway } from "../../../application/cli-metadata/update/ICliPackageVersionGateway.js";
-import {
-  CLI_UPDATE_TEST_VERSION_ENV,
-} from "./CliUpdateTestMode.js";
+import { CLI_UPDATE_TEST_VERSION_ENV } from "./CliUpdateTestMode.js";
 
 const NPM_REGISTRY_BASE_URL = "https://registry.npmjs.org";
 const NPM_REGISTRY_TIMEOUT_MS = 3_000;
@@ -17,8 +15,9 @@ export class NpmPackageVersionGateway implements ICliPackageVersionGateway {
     private readonly telemetryClient?: Pick<ITelemetryClient, "track">,
     private readonly logger?: Pick<ILogger, "warn" | "info">,
     private readonly fetchImplementation: typeof fetch = fetch,
-    private readonly testLatestVersion: string | null =
-      process.env[CLI_UPDATE_TEST_VERSION_ENV] ?? null,
+    private readonly testLatestVersion: string | null = process.env[
+      CLI_UPDATE_TEST_VERSION_ENV
+    ] ?? null,
   ) {}
 
   async getLatestVersion(

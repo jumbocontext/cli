@@ -5,14 +5,15 @@
  * Captures the core project knowledge: name and purpose.
  */
 
-import {
-  BaseAggregate,
-  AggregateState,
-} from "../BaseAggregate.js";
+import { BaseAggregate, AggregateState } from "../BaseAggregate.js";
 import { UUID } from "../BaseEvent.js";
 import { ProjectId } from "./ProjectId.js";
 import { ValidationRuleSet } from "../validation/ValidationRule.js";
-import { ProjectEvent, ProjectInitializedEvent, ProjectUpdatedEvent } from "./EventIndex.js";
+import {
+  ProjectEvent,
+  ProjectInitializedEvent,
+  ProjectUpdatedEvent,
+} from "./EventIndex.js";
 import { ProjectEventType, ProjectErrorMessages } from "./Constants.js";
 import { NAME_RULES } from "./rules/NameRules.js";
 import { PURPOSE_RULES } from "./rules/PurposeRules.js";
@@ -96,10 +97,7 @@ export class Project extends BaseAggregate<ProjectState, ProjectEvent> {
    * @returns ProjectInitialized event
    * @throws Error if project is already initialized or validation fails
    */
-  initialize(
-    name: string,
-    purpose?: string,
-  ): ProjectInitializedEvent {
+  initialize(name: string, purpose?: string): ProjectInitializedEvent {
     // State validation - can't initialize twice
     if (this.state.version > 0) {
       throw new Error(ProjectErrorMessages.ALREADY_INITIALIZED);
@@ -116,7 +114,7 @@ export class Project extends BaseAggregate<ProjectState, ProjectEvent> {
         name,
         purpose: purpose || null,
       },
-      Project.apply // Pass projection's apply function
+      Project.apply, // Pass projection's apply function
     );
   }
 
@@ -129,9 +127,7 @@ export class Project extends BaseAggregate<ProjectState, ProjectEvent> {
    * @returns ProjectUpdated event or null if no changes
    * @throws Error if project is not initialized or validation fails
    */
-  update(
-    purpose?: string | null,
-  ): ProjectUpdatedEvent | null {
+  update(purpose?: string | null): ProjectUpdatedEvent | null {
     // State validation - must be initialized
     if (this.state.version === 0) {
       throw new Error(ProjectErrorMessages.NOT_INITIALIZED);
@@ -160,7 +156,7 @@ export class Project extends BaseAggregate<ProjectState, ProjectEvent> {
     return this.makeEvent<ProjectUpdatedEvent>(
       ProjectEventType.UPDATED,
       changes,
-      Project.apply
+      Project.apply,
     );
   }
 

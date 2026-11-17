@@ -31,7 +31,7 @@ export class SqliteActiveSessionReader implements IActiveSessionReader {
   async findActive(): Promise<SessionView | null> {
     const row = this.db
       .prepare(
-        "SELECT * FROM session_views WHERE status IN ('active', 'paused') ORDER BY createdAt DESC LIMIT 1"
+        "SELECT * FROM session_views WHERE status IN ('active', 'paused') ORDER BY createdAt DESC LIMIT 1",
       )
       .get() as SessionViewRow | undefined;
     return row ? this.mapRowToView(row) : null;

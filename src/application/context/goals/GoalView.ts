@@ -15,12 +15,12 @@ export interface GoalView {
   readonly version: number;
   readonly createdAt: string;
   readonly updatedAt: string;
-  readonly note?: string;  // Optional: populated when blocked or completed
-  readonly reviewIssues?: string;  // Optional: populated when rejected with review findings
-  readonly progress: string[];  // Tracks completed sub-tasks (append-only)
+  readonly note?: string; // Optional: populated when blocked or completed
+  readonly reviewIssues?: string; // Optional: populated when rejected with review findings
+  readonly progress: string[]; // Tracks completed sub-tasks (append-only)
   // Claim fields - populated when goal is started/resumed, cleared on complete/reset
-  readonly claimedBy?: string;      // WorkerId of the claiming worker
-  readonly claimedAt?: string;      // ISO 8601 timestamp when claim was created
+  readonly claimedBy?: string; // WorkerId of the claiming worker
+  readonly claimedAt?: string; // ISO 8601 timestamp when claim was created
   readonly claimExpiresAt?: string; // ISO 8601 timestamp when claim expires
   readonly nextGoalId?: string;
   readonly prerequisiteGoals?: string[];

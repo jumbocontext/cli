@@ -2,5 +2,7 @@ import { UpdateValuePropositionRequest } from "./UpdateValuePropositionRequest.j
 import { UpdateValuePropositionResponse } from "./UpdateValuePropositionResponse.js";
 
 export interface IUpdateValuePropositionGateway {
-  updateValueProposition(request: UpdateValuePropositionRequest): Promise<UpdateValuePropositionResponse>;
+  updateValueProposition(
+    request: UpdateValuePropositionRequest,
+  ): Promise<UpdateValuePropositionResponse>;
 }

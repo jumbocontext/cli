@@ -3,11 +3,11 @@ import { UpdateDecisionResponse } from "./UpdateDecisionResponse.js";
 import { IUpdateDecisionGateway } from "./IUpdateDecisionGateway.js";
 
 export class UpdateDecisionController {
-  constructor(
-    private readonly gateway: IUpdateDecisionGateway
-  ) {}
+  constructor(private readonly gateway: IUpdateDecisionGateway) {}
 
-  async handle(request: UpdateDecisionRequest): Promise<UpdateDecisionResponse> {
+  async handle(
+    request: UpdateDecisionRequest,
+  ): Promise<UpdateDecisionResponse> {
     return this.gateway.updateDecision(request);
   }
 }

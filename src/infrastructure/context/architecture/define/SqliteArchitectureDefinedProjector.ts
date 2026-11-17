@@ -9,10 +9,17 @@ import { IArchitectureReader } from "../../../../application/context/architectur
 import { ArchitectureDefinedEvent } from "../../../../domain/architecture/define/ArchitectureDefinedEvent.js";
 import { ArchitectureView } from "../../../../application/context/architecture/ArchitectureView.js";
 
-export class SqliteArchitectureDefinedProjector implements IArchitectureDefinedProjector, IArchitectureDefineReader, IArchitectureReader {
+export class SqliteArchitectureDefinedProjector
+  implements
+    IArchitectureDefinedProjector,
+    IArchitectureDefineReader,
+    IArchitectureReader
+{
   constructor(private db: Database) {}
 
-  async applyArchitectureDefined(event: ArchitectureDefinedEvent): Promise<void> {
+  async applyArchitectureDefined(
+    event: ArchitectureDefinedEvent,
+  ): Promise<void> {
     const stmt = this.db.prepare(`
       INSERT OR REPLACE INTO architecture_views (
         architectureId, description, organization, patterns, principles,
@@ -30,12 +37,14 @@ export class SqliteArchitectureDefinedProjector implements IArchitectureDefinedP
       JSON.stringify(event.payload.stack),
       event.version,
       event.timestamp,
-      event.timestamp
+      event.timestamp,
     );
   }
 
   async findById(id: string): Promise<ArchitectureView | null> {
-    const row = this.db.prepare('SELECT * FROM architecture_views WHERE architectureId = ?').get(id);
+    const row = this.db
+      .prepare("SELECT * FROM architecture_views WHERE architectureId = ?")
+      .get(id);
     return row ? this.mapRowToView(row as Record<string, unknown>) : null;
   }
 
@@ -48,10 +57,10 @@ export class SqliteArchitectureDefinedProjector implements IArchitectureDefinedP
       architectureId: row.architectureId as string,
       description: row.description as string,
       organization: row.organization as string,
-      patterns: JSON.parse((row.patterns as string) || '[]'),
-      principles: JSON.parse((row.principles as string) || '[]'),
-      dataStores: JSON.parse((row.dataStores as string) || '[]'),
-      stack: JSON.parse((row.stack as string) || '[]'),
+      patterns: JSON.parse((row.patterns as string) || "[]"),
+      principles: JSON.parse((row.principles as string) || "[]"),
+      dataStores: JSON.parse((row.dataStores as string) || "[]"),
+      stack: JSON.parse((row.stack as string) || "[]"),
       deprecated: (row.deprecated as number) === 1,
       version: row.version as number,
       createdAt: row.createdAt as string,

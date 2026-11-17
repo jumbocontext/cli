@@ -4,9 +4,7 @@ import { BlockGoalResponse } from "./BlockGoalResponse.js";
 import { BlockGoalCommandHandler } from "./BlockGoalCommandHandler.js";
 
 export class LocalBlockGoalGateway implements IBlockGoalGateway {
-  constructor(
-    private readonly commandHandler: BlockGoalCommandHandler
-  ) {}
+  constructor(private readonly commandHandler: BlockGoalCommandHandler) {}
 
   async blockGoal(request: BlockGoalRequest): Promise<BlockGoalResponse> {
     const result = await this.commandHandler.execute({

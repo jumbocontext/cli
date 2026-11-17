@@ -21,6 +21,6 @@ export function useGuidelinesList(
     }, [category, controller]),
     controller === undefined
       ? 0
-      : context?.tickMs ?? DEFAULT_STATE_READER_TICK_MS,
+      : (context?.tickMs ?? DEFAULT_STATE_READER_TICK_MS),
   );
 }

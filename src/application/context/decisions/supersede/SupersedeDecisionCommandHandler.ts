@@ -3,7 +3,10 @@ import { IDecisionSupersededEventWriter } from "./IDecisionSupersededEventWriter
 import { IDecisionSupersedeReader } from "./IDecisionSupersedeReader.js";
 import { IEventBus } from "../../../messaging/IEventBus.js";
 import { Decision } from "../../../../domain/decisions/Decision.js";
-import { DecisionErrorMessages, formatErrorMessage } from "../../../../domain/decisions/Constants.js";
+import {
+  DecisionErrorMessages,
+  formatErrorMessage,
+} from "../../../../domain/decisions/Constants.js";
 
 /**
  * Handles superseding of an architectural decision.
@@ -13,15 +16,19 @@ export class SupersedeDecisionCommandHandler {
   constructor(
     private readonly eventWriter: IDecisionSupersededEventWriter,
     private readonly reader: IDecisionSupersedeReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
-  async execute(command: SupersedeDecisionCommand): Promise<{ decisionId: string }> {
+  async execute(
+    command: SupersedeDecisionCommand,
+  ): Promise<{ decisionId: string }> {
     // 1. Check decision exists (query projection for fast check)
     const view = await this.reader.findById(command.decisionId);
     if (!view) {
       throw new Error(
-        formatErrorMessage(DecisionErrorMessages.DECISION_NOT_FOUND, { id: command.decisionId })
+        formatErrorMessage(DecisionErrorMessages.DECISION_NOT_FOUND, {
+          id: command.decisionId,
+        }),
       );
     }
 
@@ -29,7 +36,9 @@ export class SupersedeDecisionCommandHandler {
     const supersedingView = await this.reader.findById(command.supersededBy);
     if (!supersedingView) {
       throw new Error(
-        formatErrorMessage(DecisionErrorMessages.DECISION_NOT_FOUND, { id: command.supersededBy })
+        formatErrorMessage(DecisionErrorMessages.DECISION_NOT_FOUND, {
+          id: command.supersededBy,
+        }),
       );
     }
 

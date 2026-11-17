@@ -1,4 +1,7 @@
-import { EntityTypeValue, RelationStrengthValue } from "../../../domain/relations/Constants.js";
+import {
+  EntityTypeValue,
+  RelationStrengthValue,
+} from "../../../domain/relations/Constants.js";
 
 export interface RelationView {
   relationId: string;
@@ -9,7 +12,7 @@ export interface RelationView {
   relationType: string;
   strength: RelationStrengthValue | null;
   description: string;
-  status: 'active' | 'deactivated' | 'removed';
+  status: "active" | "deactivated" | "removed";
   version: number;
   createdAt: string;
   updatedAt: string;

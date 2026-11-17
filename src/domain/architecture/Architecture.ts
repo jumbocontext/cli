@@ -1,8 +1,17 @@
 import { BaseAggregate, AggregateState } from "../BaseAggregate.js";
 import { UUID } from "../BaseEvent.js";
 import { ValidationRuleSet } from "../validation/ValidationRule.js";
-import { ArchitectureEvent, ArchitectureDefinedEvent, ArchitectureUpdatedEvent, ArchitectureDeprecatedEvent, DataStore } from "./EventIndex.js";
-import { ArchitectureEventType, ArchitectureErrorMessages } from "./Constants.js";
+import {
+  ArchitectureEvent,
+  ArchitectureDefinedEvent,
+  ArchitectureUpdatedEvent,
+  ArchitectureDeprecatedEvent,
+  DataStore,
+} from "./EventIndex.js";
+import {
+  ArchitectureEventType,
+  ArchitectureErrorMessages,
+} from "./Constants.js";
 import { DESCRIPTION_RULES } from "./rules/DescriptionRules.js";
 import { ORGANIZATION_RULES } from "./rules/OrganizationRules.js";
 import { PATTERNS_RULES } from "./rules/PatternsRules.js";
@@ -12,18 +21,21 @@ import { STACK_RULES } from "./rules/StackRules.js";
 
 // Domain state: business properties + aggregate metadata
 export interface ArchitectureState extends AggregateState {
-  id: UUID;                      // Aggregate identity
-  description: string;           // Required: high-level overview
-  organization: string;          // Required: architectural organization
-  patterns: string[];            // Optional: architectural patterns
-  principles: string[];          // Optional: design principles
-  dataStores: DataStore[];       // Optional: data stores
-  stack: string[];               // Optional: technology stack
-  deprecated: boolean;           // Whether the architecture entity is deprecated
-  version: number;               // Aggregate version
+  id: UUID; // Aggregate identity
+  description: string; // Required: high-level overview
+  organization: string; // Required: architectural organization
+  patterns: string[]; // Optional: architectural patterns
+  principles: string[]; // Optional: design principles
+  dataStores: DataStore[]; // Optional: data stores
+  stack: string[]; // Optional: technology stack
+  deprecated: boolean; // Whether the architecture entity is deprecated
+  version: number; // Aggregate version
 }
 
-export class Architecture extends BaseAggregate<ArchitectureState, ArchitectureEvent> {
+export class Architecture extends BaseAggregate<
+  ArchitectureState,
+  ArchitectureEvent
+> {
   private constructor(state: ArchitectureState) {
     super(state);
   }
@@ -47,11 +59,16 @@ export class Architecture extends BaseAggregate<ArchitectureState, ArchitectureE
       }
       case ArchitectureEventType.UPDATED: {
         const e = event as ArchitectureUpdatedEvent;
-        if (e.payload.description !== undefined) state.description = e.payload.description;
-        if (e.payload.organization !== undefined) state.organization = e.payload.organization;
-        if (e.payload.patterns !== undefined) state.patterns = e.payload.patterns;
-        if (e.payload.principles !== undefined) state.principles = e.payload.principles;
-        if (e.payload.dataStores !== undefined) state.dataStores = e.payload.dataStores;
+        if (e.payload.description !== undefined)
+          state.description = e.payload.description;
+        if (e.payload.organization !== undefined)
+          state.organization = e.payload.organization;
+        if (e.payload.patterns !== undefined)
+          state.patterns = e.payload.patterns;
+        if (e.payload.principles !== undefined)
+          state.principles = e.payload.principles;
+        if (e.payload.dataStores !== undefined)
+          state.dataStores = e.payload.dataStores;
         if (e.payload.stack !== undefined) state.stack = e.payload.stack;
         state.version = e.version;
         break;
@@ -113,7 +130,7 @@ export class Architecture extends BaseAggregate<ArchitectureState, ArchitectureE
     patterns?: string[],
     principles?: string[],
     dataStores?: DataStore[],
-    stack?: string[]
+    stack?: string[],
   ): ArchitectureDefinedEvent {
     if (this.state.version > 0) {
       throw new Error(ArchitectureErrorMessages.ALREADY_DEFINED);
@@ -122,9 +139,12 @@ export class Architecture extends BaseAggregate<ArchitectureState, ArchitectureE
     // Validation using rule pattern
     ValidationRuleSet.ensure(description, DESCRIPTION_RULES);
     ValidationRuleSet.ensure(organization, ORGANIZATION_RULES);
-    if (patterns && patterns.length > 0) ValidationRuleSet.ensure(patterns, PATTERNS_RULES);
-    if (principles && principles.length > 0) ValidationRuleSet.ensure(principles, PRINCIPLES_RULES);
-    if (dataStores && dataStores.length > 0) ValidationRuleSet.ensure(dataStores, DATA_STORES_RULES);
+    if (patterns && patterns.length > 0)
+      ValidationRuleSet.ensure(patterns, PATTERNS_RULES);
+    if (principles && principles.length > 0)
+      ValidationRuleSet.ensure(principles, PRINCIPLES_RULES);
+    if (dataStores && dataStores.length > 0)
+      ValidationRuleSet.ensure(dataStores, DATA_STORES_RULES);
     if (stack && stack.length > 0) ValidationRuleSet.ensure(stack, STACK_RULES);
 
     // Use BaseAggregate.makeEvent
@@ -136,9 +156,9 @@ export class Architecture extends BaseAggregate<ArchitectureState, ArchitectureE
         patterns: patterns || [],
         principles: principles || [],
         dataStores: dataStores || [],
-        stack: stack || []
+        stack: stack || [],
       },
-      Architecture.apply
+      Architecture.apply,
     ) as ArchitectureDefinedEvent;
   }
 
@@ -188,7 +208,7 @@ export class Architecture extends BaseAggregate<ArchitectureState, ArchitectureE
     return this.makeEvent(
       ArchitectureEventType.UPDATED,
       updates,
-      Architecture.apply
+      Architecture.apply,
     ) as ArchitectureUpdatedEvent;
   }
 
@@ -207,7 +227,7 @@ export class Architecture extends BaseAggregate<ArchitectureState, ArchitectureE
     return this.makeEvent(
       ArchitectureEventType.DEPRECATED,
       { reason },
-      Architecture.apply
+      Architecture.apply,
     ) as ArchitectureDeprecatedEvent;
   }
 }

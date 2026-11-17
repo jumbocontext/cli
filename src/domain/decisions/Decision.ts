@@ -3,8 +3,20 @@ import { UUID, ISO8601 } from "../BaseEvent.js";
 import type { DecisionRemovedEvent } from "./remove/DecisionRemovedEvent.js";
 import { DecisionId } from "./DecisionId.js";
 import { ValidationRuleSet } from "../validation/ValidationRule.js";
-import { DecisionEvent, DecisionAddedEvent, DecisionUpdatedEvent, DecisionReversedEvent, DecisionSupersededEvent, DecisionRestoredEvent } from "./EventIndex.js";
-import { DecisionEventType, DecisionStatus, DecisionStatusType, DecisionErrorMessages } from "./Constants.js";
+import {
+  DecisionEvent,
+  DecisionAddedEvent,
+  DecisionUpdatedEvent,
+  DecisionReversedEvent,
+  DecisionSupersededEvent,
+  DecisionRestoredEvent,
+} from "./EventIndex.js";
+import {
+  DecisionEventType,
+  DecisionStatus,
+  DecisionStatusType,
+  DecisionErrorMessages,
+} from "./Constants.js";
 import { TITLE_RULES } from "./rules/TitleRules.js";
 import { CONTEXT_RULES } from "./rules/ContextRules.js";
 import { RATIONALE_RULES } from "./rules/RationaleRules.js";
@@ -54,9 +66,12 @@ export class Decision extends BaseAggregate<DecisionState, DecisionEvent> {
         const e = event as DecisionUpdatedEvent;
         if (e.payload.title !== undefined) state.title = e.payload.title;
         if (e.payload.context !== undefined) state.context = e.payload.context;
-        if (e.payload.rationale !== undefined) state.rationale = e.payload.rationale;
-        if (e.payload.alternatives !== undefined) state.alternatives = e.payload.alternatives;
-        if (e.payload.consequences !== undefined) state.consequences = e.payload.consequences;
+        if (e.payload.rationale !== undefined)
+          state.rationale = e.payload.rationale;
+        if (e.payload.alternatives !== undefined)
+          state.alternatives = e.payload.alternatives;
+        if (e.payload.consequences !== undefined)
+          state.consequences = e.payload.consequences;
         state.version = e.version;
         break;
       }
@@ -144,19 +159,21 @@ export class Decision extends BaseAggregate<DecisionState, DecisionEvent> {
     context: string,
     rationale?: string,
     alternatives?: string[],
-    consequences?: string
+    consequences?: string,
   ): DecisionAddedEvent {
     // State validation: must be new aggregate
     if (this.state.version > 0) {
-      throw new Error('Decision already exists. Use update() instead.');
+      throw new Error("Decision already exists. Use update() instead.");
     }
 
     // Input validation using rules
     ValidationRuleSet.ensure(title, TITLE_RULES);
     ValidationRuleSet.ensure(context, CONTEXT_RULES);
     if (rationale) ValidationRuleSet.ensure(rationale, RATIONALE_RULES);
-    if (alternatives) ValidationRuleSet.ensure(alternatives, ALTERNATIVES_RULES);
-    if (consequences) ValidationRuleSet.ensure(consequences, CONSEQUENCES_RULES);
+    if (alternatives)
+      ValidationRuleSet.ensure(alternatives, ALTERNATIVES_RULES);
+    if (consequences)
+      ValidationRuleSet.ensure(consequences, CONSEQUENCES_RULES);
 
     // Create and return event
     return this.makeEvent(
@@ -166,9 +183,9 @@ export class Decision extends BaseAggregate<DecisionState, DecisionEvent> {
         context,
         rationale: rationale || null,
         alternatives: alternatives || [],
-        consequences: consequences || null
+        consequences: consequences || null,
       },
-      Decision.apply
+      Decision.apply,
     ) as DecisionAddedEvent;
   }
 
@@ -181,7 +198,7 @@ export class Decision extends BaseAggregate<DecisionState, DecisionEvent> {
     context?: string,
     rationale?: string,
     alternatives?: string[],
-    consequences?: string
+    consequences?: string,
   ): DecisionUpdatedEvent {
     this.ensureNotRemoved();
     // State validation
@@ -193,8 +210,10 @@ export class Decision extends BaseAggregate<DecisionState, DecisionEvent> {
     if (title) ValidationRuleSet.ensure(title, TITLE_RULES);
     if (context) ValidationRuleSet.ensure(context, CONTEXT_RULES);
     if (rationale) ValidationRuleSet.ensure(rationale, RATIONALE_RULES);
-    if (alternatives) ValidationRuleSet.ensure(alternatives, ALTERNATIVES_RULES);
-    if (consequences) ValidationRuleSet.ensure(consequences, CONSEQUENCES_RULES);
+    if (alternatives)
+      ValidationRuleSet.ensure(alternatives, ALTERNATIVES_RULES);
+    if (consequences)
+      ValidationRuleSet.ensure(consequences, CONSEQUENCES_RULES);
 
     return this.makeEvent(
       DecisionEventType.UPDATED,
@@ -203,9 +222,9 @@ export class Decision extends BaseAggregate<DecisionState, DecisionEvent> {
         context,
         rationale,
         alternatives,
-        consequences
+        consequences,
       },
-      Decision.apply
+      Decision.apply,
     ) as DecisionUpdatedEvent;
   }
 
@@ -231,9 +250,9 @@ export class Decision extends BaseAggregate<DecisionState, DecisionEvent> {
       DecisionEventType.REVERSED,
       {
         reason: reason.trim(),
-        reversedAt: new Date().toISOString() as ISO8601
+        reversedAt: new Date().toISOString() as ISO8601,
       },
-      Decision.apply
+      Decision.apply,
     ) as DecisionReversedEvent;
   }
 
@@ -256,7 +275,7 @@ export class Decision extends BaseAggregate<DecisionState, DecisionEvent> {
     return this.makeEvent(
       DecisionEventType.SUPERSEDED,
       { supersededBy },
-      Decision.apply
+      Decision.apply,
     ) as DecisionSupersededEvent;
   }
 
@@ -271,7 +290,7 @@ export class Decision extends BaseAggregate<DecisionState, DecisionEvent> {
     return this.makeEvent<DecisionRemovedEvent>(
       DecisionEventType.REMOVED,
       { status: DecisionStatus.REMOVED },
-      Decision.apply
+      Decision.apply,
     );
   }
 
@@ -294,9 +313,9 @@ export class Decision extends BaseAggregate<DecisionState, DecisionEvent> {
       DecisionEventType.RESTORED,
       {
         reason: reason.trim(),
-        restoredAt: new Date().toISOString() as ISO8601
+        restoredAt: new Date().toISOString() as ISO8601,
       },
-      Decision.apply
+      Decision.apply,
     ) as DecisionRestoredEvent;
   }
 }

@@ -9,6 +9,6 @@ import { GoalEventType } from "../Constants.js";
 export interface GoalProgressUpdatedEvent extends BaseEvent {
   readonly type: typeof GoalEventType.PROGRESS_UPDATED;
   readonly payload: {
-    readonly taskDescription: string;  // Description of completed sub-task
+    readonly taskDescription: string; // Description of completed sub-task
   };
 }

@@ -1,7 +1,11 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { Colors, Symbols } from '../../../rendering/StyleConfig.js';
-import { heading, contentLine, metaField } from '../../../rendering/OutputLayout.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { Colors, Symbols } from "../../../rendering/StyleConfig.js";
+import {
+  heading,
+  contentLine,
+  metaField,
+} from "../../../rendering/OutputLayout.js";
 
 /**
  * Specialized builder for goal.unblock command output.
@@ -26,13 +30,19 @@ export class GoalUnblockOutputBuilder {
     const lines: string[] = [];
     lines.push("");
     lines.push(heading("Goal Unblocked"));
-    lines.push(contentLine(`${Symbols.check} ${Colors.success("Goal has been unblocked")}`));
+    lines.push(
+      contentLine(
+        `${Symbols.check} ${Colors.success("Goal has been unblocked")}`,
+      ),
+    );
     lines.push("");
     lines.push(metaField("Id", Colors.muted(goalId)));
     if (resolution) {
       lines.push(metaField("Resolution", Colors.primary(resolution)));
     }
-    lines.push(metaField("Next", Colors.primary(`jumbo goal start --id ${goalId}`)));
+    lines.push(
+      metaField("Next", Colors.primary(`jumbo goal start --id ${goalId}`)),
+    );
     this.builder.addPrompt(lines.join("\n"));
     const data: Record<string, string> = { goalId, status: "unblocked" };
     if (resolution) {
@@ -48,9 +58,11 @@ export class GoalUnblockOutputBuilder {
    */
   buildFailureError(error: Error | string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Failed to unblock goal")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Failed to unblock goal")}`,
+    );
     this.builder.addData({
-      message: error instanceof Error ? error.message : error
+      message: error instanceof Error ? error.message : error,
     });
     return this.builder.build();
   }

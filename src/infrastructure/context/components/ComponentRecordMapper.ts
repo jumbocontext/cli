@@ -5,7 +5,10 @@
  */
 
 import { ComponentView } from "../../../application/context/components/ComponentView.js";
-import { ComponentTypeValue, ComponentStatusValue } from "../../../domain/components/Constants.js";
+import {
+  ComponentTypeValue,
+  ComponentStatusValue,
+} from "../../../domain/components/Constants.js";
 import { ComponentRecord } from "./ComponentRecord.js";
 
 export class ComponentRecordMapper {

@@ -1,5 +1,6 @@
 import { IProjectContextReader } from "./IProjectContextReader.js";
 import { ProjectSummaryView } from "../ProjectSummaryView.js";
+import { ProjectNotInitializedError } from "../../../host/ProjectNotInitializedError.js";
 
 /**
  * GetProjectSummaryQueryHandler - Query handler for project banner information
@@ -13,9 +14,7 @@ import { ProjectSummaryView } from "../ProjectSummaryView.js";
  *   // Render banner with project name and purpose
  */
 export class GetProjectSummaryQueryHandler {
-  constructor(
-    private readonly projectContextReader: IProjectContextReader
-  ) {}
+  constructor(private readonly projectContextReader: IProjectContextReader) {}
 
   /**
    * Execute query to get project summary for banner display
@@ -23,14 +22,23 @@ export class GetProjectSummaryQueryHandler {
    * @returns ProjectSummaryView or null if project not initialized
    */
   async execute(): Promise<ProjectSummaryView | null> {
-    const project = await this.projectContextReader.getProject();
+    let project;
+    try {
+      project = await this.projectContextReader.getProject();
+    } catch (error) {
+      if (error instanceof ProjectNotInitializedError) {
+        return null;
+      }
+      throw error;
+    }
 
     if (!project) {
       return null;
     }
 
-    const lifecycleState = project.lifecycleState
-      ?? await this.projectContextReader.getProjectLifecycleState();
+    const lifecycleState =
+      project.lifecycleState ??
+      (await this.projectContextReader.getProjectLifecycleState());
 
     return {
       name: project.name,

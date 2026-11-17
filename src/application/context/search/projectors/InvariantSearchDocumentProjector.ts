@@ -18,13 +18,19 @@ export class InvariantSearchDocumentProjector implements ISearchDocumentProjecto
     return { type: SearchCategory.INVARIANT, id: event.aggregateId };
   }
 
-  project(event: BaseEvent, current: SearchDocument | null): SearchDocumentChange | null {
+  project(
+    event: BaseEvent,
+    current: SearchDocument | null,
+  ): SearchDocumentChange | null {
     if (event.type === InvariantEventType.REMOVED) {
       return { operation: "remove", source: this.getSource(event) };
     }
 
     if (event.type === InvariantEventType.ADDED) {
-      return { operation: "upsert", document: this.fromAdded(event as InvariantAddedEvent) };
+      return {
+        operation: "upsert",
+        document: this.fromAdded(event as InvariantAddedEvent),
+      };
     }
 
     if (!current) return null;
@@ -32,14 +38,20 @@ export class InvariantSearchDocumentProjector implements ISearchDocumentProjecto
     const payload = (event as InvariantUpdatedEvent).payload;
     const metadata = { ...current.metadata };
     if (payload.title !== undefined) metadata.title = payload.title;
-    if (payload.description !== undefined) metadata.description = payload.description;
+    if (payload.description !== undefined)
+      metadata.description = payload.description;
     if (payload.rationale !== undefined) metadata.rationale = payload.rationale;
 
-    return { operation: "upsert", document: this.fromMetadata(event, current, metadata) };
+    return {
+      operation: "upsert",
+      document: this.fromMetadata(event, current, metadata),
+    };
   }
 
   private fromAdded(event: InvariantAddedEvent): SearchDocument {
-    const payload = event.payload as InvariantAddedEvent["payload"] & { category?: string };
+    const payload = event.payload as InvariantAddedEvent["payload"] & {
+      category?: string;
+    };
     return this.fromMetadata(event, null, {
       title: payload.title ?? payload.category ?? event.aggregateId,
       invariantCategory: payload.category ?? null,
@@ -51,7 +63,7 @@ export class InvariantSearchDocumentProjector implements ISearchDocumentProjecto
   private fromMetadata(
     event: BaseEvent,
     current: SearchDocument | null,
-    metadata: Record<string, SearchFacetValue>
+    metadata: Record<string, SearchFacetValue>,
   ): SearchDocument {
     const title = String(metadata.title ?? current?.title ?? event.aggregateId);
     const summary = this.optionalString(metadata.description);

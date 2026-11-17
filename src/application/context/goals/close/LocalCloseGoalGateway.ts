@@ -5,14 +5,17 @@ import { CloseGoalCommandHandler } from "./CloseGoalCommandHandler.js";
 import { IGoalCloseReader } from "./IGoalCloseReader.js";
 import { GoalClaimPolicy } from "../claims/GoalClaimPolicy.js";
 import { IWorkerIdentityReader } from "../../../host/workers/IWorkerIdentityReader.js";
-import { GoalErrorMessages, formatErrorMessage } from "../../../../domain/goals/Constants.js";
+import {
+  GoalErrorMessages,
+  formatErrorMessage,
+} from "../../../../domain/goals/Constants.js";
 
 export class LocalCloseGoalGateway implements ICloseGoalGateway {
   constructor(
     private readonly commandHandler: CloseGoalCommandHandler,
     private readonly goalReader: IGoalCloseReader,
     private readonly claimPolicy: GoalClaimPolicy,
-    private readonly workerIdentityReader: IWorkerIdentityReader
+    private readonly workerIdentityReader: IWorkerIdentityReader,
   ) {}
 
   async closeGoal(request: CloseGoalRequest): Promise<CloseGoalResponse> {
@@ -23,7 +26,7 @@ export class LocalCloseGoalGateway implements ICloseGoalGateway {
       throw new Error(
         formatErrorMessage(GoalErrorMessages.GOAL_CLAIMED_BY_ANOTHER_WORKER, {
           expiresAt: claimValidation.existingClaim.claimExpiresAt,
-        })
+        }),
       );
     }
 

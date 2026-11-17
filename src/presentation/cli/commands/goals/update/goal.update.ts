@@ -8,83 +8,121 @@
  *   jumbo goal update --id <id> [--title "..."] [--objective "..."] [--criteria "..."] [--scope-in "..."] [--scope-out "..."]
  */
 
-import { CommandMetadata } from "../../registry/CommandMetadata.js";
-import { IApplicationContainer } from "../../../../../application/host/IApplicationContainer.js";
-import { Renderer } from "../../../rendering/Renderer.js";
+import type { Command } from "commander";
+import type { CommandExample } from "../../registry/CommandMetadata.js";
+import type { UpdateGoalController } from "../../../../../application/context/goals/update/UpdateGoalController.js";
 import { UpdateGoalRequest } from "../../../../../application/context/goals/update/UpdateGoalRequest.js";
+import { LeafContainerBuilder } from "../../../../../infrastructure/host/LeafContainerBuilder.js";
+import { Renderer } from "../../../rendering/Renderer.js";
 import { GoalUpdateOutputBuilder } from "./GoalUpdateOutputBuilder.js";
+import {
+  formatSubcommandHelp,
+  metadataFromCommand,
+} from "../../../help/SubcommandHelpFormatter.js";
+import { COMMAND_CATEGORY } from "../../../help/CommandCategories.js";
 
 /**
- * Command metadata for auto-registration
+ * Help copy owned by this leaf, shown in the EXAMPLES section of `--help`.
  */
-export const metadata: CommandMetadata = {
-  description: "Update an existing goal's properties (partial updates supported)",
-  category: "work",
-  requiredOptions: [
-    {
-      flags: "-i, --id <id>",
-      description: "ID of the goal to update"
-    }
-  ],
-  options: [
-    {
-      flags: "-t, --title <text>",
-      description: "Updated title (max 60 characters)"
-    },
-    {
-      flags: "--objective <text>",
-      description: "Updated objective"
-    },
-    {
-      flags: "--criteria <items...>",
-      description: "Updated success criteria (can specify multiple)"
-    },
-    {
-      flags: "--scope-in <items...>",
-      description: "Updated in-scope items"
-    },
-    {
-      flags: "--scope-out <items...>",
-      description: "Updated out-of-scope items"
-    },
-    {
-      flags: "--next-goal <goalId>",
-      description: "Update the NextGoal property (chains to specified goal after completion)"
-    },
-    {
-      flags: "--prerequisite-goals <goalIds...>",
-      description: "Update prerequisite goal IDs that must be completed before this goal can start"
-    },
-    {
-      flags: "--branch <branch>",
-      description: "Update the git branch for this goal (for multi-agent collaboration)"
-    },
-    {
-      flags: "--worktree <worktree>",
-      description: "Update the git worktree path for this goal (for multi-agent collaboration)"
-    }
-  ],
-  examples: [
-    {
-      command: "jumbo goal update --id abc123 --title \"New Title\"",
-      description: "Update a goal's title only"
-    },
-    {
-      command: "jumbo goal update --id abc123 --objective \"Updated goal\"",
-      description: "Update a goal's objective only"
-    },
-    {
-      command: "jumbo goal update --id abc123 --criteria \"Criterion 1\" --criteria \"Criterion 2\"",
-      description: "Update success criteria only"
-    },
-    {
-      command: "jumbo goal update --id abc123 --objective \"New objective\" --scope-in \"Component A\"",
-      description: "Update multiple fields at once"
-    }
-  ],
-  related: ["goal add", "goal start", "goal complete"],
-  requiresProject: true
-};
+const EXAMPLES: CommandExample[] = [
+  {
+    command: 'jumbo goal update --id abc123 --title "New Title"',
+    description: "Update a goal's title only",
+  },
+  {
+    command: 'jumbo goal update --id abc123 --objective "Updated goal"',
+    description: "Update a goal's objective only",
+  },
+  {
+    command:
+      'jumbo goal update --id abc123 --criteria "Criterion 1" "Criterion 2"',
+    description: "Update success criteria only",
+  },
+  {
+    command:
+      'jumbo goal update --id abc123 --objective "New objective" --scope-in "Component A"',
+    description: "Update multiple fields at once",
+  },
+];
+
+/**
+ * Examples and related commands are the only help copy this leaf owns;
+ * flags, descriptions, and the command description derive from the
+ * canonical registration chain via metadataFromCommand().
+ */
+const RELATED_COMMANDS = ["goal add", "goal start", "goal complete"];
+
+/**
+ * The abstract ports the `goal update` leaf requires. Satisfied structurally
+ * by the LeafContainerBuilder composition below; a missing `with*Feature()`
+ * call fails to compile here, at the leaf that made the demand.
+ */
+interface GoalUpdateDependencies {
+  readonly updateGoalController: UpdateGoalController;
+}
+
+/**
+ * Composes exactly the features the `goal update` leaf uses.
+ */
+async function createGoalUpdateDependencies(): Promise<GoalUpdateDependencies> {
+  return new LeafContainerBuilder().withUpdateGoalFeature().build();
+}
+
+/** Registers the `goal update` leaf under the parent supplied by its group. */
+export function registerGoalUpdateCommand(goal: Command): void {
+  const command = goal
+    .command("update")
+    .description(
+      "Update an existing goal's properties (partial updates supported)",
+    )
+    .requiredOption("-i, --id <id>", "ID of the goal to update")
+    .option("-t, --title <text>", "Updated title (max 60 characters)")
+    .option("--objective <text>", "Updated objective")
+    .option(
+      "--criteria <items...>",
+      "Updated success criteria (can specify multiple)",
+    )
+    .option("--scope-in <items...>", "Updated in-scope items")
+    .option("--scope-out <items...>", "Updated out-of-scope items")
+    .option(
+      "--next-goal <goalId>",
+      "Update the NextGoal property (chains to specified goal after completion)",
+    )
+    .option(
+      "--prerequisite-goals <goalIds...>",
+      "Update prerequisite goal IDs that must be completed before this goal can start",
+    )
+    .option(
+      "--branch <branch>",
+      "Update the git branch for this goal (for multi-agent collaboration)",
+    )
+    .option(
+      "--worktree <worktree>",
+      "Update the git worktree path for this goal (for multi-agent collaboration)",
+    );
+
+  command.helpInformation = () =>
+    formatSubcommandHelp({
+      path: "goal update",
+      metadata: metadataFromCommand(command, {
+        category: COMMAND_CATEGORY.work,
+        examples: EXAMPLES,
+        related: RELATED_COMMANDS,
+      }),
+    });
+
+  let dependencies: GoalUpdateDependencies | undefined;
+
+  command.hook("preAction", async () => {
+    dependencies = await createGoalUpdateDependencies();
+  });
+
+  command.action(async (options) => {
+    if (!dependencies)
+      throw new Error("Goal update dependencies were not initialized.");
+    await goalUpdate(options, dependencies);
+  });
+}
 
 /**
  * Command handler
@@ -103,7 +141,7 @@ export async function goalUpdate(
     branch?: string;
     worktree?: string;
   },
-  container: IApplicationContainer
+  container: GoalUpdateDependencies,
 ) {
   const renderer = Renderer.getInstance();
   const outputBuilder = new GoalUpdateOutputBuilder();
@@ -128,9 +166,10 @@ export async function goalUpdate(
     const output = outputBuilder.buildSuccess(response.goalId);
     renderer.info(output.toHumanReadable());
   } catch (error) {
-    const output = outputBuilder.buildFailureError(error instanceof Error ? error : String(error));
+    const output = outputBuilder.buildFailureError(
+      error instanceof Error ? error : String(error),
+    );
     renderer.info(output.toHumanReadable());
     process.exit(1);
   }
-  // NO CLEANUP - infrastructure manages itself!
 }

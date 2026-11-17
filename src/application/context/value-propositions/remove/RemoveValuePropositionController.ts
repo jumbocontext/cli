@@ -3,11 +3,11 @@ import { RemoveValuePropositionResponse } from "./RemoveValuePropositionResponse
 import { IRemoveValuePropositionGateway } from "./IRemoveValuePropositionGateway.js";
 
 export class RemoveValuePropositionController {
-  constructor(
-    private readonly gateway: IRemoveValuePropositionGateway
-  ) {}
+  constructor(private readonly gateway: IRemoveValuePropositionGateway) {}
 
-  async handle(request: RemoveValuePropositionRequest): Promise<RemoveValuePropositionResponse> {
+  async handle(
+    request: RemoveValuePropositionRequest,
+  ): Promise<RemoveValuePropositionResponse> {
     return this.gateway.removeValueProposition(request);
   }
 }

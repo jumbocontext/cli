@@ -3,11 +3,11 @@ import { UpdateGoalProgressResponse } from "./UpdateGoalProgressResponse.js";
 import { IUpdateGoalProgressGateway } from "./IUpdateGoalProgressGateway.js";
 
 export class UpdateGoalProgressController {
-  constructor(
-    private readonly gateway: IUpdateGoalProgressGateway
-  ) {}
+  constructor(private readonly gateway: IUpdateGoalProgressGateway) {}
 
-  async handle(request: UpdateGoalProgressRequest): Promise<UpdateGoalProgressResponse> {
+  async handle(
+    request: UpdateGoalProgressRequest,
+  ): Promise<UpdateGoalProgressResponse> {
     return this.gateway.updateGoalProgress(request);
   }
 }

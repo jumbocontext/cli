@@ -2,7 +2,10 @@ import { UpgradeCommand } from "./UpgradeCommand.js";
 import { UpgradeResponse } from "./UpgradeResponse.js";
 import { IEventStore } from "../../persistence/IEventStore.js";
 import { IGoalStatusReader } from "../../context/goals/IGoalStatusReader.js";
-import { GoalEventType, GoalStatusType } from "../../../domain/goals/Constants.js";
+import {
+  GoalEventType,
+  GoalStatusType,
+} from "../../../domain/goals/Constants.js";
 import { GoalStatusMigratedEvent } from "../../../domain/goals/migrate/GoalStatusMigratedEvent.js";
 
 /**
@@ -10,9 +13,9 @@ import { GoalStatusMigratedEvent } from "../../../domain/goals/migrate/GoalStatu
  * These are the literal string values that existed in v1 event payloads.
  */
 const LEGACY_STATUS_MIGRATIONS: Record<string, GoalStatusType> = {
-  'to-do': 'defined' as GoalStatusType,
-  'qualified': 'approved' as GoalStatusType,
-  'completed': 'done' as GoalStatusType,
+  "to-do": "defined" as GoalStatusType,
+  qualified: "approved" as GoalStatusType,
+  completed: "done" as GoalStatusType,
 };
 
 /**
@@ -25,18 +28,22 @@ const LEGACY_STATUS_MIGRATIONS: Record<string, GoalStatusType> = {
 export class UpgradeCommandHandler {
   constructor(
     private readonly eventStore: IEventStore,
-    private readonly goalStatusReader: IGoalStatusReader
+    private readonly goalStatusReader: IGoalStatusReader,
   ) {}
 
   async handle(command: UpgradeCommand): Promise<UpgradeResponse> {
-    if (command.from !== 'v1' || command.to !== 'v2') {
-      throw new Error(`Unsupported upgrade path: ${command.from} → ${command.to}. Only v1 → v2 is supported.`);
+    if (command.from !== "v1" || command.to !== "v2") {
+      throw new Error(
+        `Unsupported upgrade path: ${command.from} → ${command.to}. Only v1 → v2 is supported.`,
+      );
     }
 
     // 1. Query goal_views for goals with legacy status values
     const allGoals = await this.goalStatusReader.findAll();
     const legacyStatuses = Object.keys(LEGACY_STATUS_MIGRATIONS);
-    const goalsToMigrate = allGoals.filter(g => legacyStatuses.includes(g.status));
+    const goalsToMigrate = allGoals.filter((g) =>
+      legacyStatuses.includes(g.status),
+    );
 
     let eventsAppended = 0;
 

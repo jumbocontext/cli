@@ -13,7 +13,7 @@ export class UnblockGoalCommandHandler {
   constructor(
     private readonly eventWriter: IGoalUnblockedEventWriter,
     private readonly eventReader: IGoalUnblockedEventReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
   async execute(command: UnblockGoalCommand): Promise<{ goalId: string }> {

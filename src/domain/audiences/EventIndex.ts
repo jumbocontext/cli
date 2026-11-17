@@ -7,4 +7,5 @@ import { AudienceUpdatedEvent } from "./update/AudienceUpdatedEvent.js";
 import { AudienceRemovedEvent } from "./remove/AudienceRemovedEvent.js";
 
 // Union type of all audience events
-export type AudienceEvent = AudienceAddedEvent | AudienceUpdatedEvent | AudienceRemovedEvent;
+export type AudienceEvent =
+  AudienceAddedEvent | AudienceUpdatedEvent | AudienceRemovedEvent;

@@ -4,7 +4,10 @@ import {
   DependencyRemovedEvent,
   DependencyUpdatedEvent,
 } from "../../../../domain/dependencies/EventIndex.js";
-import { DependencyEventType, DependencyStatus } from "../../../../domain/dependencies/Constants.js";
+import {
+  DependencyEventType,
+  DependencyStatus,
+} from "../../../../domain/dependencies/Constants.js";
 import { ISearchDocumentProjector } from "../ISearchDocumentProjector.js";
 import { SearchCategory } from "../SearchCategory.js";
 import { SearchDocument } from "../SearchDocument.js";
@@ -19,14 +22,20 @@ export class DependencySearchDocumentProjector implements ISearchDocumentProject
     return { type: SearchCategory.DEPENDENCY, id: event.aggregateId };
   }
 
-  project(event: BaseEvent, current: SearchDocument | null): SearchDocumentChange | null {
+  project(
+    event: BaseEvent,
+    current: SearchDocument | null,
+  ): SearchDocumentChange | null {
     if (event.type === DependencyEventType.REMOVED) {
       const removedEvent = event as DependencyRemovedEvent;
       return { operation: "remove", source: this.getSource(removedEvent) };
     }
 
     if (event.type === DependencyEventType.ADDED) {
-      return { operation: "upsert", document: this.fromAdded(event as DependencyAddedEvent) };
+      return {
+        operation: "upsert",
+        document: this.fromAdded(event as DependencyAddedEvent),
+      };
     }
 
     if (!current) return null;
@@ -37,7 +46,10 @@ export class DependencySearchDocumentProjector implements ISearchDocumentProject
     if (payload.contract !== undefined) metadata.contract = payload.contract;
     if (payload.status !== undefined) metadata.status = payload.status;
 
-    return { operation: "upsert", document: this.fromMetadata(event, current, metadata) };
+    return {
+      operation: "upsert",
+      document: this.fromMetadata(event, current, metadata),
+    };
   }
 
   private fromAdded(event: DependencyAddedEvent): SearchDocument {
@@ -67,10 +79,19 @@ export class DependencySearchDocumentProjector implements ISearchDocumentProject
   private fromMetadata(
     event: BaseEvent,
     current: SearchDocument | null,
-    metadata: Record<string, SearchFacetValue>
+    metadata: Record<string, SearchFacetValue>,
   ): SearchDocument {
-    const title = String(metadata.name ?? metadata.packageName ?? current?.title ?? event.aggregateId);
-    const summary = this.firstString(metadata.contract, metadata.endpoint, metadata.packageName);
+    const title = String(
+      metadata.name ??
+        metadata.packageName ??
+        current?.title ??
+        event.aggregateId,
+    );
+    const summary = this.firstString(
+      metadata.contract,
+      metadata.endpoint,
+      metadata.packageName,
+    );
     const content = [
       title,
       metadata.ecosystem,
@@ -104,7 +125,9 @@ export class DependencySearchDocumentProjector implements ISearchDocumentProject
   }
 
   private firstString(...values: readonly SearchFacetValue[]): string | null {
-    const match = values.find((value) => typeof value === "string" && value.length > 0);
+    const match = values.find(
+      (value) => typeof value === "string" && value.length > 0,
+    );
     return typeof match === "string" ? match : null;
   }
 }

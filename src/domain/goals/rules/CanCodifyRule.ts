@@ -1,6 +1,13 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
 import { GoalState } from "../Goal.js";
-import { GoalStatus, GoalErrorMessages, formatErrorMessage } from "../Constants.js";
+import {
+  GoalStatus,
+  GoalErrorMessages,
+  formatErrorMessage,
+} from "../Constants.js";
 
 /**
  * Validates that a goal can be codified.
@@ -24,10 +31,11 @@ export class CanCodifyRule implements ValidationRule<GoalState> {
     if (state.status !== GoalStatus.QUALIFIED) {
       return {
         isValid: false,
-        errors: [formatErrorMessage(
-          GoalErrorMessages.CANNOT_CODIFY_IN_STATUS,
-          { status: state.status }
-        )],
+        errors: [
+          formatErrorMessage(GoalErrorMessages.CANNOT_CODIFY_IN_STATUS, {
+            status: state.status,
+          }),
+        ],
       };
     }
 

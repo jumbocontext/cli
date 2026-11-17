@@ -9,7 +9,12 @@
 import { GuidelineView } from "../../../../../application/context/guidelines/GuidelineView.js";
 import { TerminalOutput } from "../../../output/TerminalOutput.js";
 import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
-import { contentLine, heading, metaField, wrapContent } from "../../../rendering/OutputLayout.js";
+import {
+  contentLine,
+  heading,
+  metaField,
+  wrapContent,
+} from "../../../rendering/OutputLayout.js";
 import { BrandColors, Colors } from "../../../rendering/StyleConfig.js";
 
 export type GuidelineSearchOutputFormat = "default" | "compact";
@@ -20,11 +25,16 @@ export class GuidelineSearchOutputBuilder {
   /**
    * Build output for TTY (human-readable formatted text).
    */
-  build(guidelines: GuidelineView[], format: GuidelineSearchOutputFormat): TerminalOutput {
+  build(
+    guidelines: GuidelineView[],
+    format: GuidelineSearchOutputFormat,
+  ): TerminalOutput {
     this.builder.reset();
 
     if (guidelines.length === 0) {
-      this.builder.addPrompt(Colors.muted("No guidelines matched the search criteria."));
+      this.builder.addPrompt(
+        Colors.muted("No guidelines matched the search criteria."),
+      );
       return this.builder.build();
     }
 
@@ -34,17 +44,33 @@ export class GuidelineSearchOutputBuilder {
 
     if (format === "compact") {
       for (const guideline of guidelines) {
-        lines.push(contentLine(`${Colors.muted(guideline.guidelineId)}  ${Colors.dim(`[${guideline.category}]`)}  ${BrandColors.accentCyan(guideline.title)}`));
+        lines.push(
+          contentLine(
+            `${Colors.muted(guideline.guidelineId)}  ${Colors.dim(`[${guideline.category}]`)}  ${BrandColors.accentCyan(guideline.title)}`,
+          ),
+        );
       }
     } else {
       for (let i = 0; i < guidelines.length; i++) {
         const guideline = guidelines[i];
         if (i > 0) lines.push("");
-        lines.push(contentLine(`${Colors.dim(`[${guideline.category.toUpperCase()}]`)} ${BrandColors.accentCyan(guideline.title)}`));
+        lines.push(
+          contentLine(
+            `${Colors.dim(`[${guideline.category.toUpperCase()}]`)} ${BrandColors.accentCyan(guideline.title)}`,
+          ),
+        );
         lines.push(...wrapContent(guideline.description));
-        lines.push(metaField("Rationale", Colors.muted(guideline.rationale), 10));
+        lines.push(
+          metaField("Rationale", Colors.muted(guideline.rationale), 10),
+        );
         if (guideline.examples.length > 0) {
-          lines.push(metaField("Examples", Colors.muted(guideline.examples.join(", ")), 10));
+          lines.push(
+            metaField(
+              "Examples",
+              Colors.muted(guideline.examples.join(", ")),
+              10,
+            ),
+          );
         }
         lines.push(metaField("ID", Colors.muted(guideline.guidelineId), 4));
       }
@@ -57,7 +83,10 @@ export class GuidelineSearchOutputBuilder {
   /**
    * Build output for non-TTY (structured JSON for programmatic consumers).
    */
-  buildStructuredOutput(guidelines: GuidelineView[], format: GuidelineSearchOutputFormat): TerminalOutput {
+  buildStructuredOutput(
+    guidelines: GuidelineView[],
+    format: GuidelineSearchOutputFormat,
+  ): TerminalOutput {
     this.builder.reset();
 
     if (format === "compact") {

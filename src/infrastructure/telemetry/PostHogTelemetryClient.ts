@@ -32,7 +32,7 @@ export class PostHogTelemetryClient implements ITelemetryClient {
 
   constructor(
     anonymousId: string,
-    postHogClientFactory: PostHogClientFactory = createDefaultPostHogClient
+    postHogClientFactory: PostHogClientFactory = createDefaultPostHogClient,
   ) {
     this.anonymousId = anonymousId;
 
@@ -74,7 +74,7 @@ export class PostHogTelemetryClient implements ITelemetryClient {
 
     try {
       await Promise.resolve(
-        this.postHogClient.shutdown(POSTHOG_SHUTDOWN_TIMEOUT_MS)
+        this.postHogClient.shutdown(POSTHOG_SHUTDOWN_TIMEOUT_MS),
       );
     } catch {
       // Telemetry must never affect CLI execution.

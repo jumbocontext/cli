@@ -12,7 +12,9 @@ import { ValuePropositionAddedEvent } from "../../../../domain/value-proposition
 export class SqliteValuePropositionAddedProjector implements IValuePropositionAddedProjector {
   constructor(private db: Database) {}
 
-  async applyValuePropositionAdded(event: ValuePropositionAddedEvent): Promise<void> {
+  async applyValuePropositionAdded(
+    event: ValuePropositionAddedEvent,
+  ): Promise<void> {
     const stmt = this.db.prepare(`
       INSERT OR REPLACE INTO value_proposition_views (
         valuePropositionId, title, description, benefit,
@@ -28,7 +30,7 @@ export class SqliteValuePropositionAddedProjector implements IValuePropositionAd
       event.payload.measurableOutcome,
       event.version,
       event.timestamp,
-      event.timestamp
+      event.timestamp,
     );
   }
 }

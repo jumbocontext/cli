@@ -1,4 +1,8 @@
-import { ISubprocessManager, DaemonName, SubprocessSnapshot } from "./ISubprocessManager.js";
+import {
+  ISubprocessManager,
+  DaemonName,
+  SubprocessSnapshot,
+} from "./ISubprocessManager.js";
 import {
   DEFAULT_WORKER_DAEMON_CONFIG,
   WORKER_DAEMON_NAMES,

@@ -9,7 +9,12 @@
 import { InvariantView } from "../../../../../application/context/invariants/InvariantView.js";
 import { TerminalOutput } from "../../../output/TerminalOutput.js";
 import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
-import { contentLine, heading, metaField, wrapContent } from "../../../rendering/OutputLayout.js";
+import {
+  contentLine,
+  heading,
+  metaField,
+  wrapContent,
+} from "../../../rendering/OutputLayout.js";
 import { BrandColors, Colors } from "../../../rendering/StyleConfig.js";
 
 export type InvariantSearchOutputFormat = "default" | "compact";
@@ -20,11 +25,16 @@ export class InvariantSearchOutputBuilder {
   /**
    * Build output for TTY (human-readable formatted text).
    */
-  build(invariants: InvariantView[], format: InvariantSearchOutputFormat): TerminalOutput {
+  build(
+    invariants: InvariantView[],
+    format: InvariantSearchOutputFormat,
+  ): TerminalOutput {
     this.builder.reset();
 
     if (invariants.length === 0) {
-      this.builder.addPrompt(Colors.muted("No invariants matched the search criteria."));
+      this.builder.addPrompt(
+        Colors.muted("No invariants matched the search criteria."),
+      );
       return this.builder.build();
     }
 
@@ -34,7 +44,11 @@ export class InvariantSearchOutputBuilder {
 
     if (format === "compact") {
       for (const invariant of invariants) {
-        lines.push(contentLine(`${Colors.muted(invariant.invariantId)}  ${BrandColors.accentCyan(invariant.title)}`));
+        lines.push(
+          contentLine(
+            `${Colors.muted(invariant.invariantId)}  ${BrandColors.accentCyan(invariant.title)}`,
+          ),
+        );
       }
     } else {
       for (let i = 0; i < invariants.length; i++) {
@@ -43,7 +57,9 @@ export class InvariantSearchOutputBuilder {
         lines.push(contentLine(BrandColors.accentCyan(invariant.title)));
         lines.push(...wrapContent(invariant.description));
         if (invariant.rationale !== null) {
-          lines.push(metaField("Rationale", Colors.muted(invariant.rationale), 10));
+          lines.push(
+            metaField("Rationale", Colors.muted(invariant.rationale), 10),
+          );
         }
         lines.push(metaField("ID", Colors.muted(invariant.invariantId), 4));
       }
@@ -56,7 +72,10 @@ export class InvariantSearchOutputBuilder {
   /**
    * Build output for non-TTY (structured JSON for programmatic consumers).
    */
-  buildStructuredOutput(invariants: InvariantView[], format: InvariantSearchOutputFormat): TerminalOutput {
+  buildStructuredOutput(
+    invariants: InvariantView[],
+    format: InvariantSearchOutputFormat,
+  ): TerminalOutput {
     this.builder.reset();
 
     if (format === "compact") {

@@ -1,7 +1,11 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { Colors, Symbols } from '../../../rendering/StyleConfig.js';
-import { heading, contentLine, metaField } from '../../../rendering/OutputLayout.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { Colors, Symbols } from "../../../rendering/StyleConfig.js";
+import {
+  heading,
+  contentLine,
+  metaField,
+} from "../../../rendering/OutputLayout.js";
 
 /**
  * Specialized builder for goal.reset command output.
@@ -21,12 +25,20 @@ export class GoalResetOutputBuilder {
    * Build output for successful goal reset.
    * Renders success message with goal details.
    */
-  buildSuccess(goalId: string, objective: string, status: string): TerminalOutput {
+  buildSuccess(
+    goalId: string,
+    objective: string,
+    status: string,
+  ): TerminalOutput {
     this.builder.reset();
     const lines: string[] = [];
     lines.push("");
     lines.push(heading("Goal Reset"));
-    lines.push(contentLine(`${Symbols.check} ${Colors.success(`Goal reset to ${status}`)}`));
+    lines.push(
+      contentLine(
+        `${Symbols.check} ${Colors.success(`Goal reset to ${status}`)}`,
+      ),
+    );
     lines.push("");
     lines.push(metaField("Id", Colors.muted(goalId)));
     lines.push(metaField("Objective", Colors.primary(objective)));
@@ -42,9 +54,11 @@ export class GoalResetOutputBuilder {
    */
   buildFailureError(error: Error | string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Failed to reset goal")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Failed to reset goal")}`,
+    );
     this.builder.addData({
-      message: error instanceof Error ? error.message : error
+      message: error instanceof Error ? error.message : error,
     });
     return this.builder.build();
   }

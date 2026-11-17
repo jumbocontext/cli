@@ -1,8 +1,15 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { RejectGoalResponse } from '../../../../../application/context/goals/reject/RejectGoalResponse.js';
-import { Colors, Symbols } from '../../../rendering/StyleConfig.js';
-import { EDGE, heading, contentLine, metaField, divider, wrapContent } from '../../../rendering/OutputLayout.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { RejectGoalResponse } from "../../../../../application/context/goals/reject/RejectGoalResponse.js";
+import { Colors, Symbols } from "../../../rendering/StyleConfig.js";
+import {
+  EDGE,
+  heading,
+  contentLine,
+  metaField,
+  divider,
+  wrapContent,
+} from "../../../rendering/OutputLayout.js";
 
 /**
  * Specialized builder for goal.reject command output.
@@ -22,13 +29,20 @@ export class GoalRejectOutputBuilder {
    * Build output for successful goal rejection.
    * Renders rejection result with review issues and next steps for the implementing agent.
    */
-  buildSuccess(response: RejectGoalResponse, continueFlag: boolean = false): TerminalOutput {
+  buildSuccess(
+    response: RejectGoalResponse,
+    continueFlag: boolean = false,
+  ): TerminalOutput {
     this.builder.reset();
     const lines: string[] = [];
 
     lines.push("");
     lines.push(heading("Goal Rejected"));
-    lines.push(contentLine(`${Symbols.cross} ${Colors.error("QA review failed — returned for rework")}`));
+    lines.push(
+      contentLine(
+        `${Symbols.cross} ${Colors.error("QA review failed — returned for rework")}`,
+      ),
+    );
     lines.push("");
     lines.push(metaField("Id", Colors.muted(response.goalId), 11));
     lines.push(metaField("Objective", Colors.primary(response.objective), 11));
@@ -49,11 +63,12 @@ export class GoalRejectOutputBuilder {
     if (continueFlag) {
       this.builder.addPrompt(
         "\n@LLM: Address the review issues and restart the goal:\n" +
-        `Run: jumbo goal start --id ${response.goalId}`
+          `Run: jumbo goal start --id ${response.goalId}`,
       );
     } else {
       this.builder.addPrompt(
-        "\n" + `${EDGE}${Colors.primary("➤")} ${Colors.primary(`To restart: jumbo goal start --id ${response.goalId}`)}`
+        "\n" +
+          `${EDGE}${Colors.primary("➤")} ${Colors.primary(`To restart: jumbo goal start --id ${response.goalId}`)}`,
       );
     }
 
@@ -66,9 +81,11 @@ export class GoalRejectOutputBuilder {
    */
   buildFailureError(error: Error | string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Failed to reject goal")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Failed to reject goal")}`,
+    );
     this.builder.addData({
-      message: error instanceof Error ? error.message : error
+      message: error instanceof Error ? error.message : error,
     });
     return this.builder.build();
   }

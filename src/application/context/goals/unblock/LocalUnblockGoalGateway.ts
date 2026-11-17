@@ -4,9 +4,7 @@ import { UnblockGoalResponse } from "./UnblockGoalResponse.js";
 import { UnblockGoalCommandHandler } from "./UnblockGoalCommandHandler.js";
 
 export class LocalUnblockGoalGateway implements IUnblockGoalGateway {
-  constructor(
-    private readonly commandHandler: UnblockGoalCommandHandler
-  ) {}
+  constructor(private readonly commandHandler: UnblockGoalCommandHandler) {}
 
   async unblockGoal(request: UnblockGoalRequest): Promise<UnblockGoalResponse> {
     const result = await this.commandHandler.execute({

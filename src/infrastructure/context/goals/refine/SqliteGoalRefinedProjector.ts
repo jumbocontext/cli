@@ -38,11 +38,13 @@ export class SqliteGoalRefinedProjector
       event.payload.status,
       event.version,
       event.timestamp,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 
-  async applyGoalRefinementStarted(event: GoalRefinementStartedEvent): Promise<void> {
+  async applyGoalRefinementStarted(
+    event: GoalRefinementStartedEvent,
+  ): Promise<void> {
     const stmt = this.db.prepare(`
       UPDATE goal_views
       SET status = ?,
@@ -61,7 +63,7 @@ export class SqliteGoalRefinedProjector
       event.payload.claimExpiresAt,
       event.version,
       event.timestamp,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 

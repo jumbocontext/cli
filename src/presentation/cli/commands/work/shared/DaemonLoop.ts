@@ -76,7 +76,9 @@ export async function runDaemonLoop(
   await display.renderHeader();
 
   while (running) {
-    const goals = callbacks.queryGoals().filter(g => !exhaustedGoals.has(g.goalId));
+    const goals = callbacks
+      .queryGoals()
+      .filter((g) => !exhaustedGoals.has(g.goalId));
 
     if (goals.length === 0) {
       const spinner = display.startWaiting();
@@ -92,7 +94,12 @@ export async function runDaemonLoop(
 
     let completed = false;
     for (let attempt = 1; attempt <= config.maxRetries && running; attempt++) {
-      display.renderGoalStart(target.goalId, target.objective, attempt, config.maxRetries);
+      display.renderGoalStart(
+        target.goalId,
+        target.objective,
+        attempt,
+        config.maxRetries,
+      );
 
       const spinner = display.startProcessing();
       await callbacks.spawnAgent(target.goalId);
@@ -107,7 +114,11 @@ export async function runDaemonLoop(
       }
 
       if (attempt === config.maxRetries) {
-        callbacks.onGoalSkipped(target.goalId, "not-complete", config.maxRetries);
+        callbacks.onGoalSkipped(
+          target.goalId,
+          "not-complete",
+          config.maxRetries,
+        );
       }
     }
 

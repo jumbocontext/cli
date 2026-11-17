@@ -6,16 +6,19 @@ export class SqliteGoalPostponedProjector implements IGoalPostponedProjector {
   constructor(private readonly db: Database) {}
 
   async applyGoalPostponed(event: GoalPostponedEvent): Promise<void> {
-    this.db.prepare(`
+    this.db
+      .prepare(
+        `
       UPDATE goal_views
       SET status = ?, version = ?, updatedAt = ?
       WHERE goalId = ?
-    `).run(
-      event.payload.status,
-      event.version,
-      event.timestamp,
-      event.aggregateId
-    );
+    `,
+      )
+      .run(
+        event.payload.status,
+        event.version,
+        event.timestamp,
+        event.aggregateId,
+      );
   }
-
 }

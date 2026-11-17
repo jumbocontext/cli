@@ -15,7 +15,10 @@ import path from "path";
 import fs from "fs-extra";
 import { AgentFileReferenceContent } from "../../../../domain/project/AgentFileReferenceContent.js";
 import { AgentFileAssetContent } from "../../../../domain/project/AgentFileAssetContent.js";
-import { SafeClaudeSettingsMerger, ClaudeSettings } from "./SafeClaudeSettingsMerger.js";
+import {
+  SafeClaudeSettingsMerger,
+  ClaudeSettings,
+} from "./SafeClaudeSettingsMerger.js";
 import { IConfigurer } from "./IConfigurer.js";
 import { PlannedFileChange } from "../../../../application/context/project/init/PlannedFileChange.js";
 
@@ -42,7 +45,8 @@ export class ClaudeConfigurer implements IConfigurer {
    */
   private async ensureClaudeMd(projectRoot: string): Promise<void> {
     const claudeMdPath = path.join(projectRoot, "CLAUDE.md");
-    const reference = AgentFileReferenceContent.getAgentFileReference("CLAUDE.md");
+    const reference =
+      AgentFileReferenceContent.getAgentFileReference("CLAUDE.md");
 
     try {
       const exists = await fs.pathExists(claudeMdPath);
@@ -64,7 +68,7 @@ export class ClaudeConfigurer implements IConfigurer {
     } catch (error) {
       // Graceful degradation - log but don't throw
       console.warn(
-        `Warning: Failed to update CLAUDE.md: ${error instanceof Error ? error.message : String(error)}`
+        `Warning: Failed to update CLAUDE.md: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
@@ -74,13 +78,15 @@ export class ClaudeConfigurer implements IConfigurer {
    */
   private async ensureClaudeSettings(projectRoot: string): Promise<void> {
     try {
-      const jumboSettings = AgentFileAssetContent.readJson<ClaudeSettings>("claude-settings.fragment.json");
+      const jumboSettings = AgentFileAssetContent.readJson<ClaudeSettings>(
+        "claude-settings.fragment.json",
+      );
 
       await SafeClaudeSettingsMerger.mergeSettings(projectRoot, jumboSettings);
     } catch (error) {
       // Graceful degradation - log but don't throw
       console.warn(
-        `Warning: Failed to configure Claude Code hooks: ${error instanceof Error ? error.message : String(error)}`
+        `Warning: Failed to configure Claude Code hooks: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
@@ -98,7 +104,8 @@ export class ClaudeConfigurer implements IConfigurer {
    */
   private async repairClaudeMd(projectRoot: string): Promise<void> {
     const claudeMdPath = path.join(projectRoot, "CLAUDE.md");
-    const reference = AgentFileReferenceContent.getAgentFileReference("CLAUDE.md");
+    const reference =
+      AgentFileReferenceContent.getAgentFileReference("CLAUDE.md");
 
     try {
       const exists = await fs.pathExists(claudeMdPath);
@@ -109,7 +116,10 @@ export class ClaudeConfigurer implements IConfigurer {
       }
 
       const content = await fs.readFile(claudeMdPath, "utf-8");
-      const replaced = AgentFileReferenceContent.replaceAgentFileReference(content, "CLAUDE.md");
+      const replaced = AgentFileReferenceContent.replaceAgentFileReference(
+        content,
+        "CLAUDE.md",
+      );
 
       if (replaced !== null) {
         // Legacy reference block found - replace entire file with new thin reference
@@ -121,7 +131,7 @@ export class ClaudeConfigurer implements IConfigurer {
       }
     } catch (error) {
       console.warn(
-        `Warning: Failed to repair CLAUDE.md: ${error instanceof Error ? error.message : String(error)}`
+        `Warning: Failed to repair CLAUDE.md: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
@@ -129,7 +139,9 @@ export class ClaudeConfigurer implements IConfigurer {
   /**
    * Return what changes this configurer will make without executing.
    */
-  async getPlannedFileChanges(projectRoot: string): Promise<PlannedFileChange[]> {
+  async getPlannedFileChanges(
+    projectRoot: string,
+  ): Promise<PlannedFileChange[]> {
     const changes: PlannedFileChange[] = [];
 
     const claudeMdPath = path.join(projectRoot, "CLAUDE.md");

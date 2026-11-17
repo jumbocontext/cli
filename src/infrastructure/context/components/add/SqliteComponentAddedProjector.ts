@@ -10,9 +10,14 @@ import { IComponentAddedProjector } from "../../../../application/context/compon
 import { IComponentAddReader } from "../../../../application/context/components/add/IComponentAddReader.js";
 import { ComponentAddedEvent } from "../../../../domain/components/EventIndex.js";
 import { ComponentView } from "../../../../application/context/components/ComponentView.js";
-import { ComponentTypeValue, ComponentStatusValue } from "../../../../domain/components/Constants.js";
+import {
+  ComponentTypeValue,
+  ComponentStatusValue,
+} from "../../../../domain/components/Constants.js";
 
-export class SqliteComponentAddedProjector implements IComponentAddedProjector, IComponentAddReader {
+export class SqliteComponentAddedProjector
+  implements IComponentAddedProjector, IComponentAddReader
+{
   constructor(private db: Database) {}
 
   async applyComponentAdded(event: ComponentAddedEvent): Promise<void> {
@@ -34,12 +39,14 @@ export class SqliteComponentAddedProjector implements IComponentAddedProjector, 
       null,
       event.version,
       event.timestamp,
-      event.timestamp
+      event.timestamp,
     );
   }
 
   async findByName(name: string): Promise<ComponentView | null> {
-    const row = this.db.prepare('SELECT * FROM component_views WHERE name = ?').get(name);
+    const row = this.db
+      .prepare("SELECT * FROM component_views WHERE name = ?")
+      .get(name);
     return row ? this.mapRowToView(row as Record<string, unknown>) : null;
   }
 

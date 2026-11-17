@@ -1,14 +1,11 @@
 /**
  * Command Metadata Model
  *
- * Formalized model for command metadata that enables:
- * - Self-documenting commands
- * - Consistent CLI behavior
- * - Auto-generated help text
- * - Build-time command discovery
+ * Help-facing facts that Commander cannot read back from a registered
+ * command: help grouping, examples, and related-command links.
  */
 
-import type { IApplicationContainer } from "../../../../application/host/IApplicationContainer.js";
+import type { CommandCategory } from "../../help/CommandCategories.js";
 
 /**
  * Command option definition
@@ -35,11 +32,6 @@ export interface CommandExample {
 }
 
 /**
- * Command category for organizing help output
- */
-export type CommandCategory = "host" | "project-knowledge" | "relations" | "solution" | "work";
-
-/**
  * Complete command metadata
  */
 export interface CommandMetadata {
@@ -59,14 +51,6 @@ export interface CommandMetadata {
   hidden?: boolean;
   /** Top-level command aliases (e.g., ["init"] makes "jumbo init" work like "jumbo project init") */
   topLevelAliases?: string[];
-  /**
-   * Whether this command requires an initialized Jumbo project to run.
-   * Required on every command — the bootstrap-layer guard relies on this as the
-   * single source of truth and does not fall back to a default. Set to false
-   * only for bootstrap commands (e.g. "project init") that operate on
-   * global/user-scope state and produce no project-scoped artifacts.
-   */
-  requiresProject: boolean;
 }
 
 /**
@@ -75,68 +59,6 @@ export interface CommandMetadata {
  */
 export const CONTINUE_OPTION: CommandOption = {
   flags: "-c, --continue",
-  description: "Output next-step as a directive instead of informational guidance",
+  description:
+    "Output next-step as a directive instead of informational guidance",
 };
-
-/**
- * A registered command's handler.
- *
- * Commander parses the CLI flags into the `options` object whose concrete shape
- * each individual handler declares for itself. Because the registry stores
- * handlers with many different option shapes, the `options` parameter is typed
- * `never` here — the only type assignable to every concrete handler's options
- * parameter (function parameters are checked contravariantly). Each handler
- * narrows `options` to its own declared shape; the container is always supplied.
- */
-export type CommandHandler = (
-  options: never,
-  container: IApplicationContainer
-) => Promise<void>;
-
-/**
- * Registered command with handler
- * Generated at build time by scanning command files
- */
-export interface RegisteredCommand {
-  /** Command path (e.g., "goal start", "project init") */
-  path: string;
-  /** Command metadata */
-  metadata: CommandMetadata;
-  /** Command handler function */
-  handler: CommandHandler;
-}
-
-/**
- * Convention: Command file paths map to command paths
- *
- * File: work/goal.start.ts
- *   → Parent: "goal" (from filename prefix)
- *   → Subcommand: "start" (from filename suffix)
- *   → Full path: "goal start"
- *
- * File: project-knowledge/project.init.ts
- *   → Parent: "project"
- *   → Subcommand: "init"
- *   → Full path: "project init"
- */
-export function parseCommandPath(filePath: string): {
-  parent: string;
-  subcommand: string;
-} {
-  // Extract filename without extension: "goal.start.ts" → "goal.start"
-  const filename = filePath.split("/").pop()?.replace(/\.ts$/, "") || "";
-
-  // Split on dot: "goal.start" → ["goal", "start"]
-  const parts = filename.split(".");
-
-  if (parts.length !== 2) {
-    throw new Error(
-      `Invalid command filename: ${filePath}. Expected format: <parent>.<subcommand>.ts`
-    );
-  }
-
-  return {
-    parent: parts[0],
-    subcommand: parts[1],
-  };
-}

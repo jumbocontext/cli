@@ -13,16 +13,14 @@ export class TitleRequiredRule implements ValidationRule<string> {
     const isValid = !!(title && title.trim() !== "");
     return {
       isValid,
-      errors: isValid
-        ? []
-        : [ValuePropositionErrorMessages.TITLE_REQUIRED],
+      errors: isValid ? [] : [ValuePropositionErrorMessages.TITLE_REQUIRED],
     };
   }
 }
 
 export class TitleMaxLengthRule implements ValidationRule<string> {
   constructor(
-    private maxLength: number = ValuePropositionLimits.TITLE_MAX_LENGTH
+    private maxLength: number = ValuePropositionLimits.TITLE_MAX_LENGTH,
   ) {}
 
   validate(title: string): ValidationResult {
@@ -32,10 +30,9 @@ export class TitleMaxLengthRule implements ValidationRule<string> {
       errors: isValid
         ? []
         : [
-            formatErrorMessage(
-              ValuePropositionErrorMessages.TITLE_TOO_LONG,
-              { max: this.maxLength }
-            ),
+            formatErrorMessage(ValuePropositionErrorMessages.TITLE_TOO_LONG, {
+              max: this.maxLength,
+            }),
           ],
     };
   }

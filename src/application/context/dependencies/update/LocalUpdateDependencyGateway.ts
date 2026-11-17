@@ -7,10 +7,12 @@ import { IDependencyUpdateReader } from "./IDependencyUpdateReader.js";
 export class LocalUpdateDependencyGateway implements IUpdateDependencyGateway {
   constructor(
     private readonly commandHandler: UpdateDependencyCommandHandler,
-    private readonly dependencyReader: IDependencyUpdateReader
+    private readonly dependencyReader: IDependencyUpdateReader,
   ) {}
 
-  async updateDependency(request: UpdateDependencyRequest): Promise<UpdateDependencyResponse> {
+  async updateDependency(
+    request: UpdateDependencyRequest,
+  ): Promise<UpdateDependencyResponse> {
     const result = await this.commandHandler.execute({
       id: request.dependencyId,
       endpoint: request.endpoint,

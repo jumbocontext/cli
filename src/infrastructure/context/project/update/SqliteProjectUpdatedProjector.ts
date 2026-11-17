@@ -8,7 +8,9 @@ import { IProjectUpdateReader } from "../../../../application/context/project/up
 import { ProjectUpdatedEvent } from "../../../../domain/project/update/ProjectUpdatedEvent.js";
 import { ProjectView } from "../../../../application/context/project/ProjectView.js";
 
-export class SqliteProjectUpdatedProjector implements IProjectUpdatedProjector, IProjectUpdateReader {
+export class SqliteProjectUpdatedProjector
+  implements IProjectUpdatedProjector, IProjectUpdateReader
+{
   constructor(private db: Database) {}
 
   async applyProjectUpdated(event: ProjectUpdatedEvent): Promise<void> {
@@ -33,9 +35,7 @@ export class SqliteProjectUpdatedProjector implements IProjectUpdatedProjector, 
   }
 
   async getProject(): Promise<ProjectView | null> {
-    const row = this.db
-      .prepare("SELECT * FROM project_views LIMIT 1")
-      .get();
+    const row = this.db.prepare("SELECT * FROM project_views LIMIT 1").get();
     return row ? this.mapRowToView(row as Record<string, unknown>) : null;
   }
 

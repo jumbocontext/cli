@@ -8,7 +8,9 @@ import { IProjectInitReader } from "../../../../application/context/project/init
 import { ProjectInitializedEvent } from "../../../../domain/project/init/ProjectInitializedEvent.js";
 import { ProjectView } from "../../../../application/context/project/ProjectView.js";
 
-export class SqliteProjectInitializedProjector implements IProjectInitializedProjector, IProjectInitReader {
+export class SqliteProjectInitializedProjector
+  implements IProjectInitializedProjector, IProjectInitReader
+{
   constructor(private db: Database) {}
 
   async applyProjectInitialized(event: ProjectInitializedEvent): Promise<void> {
@@ -25,14 +27,12 @@ export class SqliteProjectInitializedProjector implements IProjectInitializedPro
       event.payload.purpose,
       event.version,
       event.timestamp,
-      event.timestamp
+      event.timestamp,
     );
   }
 
   async getProject(): Promise<ProjectView | null> {
-    const row = this.db
-      .prepare("SELECT * FROM project_views LIMIT 1")
-      .get();
+    const row = this.db.prepare("SELECT * FROM project_views LIMIT 1").get();
     return row ? this.mapRowToView(row as Record<string, unknown>) : null;
   }
 

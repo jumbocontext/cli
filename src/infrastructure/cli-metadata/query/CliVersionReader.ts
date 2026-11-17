@@ -26,7 +26,10 @@ export class CliVersionReader implements ICliVersionReader {
       // Find package.json relative to the compiled code location
       // This file compiles to: dist/infrastructure/cli-metadata/query/CliVersionReader.js
       // package.json is at the project root, 4 levels up from the compiled file
-      const packageJsonPath = path.resolve(__dirname, "../../../../package.json");
+      const packageJsonPath = path.resolve(
+        __dirname,
+        "../../../../package.json",
+      );
 
       // Read and parse package.json
       const packageJsonContent = fs.readFileSync(packageJsonPath, "utf-8");
@@ -47,7 +50,7 @@ export class CliVersionReader implements ICliVersionReader {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
       throw new Error(
-        `Failed to read CLI version from package.json: ${errorMessage}`
+        `Failed to read CLI version from package.json: ${errorMessage}`,
       );
     }
   }

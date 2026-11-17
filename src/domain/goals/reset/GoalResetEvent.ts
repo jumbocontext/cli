@@ -9,6 +9,6 @@ import { GoalEventType, GoalStatusType } from "../Constants.js";
 export interface GoalResetEvent extends BaseEvent {
   readonly type: typeof GoalEventType.RESET;
   readonly payload: {
-    readonly status: GoalStatusType;  // Dynamic target waiting state
+    readonly status: GoalStatusType; // Dynamic target waiting state
   };
 }

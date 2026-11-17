@@ -27,7 +27,7 @@ export class SqliteGoalStatusMigratedProjector implements IGoalStatusMigratedPro
       event.version,
       event.timestamp,
       event.aggregateId,
-      event.payload.fromStatus
+      event.payload.fromStatus,
     );
   }
 }

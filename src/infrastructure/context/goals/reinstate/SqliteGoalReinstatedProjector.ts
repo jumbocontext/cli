@@ -6,15 +6,19 @@ export class SqliteGoalReinstatedProjector implements IGoalReinstatedProjector {
   constructor(private readonly db: Database) {}
 
   async applyGoalReinstated(event: GoalReinstatedEvent): Promise<void> {
-    this.db.prepare(`
+    this.db
+      .prepare(
+        `
       UPDATE goal_views
       SET status = ?, version = ?, updatedAt = ?
       WHERE goalId = ?
-    `).run(
-      event.payload.status,
-      event.version,
-      event.timestamp,
-      event.aggregateId
-    );
+    `,
+      )
+      .run(
+        event.payload.status,
+        event.version,
+        event.timestamp,
+        event.aggregateId,
+      );
   }
 }

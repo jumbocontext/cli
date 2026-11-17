@@ -5,10 +5,12 @@ import { SupersedeDecisionCommandHandler } from "./SupersedeDecisionCommandHandl
 
 export class LocalSupersedeDecisionGateway implements ISupersedeDecisionGateway {
   constructor(
-    private readonly commandHandler: SupersedeDecisionCommandHandler
+    private readonly commandHandler: SupersedeDecisionCommandHandler,
   ) {}
 
-  async supersedeDecision(request: SupersedeDecisionRequest): Promise<SupersedeDecisionResponse> {
+  async supersedeDecision(
+    request: SupersedeDecisionRequest,
+  ): Promise<SupersedeDecisionResponse> {
     const result = await this.commandHandler.execute({
       decisionId: request.decisionId,
       supersededBy: request.supersededBy,

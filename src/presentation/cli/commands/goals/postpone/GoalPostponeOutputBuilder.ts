@@ -9,7 +9,9 @@ export class GoalPostponeOutputBuilder {
 
   buildSuccess(response: PostponeGoalResponse): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.check} ${Colors.success(`Goal ${response.status}`)}`);
+    this.builder.addPrompt(
+      `${Symbols.check} ${Colors.success(`Goal ${response.status}`)}`,
+    );
     this.builder.addData({ status: response.status });
     return this.builder.build();
   }
@@ -17,7 +19,9 @@ export class GoalPostponeOutputBuilder {
   buildFailureError(error: Error | string): TerminalOutput {
     const details = error instanceof Error ? error.message : error;
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error(`Failed to postpone goal: ${details}`)}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error(`Failed to postpone goal: ${details}`)}`,
+    );
     this.builder.addData({ error: "Failed to postpone goal", details });
     return this.builder.build();
   }

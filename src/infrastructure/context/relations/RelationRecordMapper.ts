@@ -5,7 +5,10 @@
  */
 
 import { RelationView } from "../../../application/context/relations/RelationView.js";
-import { EntityTypeValue, RelationStrengthValue } from "../../../domain/relations/Constants.js";
+import {
+  EntityTypeValue,
+  RelationStrengthValue,
+} from "../../../domain/relations/Constants.js";
 import { RelationRecord } from "./RelationRecord.js";
 
 export class RelationRecordMapper {

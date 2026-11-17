@@ -93,7 +93,11 @@ export class GoalClaimPolicy {
    * @param durationMs - Duration of the claim in milliseconds
    * @returns The prepared GoalClaim (not yet stored)
    */
-  prepareClaim(goalId: string, workerId: WorkerId, durationMs: number): GoalClaim {
+  prepareClaim(
+    goalId: string,
+    workerId: WorkerId,
+    durationMs: number,
+  ): GoalClaim {
     const nowIso = this.clock.nowIso();
     const now = new Date(nowIso);
     const expiresAt = new Date(now.getTime() + durationMs);
@@ -123,7 +127,11 @@ export class GoalClaimPolicy {
    * @param durationMs - Duration of the claim in milliseconds
    * @returns The created GoalClaim
    */
-  createClaim(goalId: string, workerId: WorkerId, durationMs: number): GoalClaim {
+  createClaim(
+    goalId: string,
+    workerId: WorkerId,
+    durationMs: number,
+  ): GoalClaim {
     const claim = this.prepareClaim(goalId, workerId, durationMs);
     this.claimStore.setClaim(claim);
     return claim;
@@ -138,7 +146,11 @@ export class GoalClaimPolicy {
    * @param durationMs - New duration from now in milliseconds
    * @returns The prepared refreshed GoalClaim (not yet stored)
    */
-  prepareRefreshedClaim(goalId: string, workerId: WorkerId, durationMs: number): GoalClaim {
+  prepareRefreshedClaim(
+    goalId: string,
+    workerId: WorkerId,
+    durationMs: number,
+  ): GoalClaim {
     const existingClaim = this.claimStore.getClaim(goalId);
     const nowIso = this.clock.nowIso();
     const now = new Date(nowIso);
@@ -160,7 +172,11 @@ export class GoalClaimPolicy {
    * @param durationMs - New duration from now in milliseconds
    * @returns The updated GoalClaim
    */
-  refreshClaim(goalId: string, workerId: WorkerId, durationMs: number): GoalClaim {
+  refreshClaim(
+    goalId: string,
+    workerId: WorkerId,
+    durationMs: number,
+  ): GoalClaim {
     const claim = this.prepareRefreshedClaim(goalId, workerId, durationMs);
     this.claimStore.setClaim(claim);
     return claim;
@@ -189,17 +205,27 @@ export class GoalClaimPolicy {
    * @param durationMs - Duration of the claim in milliseconds
    * @returns EntryClaimResult indicating if the claim is allowed and the prepared claim
    */
-  prepareEntryClaim(goalId: string, workerId: WorkerId, durationMs: number): EntryClaimResult {
+  prepareEntryClaim(
+    goalId: string,
+    workerId: WorkerId,
+    durationMs: number,
+  ): EntryClaimResult {
     const existingClaim = this.claimStore.getClaim(goalId);
 
     // No existing claim - prepare new claim
     if (!existingClaim) {
-      return { allowed: true, claim: this.prepareClaim(goalId, workerId, durationMs) };
+      return {
+        allowed: true,
+        claim: this.prepareClaim(goalId, workerId, durationMs),
+      };
     }
 
     // Check if requesting worker already owns the claim (lease renewal)
     if (existingClaim.claimedBy === workerId) {
-      return { allowed: true, claim: this.prepareRefreshedClaim(goalId, workerId, durationMs) };
+      return {
+        allowed: true,
+        claim: this.prepareRefreshedClaim(goalId, workerId, durationMs),
+      };
     }
 
     // Check if claim has expired (re-entry after crash)
@@ -207,7 +233,10 @@ export class GoalClaimPolicy {
     const now = new Date(nowIso);
     const expiresAt = new Date(existingClaim.claimExpiresAt);
     if (now >= expiresAt) {
-      return { allowed: true, claim: this.prepareClaim(goalId, workerId, durationMs) };
+      return {
+        allowed: true,
+        claim: this.prepareClaim(goalId, workerId, durationMs),
+      };
     }
 
     // Another worker has an active claim

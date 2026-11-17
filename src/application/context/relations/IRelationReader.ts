@@ -6,6 +6,12 @@ import { EntityTypeValue } from "../../../domain/relations/Constants.js";
  * Used by GetGoalContextQueryHandler and other read operations.
  */
 export interface IRelationReader {
-  findByFromEntity(entityType: EntityTypeValue, entityId: string): Promise<RelationView[]>;
-  findByToEntity(entityType: EntityTypeValue, entityId: string): Promise<RelationView[]>;
+  findByFromEntity(
+    entityType: EntityTypeValue,
+    entityId: string,
+  ): Promise<RelationView[]>;
+  findByToEntity(
+    entityType: EntityTypeValue,
+    entityId: string,
+  ): Promise<RelationView[]>;
 }

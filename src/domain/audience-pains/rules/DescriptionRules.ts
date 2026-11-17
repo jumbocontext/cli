@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { AudiencePainErrorMessages, AudiencePainLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  AudiencePainErrorMessages,
+  AudiencePainLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class DescriptionRequiredRule implements ValidationRule<string> {
   validate(description: string): ValidationResult {
@@ -12,7 +19,9 @@ export class DescriptionRequiredRule implements ValidationRule<string> {
 }
 
 export class DescriptionMaxLengthRule implements ValidationRule<string> {
-  constructor(private maxLength: number = AudiencePainLimits.DESCRIPTION_MAX_LENGTH) {}
+  constructor(
+    private maxLength: number = AudiencePainLimits.DESCRIPTION_MAX_LENGTH,
+  ) {}
 
   validate(description: string): ValidationResult {
     const isValid = description.length <= this.maxLength;
@@ -20,7 +29,11 @@ export class DescriptionMaxLengthRule implements ValidationRule<string> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(AudiencePainErrorMessages.DESCRIPTION_TOO_LONG, { max: this.maxLength })],
+        : [
+            formatErrorMessage(AudiencePainErrorMessages.DESCRIPTION_TOO_LONG, {
+              max: this.maxLength,
+            }),
+          ],
     };
   }
 }

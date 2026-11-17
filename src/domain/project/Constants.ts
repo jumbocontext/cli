@@ -25,9 +25,11 @@ export type ProjectLifecycleValue =
 
 // Error messages
 export const ProjectErrorMessages = {
-  ALREADY_INITIALIZED: "Project is already initialized",
-  NOT_INITIALIZED: "Project must be initialized before updating. Run: jumbo project init",
-  NO_CHANGES_PROVIDED: "No changes provided. Specify at least one field to update.",
+  ALREADY_INITIALIZED: "Jumbo is already initialized",
+  NOT_INITIALIZED:
+    "Project must be initialized before updating. Run: jumbo project init",
+  NO_CHANGES_PROVIDED:
+    "No changes provided. Specify at least one field to update.",
   NAME_REQUIRED: "Project name must be provided",
   NAME_TOO_LONG: "Project name must be less than {max} characters",
   PURPOSE_TOO_LONG: "Purpose must be less than {max} characters",
@@ -49,10 +51,10 @@ export const ProjectLimits = {
  */
 export function formatErrorMessage(
   template: string,
-  replacements: Record<string, string | number>
+  replacements: Record<string, string | number>,
 ): string {
   return Object.entries(replacements).reduce(
     (msg, [key, value]) => msg.replace(`{${key}}`, String(value)),
-    template
+    template,
   );
 }

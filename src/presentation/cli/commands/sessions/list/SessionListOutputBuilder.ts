@@ -1,8 +1,16 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { SessionView } from '../../../../../application/context/sessions/SessionView.js';
-import { Colors, BrandColors, Symbols } from '../../../rendering/StyleConfig.js';
-import { heading, contentLine, metaField } from '../../../rendering/OutputLayout.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { SessionView } from "../../../../../application/context/sessions/SessionView.js";
+import {
+  Colors,
+  BrandColors,
+  Symbols,
+} from "../../../rendering/StyleConfig.js";
+import {
+  heading,
+  contentLine,
+  metaField,
+} from "../../../rendering/OutputLayout.js";
 
 export class SessionListOutputBuilder {
   private builder = new TerminalOutputBuilder();
@@ -19,7 +27,11 @@ export class SessionListOutputBuilder {
       const s = sessions[i];
       if (i > 0) lines.push("");
       const statusTag = `[${s.status.toUpperCase()}]`;
-      lines.push(contentLine(`${Colors.bold(statusTag)} ${BrandColors.accentCyan(s.sessionId)}`));
+      lines.push(
+        contentLine(
+          `${Colors.bold(statusTag)} ${BrandColors.accentCyan(s.sessionId)}`,
+        ),
+      );
       if (s.focus) {
         lines.push(metaField("Focus", Colors.primary(s.focus), 9));
       }
@@ -33,7 +45,10 @@ export class SessionListOutputBuilder {
     return this.builder.build();
   }
 
-  buildStructuredOutput(sessions: SessionView[], filter?: string): TerminalOutput {
+  buildStructuredOutput(
+    sessions: SessionView[],
+    filter?: string,
+  ): TerminalOutput {
     this.builder.reset();
     this.builder.addData({
       count: sessions.length,
@@ -53,7 +68,9 @@ export class SessionListOutputBuilder {
 
   buildFailureError(error: Error | string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Failed to list sessions")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Failed to list sessions")}`,
+    );
     this.builder.addData({
       message: error instanceof Error ? error.message : error,
     });

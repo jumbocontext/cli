@@ -11,7 +11,10 @@ export type { SubprocessSnapshot } from "./SubprocessSnapshot.js";
 export type { SubprocessStatusValue as SubprocessStatus } from "./SubprocessStatus.js";
 
 export interface ISubprocessManager {
-  spawn(name: DaemonName, config?: Partial<DaemonConfig>): Promise<SubprocessSnapshot>;
+  spawn(
+    name: DaemonName,
+    config?: Partial<DaemonConfig>,
+  ): Promise<SubprocessSnapshot>;
   terminate(name: DaemonName): Promise<SubprocessSnapshot>;
   terminateAll(): Promise<void>;
   getStatus(name: DaemonName): SubprocessSnapshot;

@@ -30,7 +30,7 @@ export class SqliteSessionEndedProjector implements ISessionEndedProjector {
       event.timestamp,
       event.version,
       event.timestamp,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 }

@@ -1,5 +1,5 @@
-import { EntityRenderer } from './EntityRenderer.js';
-import { Annotation } from '../Annotation.js';
+import { EntityRenderer } from "./EntityRenderer.js";
+import { Annotation } from "../Annotation.js";
 
 /**
  * DependencyContextView from ContextualGoalView
@@ -18,7 +18,9 @@ export interface DependencyContextView {
  */
 export class DependencyRenderer implements EntityRenderer<DependencyContextView> {
   toHumanReadable(dependency: DependencyContextView): string {
-    const version = dependency.versionConstraint ? `@${dependency.versionConstraint}` : '';
+    const version = dependency.versionConstraint
+      ? `@${dependency.versionConstraint}`
+      : "";
     return `- ${dependency.ecosystem}:${dependency.packageName}${version} (${dependency.name}): ${dependency.purpose}`;
   }
 
@@ -35,12 +37,12 @@ export class DependencyRenderer implements EntityRenderer<DependencyContextView>
 
   getDefaultAnnotation(): Annotation {
     return {
-      type: 'instruction',
-      text: 'INSTRUCTION: You (the developer) MUST consider the following dependencies while implementing this goal.',
+      type: "instruction",
+      text: "INSTRUCTION: You (the developer) MUST consider the following dependencies while implementing this goal.",
     };
   }
 
   getGroupHeader(): string {
-    return '## Relevant Dependencies:';
+    return "## Relevant Dependencies:";
   }
 }

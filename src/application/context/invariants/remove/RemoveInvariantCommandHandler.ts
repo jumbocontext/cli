@@ -19,19 +19,24 @@ export class RemoveInvariantCommandHandler {
     private readonly eventWriter: IInvariantRemovedEventWriter,
     private readonly eventReader: IInvariantRemovedEventReader,
     private readonly invariantReader: IInvariantRemoveReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
   async execute(command: RemoveInvariantCommand): Promise<void> {
     // 1. Check if invariant exists
-    const existingView = await this.invariantReader.findById(command.invariantId);
+    const existingView = await this.invariantReader.findById(
+      command.invariantId,
+    );
     if (!existingView) {
       throw new Error(InvariantErrorMessages.NOT_FOUND);
     }
 
     // 2. Rehydrate aggregate from event history
     const history = await this.eventReader.readStream(command.invariantId);
-    const invariant = Invariant.rehydrate(command.invariantId, history as InvariantEvent[]);
+    const invariant = Invariant.rehydrate(
+      command.invariantId,
+      history as InvariantEvent[],
+    );
 
     // 3. Domain logic produces removal event
     const event = invariant.remove();

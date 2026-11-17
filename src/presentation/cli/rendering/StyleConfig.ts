@@ -187,7 +187,11 @@ export function truncate(text: string, maxLength: number): string {
  * Word-wrap text at word boundaries to fit within maxWidth.
  * Returns an array of lines, each prefixed with the specified indent.
  */
-export function wordWrap(text: string, maxWidth: number, indentWidth: number): string[] {
+export function wordWrap(
+  text: string,
+  maxWidth: number,
+  indentWidth: number,
+): string[] {
   const indent = " ".repeat(indentWidth);
   const words = text.split(/\s+/);
   const lines: string[] = [];
