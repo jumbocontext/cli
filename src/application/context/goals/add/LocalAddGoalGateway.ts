@@ -4,9 +4,7 @@ import { AddGoalResponse } from "./AddGoalResponse.js";
 import { AddGoalCommandHandler } from "./AddGoalCommandHandler.js";
 
 export class LocalAddGoalGateway implements IAddGoalGateway {
-  constructor(
-    private readonly commandHandler: AddGoalCommandHandler
-  ) {}
+  constructor(private readonly commandHandler: AddGoalCommandHandler) {}
 
   async addGoal(request: AddGoalRequest): Promise<AddGoalResponse> {
     const result = await this.commandHandler.execute({

@@ -1,5 +1,5 @@
-import { EntityRenderer } from './EntityRenderer.js';
-import { Annotation } from '../Annotation.js';
+import { EntityRenderer } from "./EntityRenderer.js";
+import { Annotation } from "../Annotation.js";
 
 /**
  * ComponentContextView from ContextualGoalView
@@ -30,12 +30,12 @@ export class ComponentRenderer implements EntityRenderer<ComponentContextView> {
 
   getDefaultAnnotation(): Annotation {
     return {
-      type: 'instruction',
-      text: 'INSTRUCTION: You (the developer) MUST consider these components while implementing this goal.',
+      type: "instruction",
+      text: "INSTRUCTION: You (the developer) MUST consider these components while implementing this goal.",
     };
   }
 
   getGroupHeader(): string {
-    return '## Relevant Components:';
+    return "## Relevant Components:";
   }
 }

@@ -7,10 +7,12 @@ import { IAudiencePainUpdateReader } from "../update/IAudiencePainUpdateReader.j
 export class LocalAddAudiencePainGateway implements IAddAudiencePainGateway {
   constructor(
     private readonly commandHandler: AddAudiencePainCommandHandler,
-    private readonly painReader: IAudiencePainUpdateReader
+    private readonly painReader: IAudiencePainUpdateReader,
   ) {}
 
-  async addAudiencePain(request: AddAudiencePainRequest): Promise<AddAudiencePainResponse> {
+  async addAudiencePain(
+    request: AddAudiencePainRequest,
+  ): Promise<AddAudiencePainResponse> {
     const result = await this.commandHandler.execute({
       title: request.title,
       description: request.description,

@@ -8,6 +8,4 @@ import { DependencyRemovedEvent } from "./remove/DependencyRemovedEvent.js";
 
 // Union type of all dependency events
 export type DependencyEvent =
-  | DependencyAddedEvent
-  | DependencyUpdatedEvent
-  | DependencyRemovedEvent;
+  DependencyAddedEvent | DependencyUpdatedEvent | DependencyRemovedEvent;

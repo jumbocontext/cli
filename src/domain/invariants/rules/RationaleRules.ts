@@ -14,7 +14,7 @@ import {
 
 export class RationaleMaxLengthRule implements ValidationRule<string> {
   constructor(
-    private maxLength: number = InvariantLimits.RATIONALE_MAX_LENGTH
+    private maxLength: number = InvariantLimits.RATIONALE_MAX_LENGTH,
   ) {}
 
   validate(rationale: string): ValidationResult {
@@ -32,6 +32,4 @@ export class RationaleMaxLengthRule implements ValidationRule<string> {
   }
 }
 
-export const RATIONALE_RULES = [
-  new RationaleMaxLengthRule(),
-];
+export const RATIONALE_RULES = [new RationaleMaxLengthRule()];

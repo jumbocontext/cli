@@ -22,7 +22,10 @@ export class AgentFileReferenceContent {
    *
    * @returns Updated content, or null if legacy marker not found
    */
-  static replaceAgentFileReference(existingContent: string, fileName: string): string | null {
+  static replaceAgentFileReference(
+    existingContent: string,
+    fileName: string,
+  ): string | null {
     const legacyMarker = "CRITICAL STARTUP INSTRUCTION:";
 
     if (existingContent.indexOf(legacyMarker) === -1) return null;

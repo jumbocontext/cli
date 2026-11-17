@@ -8,7 +8,7 @@ import { GoalPausedReasons } from "../../../../domain/goals/GoalPausedReasons.js
 export class LocalPauseGoalGateway implements IPauseGoalGateway {
   constructor(
     private readonly commandHandler: PauseGoalCommandHandler,
-    private readonly goalReader: IGoalPauseReader
+    private readonly goalReader: IGoalPauseReader,
   ) {}
 
   async pauseGoal(request: PauseGoalRequest): Promise<PauseGoalResponse> {
@@ -16,7 +16,7 @@ export class LocalPauseGoalGateway implements IPauseGoalGateway {
     const validReasons = Object.values(GoalPausedReasons);
     if (!(validReasons as readonly string[]).includes(request.reason)) {
       throw new Error(
-        `Invalid reason: ${request.reason}. Valid reasons: ${validReasons.join(", ")}`
+        `Invalid reason: ${request.reason}. Valid reasons: ${validReasons.join(", ")}`,
       );
     }
 

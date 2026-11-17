@@ -1,6 +1,13 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
 import { GoalState } from "../Goal.js";
-import { GoalStatus, GoalErrorMessages, formatErrorMessage } from "../Constants.js";
+import {
+  GoalStatus,
+  GoalErrorMessages,
+  formatErrorMessage,
+} from "../Constants.js";
 
 /**
  * Validates that a goal can be rejected.
@@ -15,10 +22,11 @@ export class CanRejectRule implements ValidationRule<GoalState> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(
-            GoalErrorMessages.CANNOT_REJECT_IN_STATUS,
-            { status: state.status }
-          )],
+        : [
+            formatErrorMessage(GoalErrorMessages.CANNOT_REJECT_IN_STATUS, {
+              status: state.status,
+            }),
+          ],
     };
   }
 }

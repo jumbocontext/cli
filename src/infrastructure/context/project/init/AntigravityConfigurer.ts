@@ -36,9 +36,12 @@ export class AntigravityConfigurer implements IConfigurer {
   /**
    * Ensure GEMINI.md exists because Antigravity documents compatibility with it.
    */
-  private async ensureGeminiMdCompatibility(projectRoot: string): Promise<void> {
+  private async ensureGeminiMdCompatibility(
+    projectRoot: string,
+  ): Promise<void> {
     const geminiMdPath = path.join(projectRoot, "GEMINI.md");
-    const reference = AgentFileReferenceContent.getAgentFileReference("GEMINI.md");
+    const reference =
+      AgentFileReferenceContent.getAgentFileReference("GEMINI.md");
 
     try {
       const exists = await fs.pathExists(geminiMdPath);
@@ -58,7 +61,7 @@ export class AntigravityConfigurer implements IConfigurer {
       console.warn(
         `Warning: Failed to update Antigravity GEMINI.md compatibility file: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
       );
     }
   }
@@ -75,9 +78,12 @@ export class AntigravityConfigurer implements IConfigurer {
   /**
    * Repair GEMINI.md by replacing legacy Jumbo reference content.
    */
-  private async repairGeminiMdCompatibility(projectRoot: string): Promise<void> {
+  private async repairGeminiMdCompatibility(
+    projectRoot: string,
+  ): Promise<void> {
     const geminiMdPath = path.join(projectRoot, "GEMINI.md");
-    const reference = AgentFileReferenceContent.getAgentFileReference("GEMINI.md");
+    const reference =
+      AgentFileReferenceContent.getAgentFileReference("GEMINI.md");
 
     try {
       const exists = await fs.pathExists(geminiMdPath);
@@ -88,7 +94,10 @@ export class AntigravityConfigurer implements IConfigurer {
       }
 
       const content = await fs.readFile(geminiMdPath, "utf-8");
-      const replaced = AgentFileReferenceContent.replaceAgentFileReference(content, "GEMINI.md");
+      const replaced = AgentFileReferenceContent.replaceAgentFileReference(
+        content,
+        "GEMINI.md",
+      );
 
       if (replaced !== null) {
         await fs.writeFile(geminiMdPath, replaced, "utf-8");
@@ -100,7 +109,7 @@ export class AntigravityConfigurer implements IConfigurer {
       console.warn(
         `Warning: Failed to repair Antigravity GEMINI.md compatibility file: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
       );
     }
   }
@@ -108,7 +117,9 @@ export class AntigravityConfigurer implements IConfigurer {
   /**
    * Return what changes this configurer will make without executing.
    */
-  async getPlannedFileChanges(projectRoot: string): Promise<PlannedFileChange[]> {
+  async getPlannedFileChanges(
+    projectRoot: string,
+  ): Promise<PlannedFileChange[]> {
     const changes: PlannedFileChange[] = [];
 
     const geminiMdPath = path.join(projectRoot, "GEMINI.md");
@@ -136,7 +147,11 @@ export class AntigravityConfigurer implements IConfigurer {
       });
     }
 
-    const geminiSettingsPath = path.join(projectRoot, ".gemini", "settings.json");
+    const geminiSettingsPath = path.join(
+      projectRoot,
+      ".gemini",
+      "settings.json",
+    );
     if (await fs.pathExists(geminiSettingsPath)) {
       changes.push({
         path: ".gemini/settings.json",
@@ -157,7 +172,9 @@ export class AntigravityConfigurer implements IConfigurer {
     return changes;
   }
 
-  private async removeLegacyAntigravityHooks(projectRoot: string): Promise<void> {
+  private async removeLegacyAntigravityHooks(
+    projectRoot: string,
+  ): Promise<void> {
     const agentsDir = path.join(projectRoot, ".agents");
     if (!(await fs.pathExists(agentsDir))) {
       return;
@@ -193,7 +210,11 @@ export class AntigravityConfigurer implements IConfigurer {
             if (Object.keys(hooks).length === 0) {
               await fs.remove(hooksPath);
             } else {
-              await fs.writeFile(hooksPath, JSON.stringify(hooks, null, 2) + "\n", "utf-8");
+              await fs.writeFile(
+                hooksPath,
+                JSON.stringify(hooks, null, 2) + "\n",
+                "utf-8",
+              );
             }
           }
         }
@@ -201,7 +222,7 @@ export class AntigravityConfigurer implements IConfigurer {
         console.warn(
           `Warning: Failed to clean legacy hooks in .agents/hooks.json: ${
             error instanceof Error ? error.message : String(error)
-          }`
+          }`,
         );
       }
     }
@@ -232,7 +253,10 @@ export class AntigravityConfigurer implements IConfigurer {
               if (Array.isArray(matchers)) {
                 const cleanedMatchers = matchers
                   .map((matcher: unknown) => {
-                    if (AntigravityConfigurer.isObject(matcher) && Array.isArray(matcher.hooks)) {
+                    if (
+                      AntigravityConfigurer.isObject(matcher) &&
+                      Array.isArray(matcher.hooks)
+                    ) {
                       matcher.hooks = matcher.hooks.filter((hook: unknown) => {
                         return AntigravityConfigurer.shouldKeepLegacyHook(hook);
                       });
@@ -240,7 +264,11 @@ export class AntigravityConfigurer implements IConfigurer {
                     return matcher;
                   })
                   .filter((matcher: unknown) => {
-                    return AntigravityConfigurer.isObject(matcher) && Array.isArray(matcher.hooks) && matcher.hooks.length > 0;
+                    return (
+                      AntigravityConfigurer.isObject(matcher) &&
+                      Array.isArray(matcher.hooks) &&
+                      matcher.hooks.length > 0
+                    );
                   });
                 settings.hooks[eventType] = cleanedMatchers;
 
@@ -255,10 +283,19 @@ export class AntigravityConfigurer implements IConfigurer {
           }
 
           // Remove jumbo-specific allowed tools
-          if (AntigravityConfigurer.isObject(settings.tools) && Array.isArray(settings.tools.allowed)) {
-            const allowedTools = settings.tools.allowed.filter((tool: unknown) => {
-              return typeof tool === "string" && !tool.includes("jumbo") && !tool.includes("antigravity-hook.mjs");
-            });
+          if (
+            AntigravityConfigurer.isObject(settings.tools) &&
+            Array.isArray(settings.tools.allowed)
+          ) {
+            const allowedTools = settings.tools.allowed.filter(
+              (tool: unknown) => {
+                return (
+                  typeof tool === "string" &&
+                  !tool.includes("jumbo") &&
+                  !tool.includes("antigravity-hook.mjs")
+                );
+              },
+            );
             settings.tools.allowed = allowedTools;
             if (allowedTools.length === 0) {
               delete settings.tools.allowed;
@@ -279,14 +316,18 @@ export class AntigravityConfigurer implements IConfigurer {
               }
             }
           } else {
-            await fs.writeFile(settingsPath, JSON.stringify(settings, null, 2) + "\n", "utf-8");
+            await fs.writeFile(
+              settingsPath,
+              JSON.stringify(settings, null, 2) + "\n",
+              "utf-8",
+            );
           }
         }
       } catch (error) {
         console.warn(
           `Warning: Failed to clean legacy settings in .gemini/settings.json: ${
             error instanceof Error ? error.message : String(error)
-          }`
+          }`,
         );
       }
     }
@@ -312,7 +353,7 @@ export class AntigravityConfigurer implements IConfigurer {
         console.warn(
           `Warning: Failed to clean legacy skills in .gemini/skills: ${
             error instanceof Error ? error.message : String(error)
-          }`
+          }`,
         );
       }
     }
@@ -341,7 +382,10 @@ export class AntigravityConfigurer implements IConfigurer {
       return false;
     }
 
-    if (AntigravityConfigurer.isObject(hook) && typeof hook.command === "string") {
+    if (
+      AntigravityConfigurer.isObject(hook) &&
+      typeof hook.command === "string"
+    ) {
       return !hook.command.includes("jumbo");
     }
 

@@ -1,4 +1,7 @@
-import { ComponentTypeValue, ComponentStatusValue } from "../../../domain/components/Constants.js";
+import {
+  ComponentTypeValue,
+  ComponentStatusValue,
+} from "../../../domain/components/Constants.js";
 
 export interface ComponentView {
   componentId: string;

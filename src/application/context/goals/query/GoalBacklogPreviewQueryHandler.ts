@@ -1,4 +1,7 @@
-import { GoalStatus, GoalStatusType } from "../../../../domain/goals/Constants.js";
+import {
+  GoalStatus,
+  GoalStatusType,
+} from "../../../../domain/goals/Constants.js";
 import { GoalView } from "../GoalView.js";
 import { IGoalStatusReader } from "../IGoalStatusReader.js";
 import { GoalBacklogPreviewItem } from "./GoalBacklogPreviewItem.js";

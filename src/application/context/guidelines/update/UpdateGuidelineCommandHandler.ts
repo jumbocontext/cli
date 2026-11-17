@@ -21,11 +21,11 @@ export class UpdateGuidelineCommandHandler {
     private readonly eventWriter: IGuidelineUpdatedEventWriter,
     private readonly eventReader: IGuidelineUpdatedEventReader,
     private readonly guidelineReader: IGuidelineUpdateReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
   async execute(
-    command: UpdateGuidelineCommand
+    command: UpdateGuidelineCommand,
   ): Promise<{ guidelineId: string }> {
     // 1. Check if guideline exists
     const existingView = await this.guidelineReader.findById(command.id);
@@ -33,16 +33,13 @@ export class UpdateGuidelineCommandHandler {
       throw new Error(
         formatErrorMessage(GuidelineErrorMessages.NOT_FOUND, {
           id: command.id,
-        })
+        }),
       );
     }
 
     // 2. Load event history and rehydrate aggregate
     const history = await this.eventReader.readStream(command.id);
-    const guideline = Guideline.rehydrate(
-      command.id,
-      history
-    );
+    const guideline = Guideline.rehydrate(command.id, history);
 
     // 3. Domain logic produces update event - only pass defined fields
     const changes: {

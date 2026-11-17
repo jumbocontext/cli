@@ -36,7 +36,7 @@ export class SqliteGoalCompletedProjector
       event.payload.status,
       event.version,
       event.timestamp,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 

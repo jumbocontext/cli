@@ -1,7 +1,11 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { Colors, Symbols } from '../../../rendering/StyleConfig.js';
-import { heading, contentLine, metaField } from '../../../rendering/OutputLayout.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { Colors, Symbols } from "../../../rendering/StyleConfig.js";
+import {
+  heading,
+  contentLine,
+  metaField,
+} from "../../../rendering/OutputLayout.js";
 
 /**
  * Specialized builder for goal.add command output.
@@ -31,12 +35,20 @@ export class GoalAddOutputBuilder {
    * Build output for successful goal creation.
    * Renders success message with goal details.
    */
-  buildSuccess(goalId: string, title: string, objective: string): TerminalOutput {
+  buildSuccess(
+    goalId: string,
+    title: string,
+    objective: string,
+  ): TerminalOutput {
     this.builder.reset();
     const lines: string[] = [];
     lines.push("");
     lines.push(heading("Goal Defined"));
-    lines.push(contentLine(`${Symbols.check} ${Colors.success("Goal has been defined")}`));
+    lines.push(
+      contentLine(
+        `${Symbols.check} ${Colors.success("Goal has been defined")}`,
+      ),
+    );
     lines.push("");
     lines.push(metaField("Id", Colors.muted(goalId)));
     lines.push(metaField("Title", Colors.primary(title)));
@@ -47,8 +59,8 @@ export class GoalAddOutputBuilder {
       goalId,
       title,
       objective,
-      status: 'defined',
-      message: `  goalId: ${goalId}\n  title: ${title}\n  objective: ${objective}\n  status: defined`
+      status: "defined",
+      message: `  goalId: ${goalId}\n  title: ${title}\n  objective: ${objective}\n  status: defined`,
     });
     return this.builder.build();
   }
@@ -59,9 +71,12 @@ export class GoalAddOutputBuilder {
    */
   buildMissingObjectiveError(): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Missing required option")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Missing required option")}`,
+    );
     this.builder.addData({
-      message: '--objective is required (or use --interactive for guided creation)'
+      message:
+        "--objective is required (or use --interactive for guided creation)",
     });
     return this.builder.build();
   }
@@ -72,9 +87,11 @@ export class GoalAddOutputBuilder {
    */
   buildFailureError(error: Error | string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Failed to define goal")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Failed to define goal")}`,
+    );
     this.builder.addData({
-      message: error instanceof Error ? error.message : error
+      message: error instanceof Error ? error.message : error,
     });
     return this.builder.build();
   }

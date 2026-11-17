@@ -24,14 +24,14 @@ export class SqliteWorkerIdentifiedProjector implements IWorkerIdentifiedProject
     } else {
       this.db
         .prepare(
-          "INSERT INTO workers (workerId, hostSessionKey, mode, createdAt, lastSeenAt) VALUES (?, ?, ?, ?, ?)"
+          "INSERT INTO workers (workerId, hostSessionKey, mode, createdAt, lastSeenAt) VALUES (?, ?, ?, ?, ?)",
         )
         .run(
           event.aggregateId,
           event.payload.hostSessionKey,
           event.payload.mode,
           event.timestamp,
-          event.timestamp
+          event.timestamp,
         );
     }
   }

@@ -27,7 +27,7 @@ export class SqliteGoalUnblockedProjector implements IGoalUnblockedProjector {
       event.payload.note || null,
       event.version,
       event.timestamp,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 }

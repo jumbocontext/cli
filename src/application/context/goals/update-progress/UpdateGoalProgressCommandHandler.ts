@@ -4,7 +4,10 @@ import { IGoalProgressUpdatedEventReader } from "./IGoalProgressUpdatedEventRead
 import { IGoalProgressUpdateReader } from "./IGoalProgressUpdateReader.js";
 import { IEventBus } from "../../../messaging/IEventBus.js";
 import { Goal } from "../../../../domain/goals/Goal.js";
-import { GoalErrorMessages, formatErrorMessage } from "../../../../domain/goals/Constants.js";
+import {
+  GoalErrorMessages,
+  formatErrorMessage,
+} from "../../../../domain/goals/Constants.js";
 import { GoalContextQueryHandler } from "../get/GoalContextQueryHandler.js";
 import { ContextualGoalView } from "../get/ContextualGoalView.js";
 
@@ -19,15 +22,19 @@ export class UpdateGoalProgressCommandHandler {
     private readonly eventReader: IGoalProgressUpdatedEventReader,
     private readonly goalReader: IGoalProgressUpdateReader,
     private readonly eventBus: IEventBus,
-    private readonly goalContextQueryHandler: GoalContextQueryHandler
+    private readonly goalContextQueryHandler: GoalContextQueryHandler,
   ) {}
 
-  async execute(command: UpdateGoalProgressCommand): Promise<ContextualGoalView> {
+  async execute(
+    command: UpdateGoalProgressCommand,
+  ): Promise<ContextualGoalView> {
     // 1. Check goal exists (query projection for fast check)
     const view = await this.goalReader.findById(command.goalId);
     if (!view) {
       throw new Error(
-        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, { id: command.goalId })
+        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, {
+          id: command.goalId,
+        }),
       );
     }
 

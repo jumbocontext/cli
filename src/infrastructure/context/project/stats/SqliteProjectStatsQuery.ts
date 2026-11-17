@@ -46,9 +46,7 @@ export class SqliteProjectStatsQuery implements IProjectStatsQuery {
         goals: {
           definedGoalsCount: this.countByStatus(GoalStatus.TODO),
           refinedGoalsCount: this.countByStatus(GoalStatus.REFINED),
-          inProgressGoalsCount: this.countByStatuses(
-            IN_PROGRESS_GOAL_STATUSES,
-          ),
+          inProgressGoalsCount: this.countByStatuses(IN_PROGRESS_GOAL_STATUSES),
           submittedGoalsCount: this.countByStatus(GoalStatus.SUBMITTED),
           closedGoalsCount: this.countByStatus(GoalStatus.DONE),
         },

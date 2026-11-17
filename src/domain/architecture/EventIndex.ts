@@ -10,4 +10,7 @@ import { ArchitectureDeprecatedEvent } from "./deprecate/ArchitectureDeprecatedE
 export type { DataStore } from "./define/ArchitectureDefinedEvent.js";
 
 // Union type of all architecture events
-export type ArchitectureEvent = ArchitectureDefinedEvent | ArchitectureUpdatedEvent | ArchitectureDeprecatedEvent;
+export type ArchitectureEvent =
+  | ArchitectureDefinedEvent
+  | ArchitectureUpdatedEvent
+  | ArchitectureDeprecatedEvent;

@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { DependencyErrorMessages, DependencyLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  DependencyErrorMessages,
+  DependencyLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class PackageNameRequiredRule implements ValidationRule<string> {
   validate(packageName: string): ValidationResult {
@@ -12,13 +19,21 @@ export class PackageNameRequiredRule implements ValidationRule<string> {
 }
 
 export class PackageNameMaxLengthRule implements ValidationRule<string> {
-  constructor(private maxLength: number = DependencyLimits.PACKAGE_NAME_MAX_LENGTH) {}
+  constructor(
+    private maxLength: number = DependencyLimits.PACKAGE_NAME_MAX_LENGTH,
+  ) {}
 
   validate(packageName: string): ValidationResult {
     const isValid = packageName.length <= this.maxLength;
     return {
       isValid,
-      errors: isValid ? [] : [formatErrorMessage(DependencyErrorMessages.PACKAGE_NAME_TOO_LONG, { max: this.maxLength })],
+      errors: isValid
+        ? []
+        : [
+            formatErrorMessage(DependencyErrorMessages.PACKAGE_NAME_TOO_LONG, {
+              max: this.maxLength,
+            }),
+          ],
     };
   }
 }

@@ -1,5 +1,5 @@
-import { EntityRenderer } from './EntityRenderer.js';
-import { Annotation } from '../Annotation.js';
+import { EntityRenderer } from "./EntityRenderer.js";
+import { Annotation } from "../Annotation.js";
 
 /**
  * DecisionContextView from ContextualGoalView
@@ -30,12 +30,12 @@ export class DecisionRenderer implements EntityRenderer<DecisionContextView> {
 
   getDefaultAnnotation(): Annotation {
     return {
-      type: 'instruction',
-      text: 'INSTRUCTION: The solution may contain artifacts that reflect previous design decisions.\nTherefore, you MUST consider these design decisions while implementing this goal to ensure the trajectory of the solution remains consistent.',
+      type: "instruction",
+      text: "INSTRUCTION: The solution may contain artifacts that reflect previous design decisions.\nTherefore, you MUST consider these design decisions while implementing this goal to ensure the trajectory of the solution remains consistent.",
     };
   }
 
   getGroupHeader(): string {
-    return '## Relevant Decisions:';
+    return "## Relevant Decisions:";
   }
 }

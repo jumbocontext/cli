@@ -7,6 +7,7 @@ import type { RequestController } from "../action-dispatch/RequestController.js"
 import type { PlanProjectInitRequest } from "../../../application/context/project/init/PlanProjectInitRequest.js";
 import type { PlanProjectInitResponse } from "../../../application/context/project/init/PlanProjectInitResponse.js";
 import type { InitializeProjectRequest } from "../../../application/context/project/init/InitializeProjectRequest.js";
+import type { ILogger } from "../../../application/logging/ILogger.js";
 import type { InitializeProjectResponse } from "../../../application/context/project/init/InitializeProjectResponse.js";
 import type { AddAudienceRequest } from "../../../application/context/audiences/add/AddAudienceRequest.js";
 import type { AddAudienceResponse } from "../../../application/context/audiences/add/AddAudienceResponse.js";
@@ -88,6 +89,7 @@ interface InitFlowProps {
   readonly actionControllers?: InitFlowActionControllers;
   readonly onComplete: (values: Record<string, string>) => void | Promise<void>;
   readonly onCancel: () => void;
+  readonly logger?: ILogger;
 }
 
 const PROJECT_STEPS: readonly WizardStepDefinition[] = [
@@ -244,6 +246,7 @@ export function InitFlow({
   actionControllers = {},
   onComplete,
   onCancel,
+  logger,
 }: InitFlowProps): React.ReactElement {
   const [stage, setStage] = useState<InitFlowStageValue>(InitFlowStage.project);
   const [stageHistory, setStageHistory] = useState<
@@ -500,6 +503,7 @@ export function InitFlow({
 
     if (!initResult.ok) {
       setWorking(false);
+      logger?.error("Project initialization failed", initResult.error);
       setDispatchError(initResult.error.message);
       return;
     }
@@ -512,6 +516,7 @@ export function InitFlow({
     setWorking(false);
 
     if (!primitiveResult.ok) {
+      logger?.error("Post-initialization persistence failed", primitiveResult.error);
       setDispatchError(primitiveResult.error.message);
       return;
     }

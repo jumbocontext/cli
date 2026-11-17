@@ -11,11 +11,11 @@ import { ValuePropositionAddedEvent } from "../../../../domain/value-proposition
 export class AddValuePropositionCommandHandler {
   constructor(
     private readonly eventWriter: IValuePropositionAddedEventWriter,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
   async execute(
-    command: AddValuePropositionCommand
+    command: AddValuePropositionCommand,
   ): Promise<{ valuePropositionId: string }> {
     // 1. Create new aggregate with generated ID
     const valueProposition = ValueProposition.create();
@@ -26,7 +26,7 @@ export class AddValuePropositionCommandHandler {
       command.title,
       command.description,
       command.benefit,
-      command.measurableOutcome
+      command.measurableOutcome,
     ) as ValuePropositionAddedEvent;
 
     // 3. Persist event to file store

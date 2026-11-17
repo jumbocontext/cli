@@ -11,9 +11,9 @@ export interface AddGoalCommand {
   readonly successCriteria: string[];
   readonly scopeIn?: string[];
   readonly scopeOut?: string[];
-  readonly nextGoalId?: string;      // Sets NextGoal on this new goal
-  readonly previousGoalId?: string;  // Updates the referenced goal's NextGoal to point to this new goal
-  readonly prerequisiteGoals?: string[];  // Goals that must be completed before this goal can start
-  readonly branch?: string;      // Git branch for multi-agent collaboration
-  readonly worktree?: string;    // Git worktree path for multi-agent collaboration
+  readonly nextGoalId?: string; // Sets NextGoal on this new goal
+  readonly previousGoalId?: string; // Updates the referenced goal's NextGoal to point to this new goal
+  readonly prerequisiteGoals?: string[]; // Goals that must be completed before this goal can start
+  readonly branch?: string; // Git branch for multi-agent collaboration
+  readonly worktree?: string; // Git worktree path for multi-agent collaboration
 }

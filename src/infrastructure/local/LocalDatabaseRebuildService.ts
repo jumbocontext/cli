@@ -36,7 +36,7 @@ export class LocalDatabaseRebuildService implements IDatabaseRebuildService {
     private readonly db: Database.Database,
     private readonly eventStore: IEventStore,
     private readonly createProjectionBus: (db: Database.Database) => IEventBus,
-    private readonly logger: ILogger
+    private readonly logger: ILogger,
   ) {}
 
   async rebuild(): Promise<DatabaseRebuildResult> {
@@ -53,7 +53,11 @@ export class LocalDatabaseRebuildService implements IDatabaseRebuildService {
 
     // Step 2: Create rebuild database at a temporary path
     this.logger.debug(`${this.tag} Creating rebuild database`);
-    for (const filePath of [rebuildPath, `${rebuildPath}-wal`, `${rebuildPath}-shm`]) {
+    for (const filePath of [
+      rebuildPath,
+      `${rebuildPath}-wal`,
+      `${rebuildPath}-shm`,
+    ]) {
       if (await fs.pathExists(filePath)) {
         await fs.remove(filePath);
       }
@@ -71,7 +75,9 @@ export class LocalDatabaseRebuildService implements IDatabaseRebuildService {
     // Step 3: Replay all events in a single transaction
     const projectionBus = this.createProjectionBus(newDb);
     const events = await this.eventStore.getAllEvents();
-    this.logger.info(`${this.tag} Loaded events for replay`, { eventCount: events.length });
+    this.logger.info(`${this.tag} Loaded events for replay`, {
+      eventCount: events.length,
+    });
 
     let processedCount = 0;
     newDb.exec("BEGIN");
@@ -85,11 +91,15 @@ export class LocalDatabaseRebuildService implements IDatabaseRebuildService {
       newDb.exec("ROLLBACK");
       this.closeAndRemove(newDb, rebuildPath);
       const failedEvent = events[processedCount];
-      this.logger.error(`${this.tag} Failed to replay event`, error instanceof Error ? error : undefined, {
-        eventType: failedEvent?.type,
-        aggregateId: failedEvent?.aggregateId,
-        processedSoFar: processedCount,
-      });
+      this.logger.error(
+        `${this.tag} Failed to replay event`,
+        error instanceof Error ? error : undefined,
+        {
+          eventType: failedEvent?.type,
+          aggregateId: failedEvent?.aggregateId,
+          processedSoFar: processedCount,
+        },
+      );
       throw error;
     }
 
@@ -106,7 +116,9 @@ export class LocalDatabaseRebuildService implements IDatabaseRebuildService {
     }
     await fs.move(rebuildPath, dbPath);
 
-    this.logger.info(`${this.tag} Database rebuild complete`, { eventsReplayed: processedCount });
+    this.logger.info(`${this.tag} Database rebuild complete`, {
+      eventsReplayed: processedCount,
+    });
 
     return {
       eventsReplayed: processedCount,
@@ -117,9 +129,15 @@ export class LocalDatabaseRebuildService implements IDatabaseRebuildService {
   private closeAndRemove(db: Database.Database, dbPath: string): void {
     try {
       if (db.open) db.close();
-    } catch { /* best-effort cleanup */ }
+    } catch {
+      /* best-effort cleanup */
+    }
     for (const suffix of ["", "-wal", "-shm"]) {
-      try { fs.removeSync(`${dbPath}${suffix}`); } catch { /* best-effort */ }
+      try {
+        fs.removeSync(`${dbPath}${suffix}`);
+      } catch {
+        /* best-effort */
+      }
     }
   }
 }

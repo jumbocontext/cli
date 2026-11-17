@@ -3,9 +3,7 @@ import { AddComponentResponse } from "./AddComponentResponse.js";
 import { IAddComponentGateway } from "./IAddComponentGateway.js";
 
 export class AddComponentController {
-  constructor(
-    private readonly gateway: IAddComponentGateway
-  ) {}
+  constructor(private readonly gateway: IAddComponentGateway) {}
 
   async handle(request: AddComponentRequest): Promise<AddComponentResponse> {
     return this.gateway.addComponent(request);

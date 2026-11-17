@@ -1,11 +1,20 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { ComponentView } from '../../../../../application/context/components/ComponentView.js';
-import { RelationView } from '../../../../../application/context/relations/RelationView.js';
-import { Colors, BrandColors, Symbols } from '../../../rendering/StyleConfig.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { ComponentView } from "../../../../../application/context/components/ComponentView.js";
+import { RelationView } from "../../../../../application/context/relations/RelationView.js";
 import {
-  EDGE, heading, metaField, contentLine, divider, wrapContent,
-} from '../../../rendering/OutputLayout.js';
+  Colors,
+  BrandColors,
+  Symbols,
+} from "../../../rendering/StyleConfig.js";
+import {
+  EDGE,
+  heading,
+  metaField,
+  contentLine,
+  divider,
+  wrapContent,
+} from "../../../rendering/OutputLayout.js";
 
 /**
  * Specialized builder for component.show command output.
@@ -48,13 +57,25 @@ export class ComponentShowOutputBuilder {
     lines.push("");
     lines.push(metaField("Id", Colors.muted(component.componentId), 16));
     lines.push(metaField("Type", Colors.primary(component.type), 16));
-    lines.push(metaField("Status", Colors.primary(this.formatStatus(component.status)), 16));
+    lines.push(
+      metaField(
+        "Status",
+        Colors.primary(this.formatStatus(component.status)),
+        16,
+      ),
+    );
     lines.push(metaField("Path", Colors.muted(component.path), 16));
     lines.push(metaField("Created", Colors.muted(component.createdAt), 16));
     lines.push(metaField("Updated", Colors.muted(component.updatedAt), 16));
 
     if (component.deprecationReason) {
-      lines.push(metaField("Deprecation", Colors.warning(component.deprecationReason), 16));
+      lines.push(
+        metaField(
+          "Deprecation",
+          Colors.warning(component.deprecationReason),
+          16,
+        ),
+      );
     }
 
     lines.push("");
@@ -78,11 +99,16 @@ export class ComponentShowOutputBuilder {
       relLines.push("");
       relLines.push(heading("Relations"));
       for (const relation of relations) {
-        const direction = relation.fromEntityId === component.componentId
-          ? `${Symbols.arrow} ${relation.toEntityType}:${relation.toEntityId}`
-          : `${Symbols.arrow} ${relation.fromEntityType}:${relation.fromEntityId}`;
+        const direction =
+          relation.fromEntityId === component.componentId
+            ? `${Symbols.arrow} ${relation.toEntityType}:${relation.toEntityId}`
+            : `${Symbols.arrow} ${relation.fromEntityType}:${relation.fromEntityId}`;
         const strength = relation.strength ? ` [${relation.strength}]` : "";
-        relLines.push(contentLine(`${BrandColors.accentCyan(relation.relationType)}${strength} ${direction}`));
+        relLines.push(
+          contentLine(
+            `${BrandColors.accentCyan(relation.relationType)}${strength} ${direction}`,
+          ),
+        );
         if (relation.description) {
           relLines.push(...wrapContent(relation.description));
         }
@@ -103,7 +129,10 @@ export class ComponentShowOutputBuilder {
   /**
    * Build output for non-TTY (structured JSON for programmatic consumers).
    */
-  buildStructuredOutput(component: ComponentView, relations: RelationView[]): TerminalOutput {
+  buildStructuredOutput(
+    component: ComponentView,
+    relations: RelationView[],
+  ): TerminalOutput {
     this.builder.reset();
 
     this.builder.addData({
@@ -119,7 +148,7 @@ export class ComponentShowOutputBuilder {
         createdAt: component.createdAt,
         updatedAt: component.updatedAt,
       },
-      relations: relations.map(r => ({
+      relations: relations.map((r) => ({
         relationId: r.relationId,
         fromEntityType: r.fromEntityType,
         fromEntityId: r.fromEntityId,
@@ -139,8 +168,12 @@ export class ComponentShowOutputBuilder {
    */
   buildNotFoundError(identifier: string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Component not found")}`);
-    this.builder.addData({ message: `No component exists with ID or name: ${identifier}` });
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Component not found")}`,
+    );
+    this.builder.addData({
+      message: `No component exists with ID or name: ${identifier}`,
+    });
     return this.builder.build();
   }
 
@@ -149,7 +182,9 @@ export class ComponentShowOutputBuilder {
    */
   buildFailureError(error: Error | string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Failed to show component")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Failed to show component")}`,
+    );
     this.builder.addData({
       message: error instanceof Error ? error.message : error,
     });

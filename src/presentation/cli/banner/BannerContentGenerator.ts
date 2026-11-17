@@ -68,23 +68,36 @@ function generateWelcomeContent(): string[] {
     "Get started:  jumbo init",
     "Add a goal:   jumbo goal add",
     "All commands: jumbo --help",
-
   ];
 }
 
 /**
  * Project summary content for initialized projects
  */
-function generateProjectSummaryContent(context: BannerDisplayContext): string[] {
+function generateProjectSummaryContent(
+  context: BannerDisplayContext,
+): string[] {
   const lines: string[] = [];
 
-  lines.push("  " + chalk.gray("Project: ") + chalk.white(context.project!.name));
+  lines.push(
+    "  " + chalk.gray("Project: ") + chalk.white(context.project!.name),
+  );
 
   // Session status
   if (context.work.session && context.work.session.status === "active") {
-    lines.push("  " + chalk.gray("Session: ") + context.work.session.focus + " " + chalk.green("(active)"));
+    lines.push(
+      "  " +
+        chalk.gray("Session: ") +
+        context.work.session.focus +
+        " " +
+        chalk.green("(active)"),
+    );
   } else {
-    lines.push("  " + chalk.gray("Start session: ") + chalk.cyan('jumbo session start --focus "Your focus"'));
+    lines.push(
+      "  " +
+        chalk.gray("Start session: ") +
+        chalk.cyan('jumbo session start --focus "Your focus"'),
+    );
   }
 
   lines.push(" ");
@@ -93,16 +106,29 @@ function generateProjectSummaryContent(context: BannerDisplayContext): string[] 
   if (context.work.goals.active > 0) {
     lines.push(
       `  ${chalk.green(String(context.work.goals.active))} active goal${context.work.goals.active > 1 ? "s" : ""}` +
-      (context.work.goals.blocked > 0 ? ` | ${chalk.red(String(context.work.goals.blocked))} blocked` : "")
+        (context.work.goals.blocked > 0
+          ? ` | ${chalk.red(String(context.work.goals.blocked))} blocked`
+          : ""),
     );
   } else if (context.work.goals.planned > 0) {
-    lines.push(`  ${chalk.blue(String(context.work.goals.planned))} planned goal${context.work.goals.planned > 1 ? "s" : ""} ready to start`);
+    lines.push(
+      `  ${chalk.blue(String(context.work.goals.planned))} planned goal${context.work.goals.planned > 1 ? "s" : ""} ready to start`,
+    );
   } else {
-    lines.push("  " + chalk.gray("No goals yet. Add one with: ") + chalk.cyan("jumbo goal add"));
+    lines.push(
+      "  " +
+        chalk.gray("No goals yet. Add one with: ") +
+        chalk.cyan("jumbo goal add"),
+    );
   }
 
   lines.push(" ");
-  lines.push("  " + chalk.gray("Type ") + chalk.cyan("jumbo --help") + chalk.gray(" for all commands"));
+  lines.push(
+    "  " +
+      chalk.gray("Type ") +
+      chalk.cyan("jumbo --help") +
+      chalk.gray(" for all commands"),
+  );
   lines.push(" ");
 
   return lines;

@@ -7,10 +7,12 @@ import { IAudienceUpdateReader } from "./IAudienceUpdateReader.js";
 export class LocalUpdateAudienceGateway implements IUpdateAudienceGateway {
   constructor(
     private readonly commandHandler: UpdateAudienceCommandHandler,
-    private readonly reader: IAudienceUpdateReader
+    private readonly reader: IAudienceUpdateReader,
   ) {}
 
-  async updateAudience(request: UpdateAudienceRequest): Promise<UpdateAudienceResponse> {
+  async updateAudience(
+    request: UpdateAudienceRequest,
+  ): Promise<UpdateAudienceResponse> {
     const result = await this.commandHandler.execute({
       audienceId: request.audienceId,
       name: request.name,

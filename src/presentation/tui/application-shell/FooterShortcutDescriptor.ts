@@ -18,4 +18,7 @@ export const FooterShortcut = {
   NOTIFICATIONS: {
     char: "i",
   },
-} as const satisfies Record<string, FooterShortcutDescriptor | FooterContextualShortcutDescriptor>;
+} as const satisfies Record<
+  string,
+  FooterShortcutDescriptor | FooterContextualShortcutDescriptor
+>;

@@ -28,6 +28,7 @@ export function defineDomainIdentity<Name extends string>(
       return value as DomainIdentity<Name>;
     },
     fromLegacy: (value: string) => value as DomainIdentity<Name>,
-    is: (value: string): value is DomainIdentity<Name> => UUID_PATTERN.test(value),
+    is: (value: string): value is DomainIdentity<Name> =>
+      UUID_PATTERN.test(value),
   };
 }

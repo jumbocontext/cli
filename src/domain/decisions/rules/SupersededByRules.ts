@@ -1,4 +1,7 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
 import { DecisionErrorMessages } from "../Constants.js";
 
 export class SupersededByRequiredRule implements ValidationRule<string> {
@@ -11,6 +14,4 @@ export class SupersededByRequiredRule implements ValidationRule<string> {
   }
 }
 
-export const SUPERSEDED_BY_RULES = [
-  new SupersededByRequiredRule(),
-];
+export const SUPERSEDED_BY_RULES = [new SupersededByRequiredRule()];

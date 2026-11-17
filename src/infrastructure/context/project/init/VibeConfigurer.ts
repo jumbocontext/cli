@@ -36,7 +36,9 @@ export class VibeConfigurer implements IConfigurer {
   /**
    * Return what changes this configurer will make without executing.
    */
-  async getPlannedFileChanges(_projectRoot: string): Promise<PlannedFileChange[]> {
+  async getPlannedFileChanges(
+    _projectRoot: string,
+  ): Promise<PlannedFileChange[]> {
     return [];
   }
 }

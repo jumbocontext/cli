@@ -7,11 +7,15 @@ import { TerminalOutput } from "../../../output/TerminalOutput.js";
 export class DecisionRemoveOutputBuilder {
   buildSuccess(response: RemoveDecisionResponse): TerminalOutput {
     return new TerminalOutputBuilder()
-      .addPrompt([
-        chalk.hex(SemanticColors.headline).bold("Decision Removed"),
-        chalk.hex(SemanticColors.success)("Decision and its incoming/outgoing relations have been removed."),
-        `Id: ${chalk.hex(SemanticColors.primary)(response.decisionId)}`,
-      ].join("\n"))
+      .addPrompt(
+        [
+          chalk.hex(SemanticColors.headline).bold("Decision Removed"),
+          chalk.hex(SemanticColors.success)(
+            "Decision and its incoming/outgoing relations have been removed.",
+          ),
+          `Id: ${chalk.hex(SemanticColors.primary)(response.decisionId)}`,
+        ].join("\n"),
+      )
       .addData({ decisionId: response.decisionId, status: response.status })
       .build();
   }

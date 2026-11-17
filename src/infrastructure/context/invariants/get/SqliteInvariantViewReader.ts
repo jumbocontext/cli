@@ -29,7 +29,9 @@ export class SqliteInvariantViewReader implements IInvariantViewReader {
     const rows = this.db
       .prepare("SELECT * FROM invariant_views ORDER BY createdAt ASC")
       .all();
-    return rows.map((row) => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   async findByIds(ids: string[]): Promise<InvariantView[]> {
@@ -38,7 +40,9 @@ export class SqliteInvariantViewReader implements IInvariantViewReader {
     const placeholders = ids.map(() => "?").join(",");
     const query = `SELECT * FROM invariant_views WHERE invariantId IN (${placeholders}) ORDER BY createdAt ASC`;
     const rows = this.db.prepare(query).all(...ids);
-    return rows.map((row) => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   async search(criteria: InvariantSearchCriteria): Promise<InvariantView[]> {
@@ -63,7 +67,9 @@ export class SqliteInvariantViewReader implements IInvariantViewReader {
     query += " ORDER BY createdAt ASC";
 
     const rows = this.db.prepare(query).all(...params);
-    return rows.map((row) => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   /**

@@ -4,7 +4,10 @@ import { IGoalResumedEventReader } from "./IGoalResumedEventReader.js";
 import { IGoalReader } from "./IGoalReader.js";
 import { IEventBus } from "../../../messaging/IEventBus.js";
 import { Goal } from "../../../../domain/goals/Goal.js";
-import { GoalErrorMessages, formatErrorMessage } from "../../../../domain/goals/Constants.js";
+import {
+  GoalErrorMessages,
+  formatErrorMessage,
+} from "../../../../domain/goals/Constants.js";
 import { GoalClaimPolicy } from "../claims/GoalClaimPolicy.js";
 import { IWorkerIdentityReader } from "../../../host/workers/IWorkerIdentityReader.js";
 import { ISettingsReader } from "../../../settings/ISettingsReader.js";
@@ -26,7 +29,7 @@ export class ResumeGoalCommandHandler {
     private readonly claimPolicy: GoalClaimPolicy,
     private readonly workerIdentityReader: IWorkerIdentityReader,
     private readonly settingsReader: ISettingsReader,
-    private readonly goalContextQueryHandler: GoalContextQueryHandler
+    private readonly goalContextQueryHandler: GoalContextQueryHandler,
   ) {}
 
   async execute(command: ResumeGoalCommand): Promise<ContextualGoalView> {
@@ -34,7 +37,9 @@ export class ResumeGoalCommandHandler {
     const view = await this.goalReader.findById(command.goalId);
     if (!view) {
       throw new Error(
-        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, { id: command.goalId })
+        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, {
+          id: command.goalId,
+        }),
       );
     }
 
@@ -46,7 +51,7 @@ export class ResumeGoalCommandHandler {
       throw new Error(
         formatErrorMessage(GoalErrorMessages.GOAL_CLAIMED_BY_ANOTHER_WORKER, {
           expiresAt: claimValidation.existingClaim.claimExpiresAt,
-        })
+        }),
       );
     }
 
@@ -57,7 +62,11 @@ export class ResumeGoalCommandHandler {
     // 4. Prepare claim data before creating event (for embedding in event payload)
     const settings = await this.settingsReader.read();
     const claimDurationMs = settings.claims.claimDurationMinutes * 60 * 1000;
-    const claim = this.claimPolicy.prepareRefreshedClaim(command.goalId, workerId, claimDurationMs);
+    const claim = this.claimPolicy.prepareRefreshedClaim(
+      command.goalId,
+      workerId,
+      claimDurationMs,
+    );
 
     // 5. Domain logic produces event with claim data (validates state)
     const event = goal.resume(command.note, {

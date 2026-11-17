@@ -16,11 +16,11 @@ export class UpdateValuePropositionCommandHandler {
   constructor(
     private readonly eventWriter: IValuePropositionUpdatedEventWriter,
     private readonly eventBus: IEventBus,
-    private readonly reader: IValuePropositionUpdateReader
+    private readonly reader: IValuePropositionUpdateReader,
   ) {}
 
   async execute(
-    command: UpdateValuePropositionCommand
+    command: UpdateValuePropositionCommand,
   ): Promise<{ valuePropositionId: string }> {
     // 1. Check if value proposition exists
     const existingView = await this.reader.findById(command.id);
@@ -28,23 +28,20 @@ export class UpdateValuePropositionCommandHandler {
       throw new Error(
         formatErrorMessage(ValuePropositionErrorMessages.NOT_FOUND, {
           id: command.id,
-        })
+        }),
       );
     }
 
     // 2. Rehydrate aggregate from event history
     const history = await this.eventWriter.readStream(command.id);
-    const valueProposition = ValueProposition.rehydrate(
-      command.id,
-      history
-    );
+    const valueProposition = ValueProposition.rehydrate(command.id, history);
 
     // 3. Domain logic produces event
     const event = valueProposition.update(
       command.title,
       command.description,
       command.benefit,
-      command.measurableOutcome
+      command.measurableOutcome,
     );
 
     // 4. Persist event to file store

@@ -25,7 +25,9 @@ export class CategoryRequiredRule implements ValidationRule<string> {
 export class CategoryValidValueRule implements ValidationRule<string> {
   validate(category: string): ValidationResult {
     const validCategories = Object.values(GuidelineCategory);
-    const isValid = validCategories.includes(category as GuidelineCategoryValue);
+    const isValid = validCategories.includes(
+      category as GuidelineCategoryValue,
+    );
     return {
       isValid,
       errors: isValid ? [] : [GuidelineErrorMessages.CATEGORY_INVALID],

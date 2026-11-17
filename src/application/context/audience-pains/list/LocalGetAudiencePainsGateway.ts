@@ -5,10 +5,12 @@ import { IAudiencePainContextReader } from "../query/IAudiencePainContextReader.
 
 export class LocalGetAudiencePainsGateway implements IGetAudiencePainsGateway {
   constructor(
-    private readonly audiencePainContextReader: IAudiencePainContextReader
+    private readonly audiencePainContextReader: IAudiencePainContextReader,
   ) {}
 
-  async getAudiencePains(_request: GetAudiencePainsRequest): Promise<GetAudiencePainsResponse> {
+  async getAudiencePains(
+    _request: GetAudiencePainsRequest,
+  ): Promise<GetAudiencePainsResponse> {
     const pains = await this.audiencePainContextReader.findAllActive();
     return { pains };
   }

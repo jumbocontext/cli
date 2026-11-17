@@ -1,6 +1,4 @@
-import type {
-  DaemonEventStatusValue,
-} from "./DaemonEventStatus.js";
+import type { DaemonEventStatusValue } from "./DaemonEventStatus.js";
 
 export interface DaemonEventSnapshot {
   readonly daemon: string;

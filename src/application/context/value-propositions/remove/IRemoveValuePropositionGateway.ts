@@ -2,5 +2,7 @@ import { RemoveValuePropositionRequest } from "./RemoveValuePropositionRequest.j
 import { RemoveValuePropositionResponse } from "./RemoveValuePropositionResponse.js";
 
 export interface IRemoveValuePropositionGateway {
-  removeValueProposition(request: RemoveValuePropositionRequest): Promise<RemoveValuePropositionResponse>;
+  removeValueProposition(
+    request: RemoveValuePropositionRequest,
+  ): Promise<RemoveValuePropositionResponse>;
 }

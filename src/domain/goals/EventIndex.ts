@@ -23,54 +23,54 @@ export * from "./close/GoalClosedEvent.js";
 export * from "./approve/GoalApprovedEvent.js";
 export * from "./migrate/GoalStatusMigratedEvent.js";
 
-import { GoalAddedEvent} from "./add/GoalAddedEvent.js";
-import { GoalRefinedEvent} from "./refine/GoalRefinedEvent.js";
-import { GoalRefinementStartedEvent} from "./refine/GoalRefinementStartedEvent.js";
-import { GoalBlockedEvent} from "./block/GoalBlockedEvent.js";
-import { GoalCompletedEvent} from "./complete/GoalCompletedEvent.js";
-import { GoalPausedEvent} from "./pause/GoalPausedEvent.js";
+import { GoalAddedEvent } from "./add/GoalAddedEvent.js";
+import { GoalRefinedEvent } from "./refine/GoalRefinedEvent.js";
+import { GoalRefinementStartedEvent } from "./refine/GoalRefinementStartedEvent.js";
+import { GoalBlockedEvent } from "./block/GoalBlockedEvent.js";
+import { GoalCompletedEvent } from "./complete/GoalCompletedEvent.js";
+import { GoalPausedEvent } from "./pause/GoalPausedEvent.js";
 import { GoalPostponedEvent } from "./postpone/GoalPostponedEvent.js";
 import { GoalReinstatedEvent } from "./reinstate/GoalReinstatedEvent.js";
-import { GoalRemovedEvent} from "./remove/GoalRemovedEvent.js";
-import { GoalResetEvent} from "./reset/GoalResetEvent.js";
-import { GoalResumedEvent} from "./resume/GoalResumedEvent.js";
-import { GoalStartedEvent} from "./start/GoalStartedEvent.js";
-import { GoalUnblockedEvent} from "./unblock/GoalUnblockedEvent.js";
-import { GoalUpdatedEvent} from "./update/GoalUpdatedEvent.js";
-import { GoalProgressUpdatedEvent} from "./update-progress/GoalProgressUpdatedEvent.js";
-import { GoalSubmittedForReviewEvent} from "./review/GoalSubmittedForReviewEvent.js";
-import { GoalQualifiedEvent} from "./qualify/GoalQualifiedEvent.js";
-import { GoalCommittedEvent} from "./commit/GoalCommittedEvent.js";
-import { GoalRejectedEvent} from "./reject/GoalRejectedEvent.js";
-import { GoalSubmittedEvent} from "./submit/GoalSubmittedEvent.js";
-import { GoalCodifyingStartedEvent} from "./codify/GoalCodifyingStartedEvent.js";
-import { GoalClosedEvent} from "./close/GoalClosedEvent.js";
-import { GoalApprovedEvent} from "./approve/GoalApprovedEvent.js";
-import { GoalStatusMigratedEvent} from "./migrate/GoalStatusMigratedEvent.js";
+import { GoalRemovedEvent } from "./remove/GoalRemovedEvent.js";
+import { GoalResetEvent } from "./reset/GoalResetEvent.js";
+import { GoalResumedEvent } from "./resume/GoalResumedEvent.js";
+import { GoalStartedEvent } from "./start/GoalStartedEvent.js";
+import { GoalUnblockedEvent } from "./unblock/GoalUnblockedEvent.js";
+import { GoalUpdatedEvent } from "./update/GoalUpdatedEvent.js";
+import { GoalProgressUpdatedEvent } from "./update-progress/GoalProgressUpdatedEvent.js";
+import { GoalSubmittedForReviewEvent } from "./review/GoalSubmittedForReviewEvent.js";
+import { GoalQualifiedEvent } from "./qualify/GoalQualifiedEvent.js";
+import { GoalCommittedEvent } from "./commit/GoalCommittedEvent.js";
+import { GoalRejectedEvent } from "./reject/GoalRejectedEvent.js";
+import { GoalSubmittedEvent } from "./submit/GoalSubmittedEvent.js";
+import { GoalCodifyingStartedEvent } from "./codify/GoalCodifyingStartedEvent.js";
+import { GoalClosedEvent } from "./close/GoalClosedEvent.js";
+import { GoalApprovedEvent } from "./approve/GoalApprovedEvent.js";
+import { GoalStatusMigratedEvent } from "./migrate/GoalStatusMigratedEvent.js";
 
 // Union type will expand as we add more events
 export type GoalEvent =
-    GoalAddedEvent |
-    GoalRefinedEvent |
-    GoalRefinementStartedEvent |
-    GoalBlockedEvent |
-    GoalCompletedEvent |
-    GoalPausedEvent |
-    GoalPostponedEvent |
-    GoalReinstatedEvent |
-    GoalProgressUpdatedEvent |
-    GoalRemovedEvent |
-    GoalResetEvent |
-    GoalResumedEvent |
-    GoalStartedEvent |
-    GoalUnblockedEvent |
-    GoalUpdatedEvent |
-    GoalSubmittedForReviewEvent |
-    GoalQualifiedEvent |
-    GoalCommittedEvent |
-    GoalRejectedEvent |
-    GoalSubmittedEvent |
-    GoalCodifyingStartedEvent |
-    GoalClosedEvent |
-    GoalApprovedEvent |
-    GoalStatusMigratedEvent;
+  | GoalAddedEvent
+  | GoalRefinedEvent
+  | GoalRefinementStartedEvent
+  | GoalBlockedEvent
+  | GoalCompletedEvent
+  | GoalPausedEvent
+  | GoalPostponedEvent
+  | GoalReinstatedEvent
+  | GoalProgressUpdatedEvent
+  | GoalRemovedEvent
+  | GoalResetEvent
+  | GoalResumedEvent
+  | GoalStartedEvent
+  | GoalUnblockedEvent
+  | GoalUpdatedEvent
+  | GoalSubmittedForReviewEvent
+  | GoalQualifiedEvent
+  | GoalCommittedEvent
+  | GoalRejectedEvent
+  | GoalSubmittedEvent
+  | GoalCodifyingStartedEvent
+  | GoalClosedEvent
+  | GoalApprovedEvent
+  | GoalStatusMigratedEvent;

@@ -22,6 +22,6 @@ export function useSessionsList(
     }, [controller, status]),
     controller === undefined
       ? 0
-      : context?.tickMs ?? DEFAULT_STATE_READER_TICK_MS,
+      : (context?.tickMs ?? DEFAULT_STATE_READER_TICK_MS),
   );
 }

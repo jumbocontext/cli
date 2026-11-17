@@ -6,7 +6,10 @@ import {
   DecisionSupersededEvent,
   DecisionUpdatedEvent,
 } from "../../../../domain/decisions/EventIndex.js";
-import { DecisionEventType, DecisionStatus } from "../../../../domain/decisions/Constants.js";
+import {
+  DecisionEventType,
+  DecisionStatus,
+} from "../../../../domain/decisions/Constants.js";
 import { ISearchDocumentProjector } from "../ISearchDocumentProjector.js";
 import { SearchCategory } from "../SearchCategory.js";
 import { SearchDocument } from "../SearchDocument.js";
@@ -21,9 +24,15 @@ export class DecisionSearchDocumentProjector implements ISearchDocumentProjector
     return { type: SearchCategory.DECISION, id: event.aggregateId };
   }
 
-  project(event: BaseEvent, current: SearchDocument | null): SearchDocumentChange | null {
+  project(
+    event: BaseEvent,
+    current: SearchDocument | null,
+  ): SearchDocumentChange | null {
     if (event.type === DecisionEventType.ADDED) {
-      return { operation: "upsert", document: this.fromAdded(event as DecisionAddedEvent) };
+      return {
+        operation: "upsert",
+        document: this.fromAdded(event as DecisionAddedEvent),
+      };
     }
 
     if (event.type === DecisionEventType.REMOVED) {
@@ -38,9 +47,12 @@ export class DecisionSearchDocumentProjector implements ISearchDocumentProjector
       const payload = (event as DecisionUpdatedEvent).payload;
       if (payload.title !== undefined) metadata.title = payload.title;
       if (payload.context !== undefined) metadata.context = payload.context;
-      if (payload.rationale !== undefined) metadata.rationale = payload.rationale;
-      if (payload.alternatives !== undefined) metadata.alternatives = payload.alternatives;
-      if (payload.consequences !== undefined) metadata.consequences = payload.consequences;
+      if (payload.rationale !== undefined)
+        metadata.rationale = payload.rationale;
+      if (payload.alternatives !== undefined)
+        metadata.alternatives = payload.alternatives;
+      if (payload.consequences !== undefined)
+        metadata.consequences = payload.consequences;
     }
 
     if (event.type === DecisionEventType.REVERSED) {
@@ -50,15 +62,22 @@ export class DecisionSearchDocumentProjector implements ISearchDocumentProjector
 
     if (event.type === DecisionEventType.RESTORED) {
       metadata.status = DecisionStatus.ACTIVE;
-      metadata.restorationReason = (event as DecisionRestoredEvent).payload.reason;
+      metadata.restorationReason = (
+        event as DecisionRestoredEvent
+      ).payload.reason;
     }
 
     if (event.type === DecisionEventType.SUPERSEDED) {
       metadata.status = DecisionStatus.SUPERSEDED;
-      metadata.supersededBy = (event as DecisionSupersededEvent).payload.supersededBy;
+      metadata.supersededBy = (
+        event as DecisionSupersededEvent
+      ).payload.supersededBy;
     }
 
-    return { operation: "upsert", document: this.fromMetadata(event, current, metadata) };
+    return {
+      operation: "upsert",
+      document: this.fromMetadata(event, current, metadata),
+    };
   }
 
   private fromAdded(event: DecisionAddedEvent): SearchDocument {
@@ -77,7 +96,7 @@ export class DecisionSearchDocumentProjector implements ISearchDocumentProjector
   private fromMetadata(
     event: BaseEvent,
     current: SearchDocument | null,
-    metadata: Record<string, SearchFacetValue>
+    metadata: Record<string, SearchFacetValue>,
   ): SearchDocument {
     const title = String(metadata.title ?? current?.title ?? event.aggregateId);
     const summary = this.optionalString(metadata.context);

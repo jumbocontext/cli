@@ -1,11 +1,11 @@
 import {
   ValidationRule,
-  ValidationResult
+  ValidationResult,
 } from "../../validation/ValidationRule.js";
 import {
   ComponentErrorMessages,
   ComponentLimits,
-  formatErrorMessage
+  formatErrorMessage,
 } from "../Constants.js";
 
 export class NameRequiredRule implements ValidationRule<string> {
@@ -27,12 +27,13 @@ export class NameMaxLengthRule implements ValidationRule<string> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(ComponentErrorMessages.NAME_TOO_LONG, { max: this.maxLength })],
+        : [
+            formatErrorMessage(ComponentErrorMessages.NAME_TOO_LONG, {
+              max: this.maxLength,
+            }),
+          ],
     };
   }
 }
 
-export const NAME_RULES = [
-  new NameRequiredRule(),
-  new NameMaxLengthRule(),
-];
+export const NAME_RULES = [new NameRequiredRule(), new NameMaxLengthRule()];

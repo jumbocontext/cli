@@ -4,7 +4,10 @@ import { IGoalRemovedEventReader } from "./IGoalRemovedEventReader.js";
 import { IGoalRemoveReader } from "./IGoalRemoveReader.js";
 import { IEventBus } from "../../../messaging/IEventBus.js";
 import { Goal } from "../../../../domain/goals/Goal.js";
-import { GoalErrorMessages, formatErrorMessage } from "../../../../domain/goals/Constants.js";
+import {
+  GoalErrorMessages,
+  formatErrorMessage,
+} from "../../../../domain/goals/Constants.js";
 
 /**
  * Handles removal of a goal from tracking.
@@ -15,7 +18,7 @@ export class RemoveGoalCommandHandler {
     private readonly eventWriter: IGoalRemovedEventWriter,
     private readonly eventReader: IGoalRemovedEventReader,
     private readonly goalReader: IGoalRemoveReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
   async execute(command: RemoveGoalCommand): Promise<{ goalId: string }> {
@@ -23,7 +26,9 @@ export class RemoveGoalCommandHandler {
     const view = await this.goalReader.findById(command.goalId);
     if (!view) {
       throw new Error(
-        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, { id: command.goalId })
+        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, {
+          id: command.goalId,
+        }),
       );
     }
 

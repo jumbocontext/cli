@@ -32,7 +32,9 @@ export class SessionContextOutputBuilder {
   buildSessionContext(context: EnrichedSessionContext): TerminalOutput {
     this.builder.reset();
 
-    const projectContextYaml = this.renderProjectContext(context.context.projectContext);
+    const projectContextYaml = this.renderProjectContext(
+      context.context.projectContext,
+    );
     if (projectContextYaml) {
       this.builder.addPrompt(projectContextYaml);
     }
@@ -53,15 +55,18 @@ export class SessionContextOutputBuilder {
     const sessionContextResult = this.buildSessionContextData(context);
 
     return {
-      projectContext: this.buildProjectContextData(context.context.projectContext),
-      sessionContext: sessionContextResult.data.sessionContext as Record<string, unknown>,
+      projectContext: this.buildProjectContextData(
+        context.context.projectContext,
+      ),
+      sessionContext: sessionContextResult.data.sessionContext as Record<
+        string,
+        unknown
+      >,
       llmSessionContextInstruction: sessionContextResult.llmInstruction ?? null,
     };
   }
 
-  private renderProjectContext(
-    projectContext: ProjectView | null
-  ): string {
+  private renderProjectContext(projectContext: ProjectView | null): string {
     const contextData = this.buildProjectContextData(projectContext);
 
     if (!contextData) {
@@ -84,7 +89,7 @@ export class SessionContextOutputBuilder {
   }
 
   private buildProjectContextData(
-    projectContext: ProjectView | null
+    projectContext: ProjectView | null,
   ): Record<string, unknown> | null {
     if (!projectContext) {
       return null;
@@ -98,10 +103,15 @@ export class SessionContextOutputBuilder {
     return contextData;
   }
 
-  private buildSessionContextData(
-    context: EnrichedSessionContext
-  ): { data: Record<string, unknown>; llmInstruction?: string } {
-    if (context.instructions.includes(SessionInstructionSignal.BROWNFIELD_ONBOARDING)) {
+  private buildSessionContextData(context: EnrichedSessionContext): {
+    data: Record<string, unknown>;
+    llmInstruction?: string;
+  } {
+    if (
+      context.instructions.includes(
+        SessionInstructionSignal.BROWNFIELD_ONBOARDING,
+      )
+    ) {
       return {
         data: {
           sessionContext: {
@@ -157,16 +167,21 @@ export class SessionContextOutputBuilder {
     const llmParts: string[] = [];
 
     if (context.context.pausedGoals.length > 0) {
-      llmParts.push("@LLM: Goals were paused in your workspace. To pick up where you left off, run:\n  jumbo goal resume --id <goal-id>");
+      llmParts.push(
+        "@LLM: Goals were paused in your workspace. To pick up where you left off, run:\n  jumbo goal resume --id <goal-id>",
+      );
     }
 
-    if (context.instructions.includes(SessionInstructionSignal.ARCHITECTURE_DEPRECATED)) {
+    if (
+      context.instructions.includes(
+        SessionInstructionSignal.ARCHITECTURE_DEPRECATED,
+      )
+    ) {
       llmParts.push(this.buildArchitectureDeprecationNotice());
     }
 
-    const llmInstruction = llmParts.length > 0
-      ? "\n\n" + llmParts.join("\n\n")
-      : undefined;
+    const llmInstruction =
+      llmParts.length > 0 ? "\n\n" + llmParts.join("\n\n") : undefined;
 
     return { data: contextData, llmInstruction };
   }
@@ -180,17 +195,17 @@ export class SessionContextOutputBuilder {
       "REQUIRED ACTION: Proactively engage the user with the following approach:",
       "",
       "1. GREET and ACKNOWLEDGE: \"Hi! I can see that you've added Jumbo to this project. ",
-      "   This looks like an existing codebase with valuable context to preserve.\"",
+      '   This looks like an existing codebase with valuable context to preserve."',
       "",
-      "2. OFFER HELP: \"Would you like me to help transfer your existing project knowledge into Jumbo? ",
-      "   I can scan your documentation, code structure, and patterns to capture:\"",
+      '2. OFFER HELP: "Would you like me to help transfer your existing project knowledge into Jumbo? ',
+      '   I can scan your documentation, code structure, and patterns to capture:"',
       "   - Project purpose and target audience (from README, docs)",
       "   - Architectural components and dependencies (from code structure)",
       "   - Development guidelines and coding standards (from patterns)",
       "   - Architectural decisions (from docs, comments, ADRs)",
       "",
       "3. GET PERMISSION: \"I'll ask for your confirmation before adding anything to Jumbo. ",
-      "   Should we start by scanning your project documentation?\"",
+      '   Should we start by scanning your project documentation?"',
       "",
       "IMPORTANT:",
       "- Take initiative: Don't wait passively. Actively offer to help.",

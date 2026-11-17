@@ -8,6 +8,4 @@ import { InvariantRemovedEvent } from "./remove/InvariantRemovedEvent.js";
 
 // Union type of all invariant events
 export type InvariantEvent =
-  | InvariantAddedEvent
-  | InvariantUpdatedEvent
-  | InvariantRemovedEvent;
+  InvariantAddedEvent | InvariantUpdatedEvent | InvariantRemovedEvent;

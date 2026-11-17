@@ -2,8 +2,17 @@ import { BaseAggregate, AggregateState } from "../BaseAggregate.js";
 import { UUID } from "../BaseEvent.js";
 import { AudiencePainId } from "./AudiencePainId.js";
 import { ValidationRuleSet } from "../validation/ValidationRule.js";
-import { AudiencePainEvent, AudiencePainAddedEvent, AudiencePainUpdatedEvent } from "./EventIndex.js";
-import { AudiencePainEventType, AudiencePainErrorMessages, AudiencePainStatus, AudiencePainStatusType } from "./Constants.js";
+import {
+  AudiencePainEvent,
+  AudiencePainAddedEvent,
+  AudiencePainUpdatedEvent,
+} from "./EventIndex.js";
+import {
+  AudiencePainEventType,
+  AudiencePainErrorMessages,
+  AudiencePainStatus,
+  AudiencePainStatusType,
+} from "./Constants.js";
 import { TITLE_RULES } from "./rules/TitleRules.js";
 import { DESCRIPTION_RULES } from "./rules/DescriptionRules.js";
 
@@ -15,7 +24,10 @@ export interface AudiencePainState extends AggregateState {
   version: number;
 }
 
-export class AudiencePain extends BaseAggregate<AudiencePainState, AudiencePainEvent> {
+export class AudiencePain extends BaseAggregate<
+  AudiencePainState,
+  AudiencePainEvent
+> {
   private constructor(state: AudiencePainState) {
     super(state);
   }
@@ -88,7 +100,7 @@ export class AudiencePain extends BaseAggregate<AudiencePainState, AudiencePainE
     return this.makeEvent<AudiencePainAddedEvent>(
       AudiencePainEventType.ADDED,
       { title, description },
-      AudiencePain.apply
+      AudiencePain.apply,
     );
   }
 
@@ -114,10 +126,9 @@ export class AudiencePain extends BaseAggregate<AudiencePainState, AudiencePainE
       AudiencePainEventType.UPDATED,
       {
         title,
-        description
+        description,
       },
-      AudiencePain.apply
+      AudiencePain.apply,
     );
   }
-
 }

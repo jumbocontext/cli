@@ -13,7 +13,9 @@ import { DependencyView } from "../../../../application/context/dependencies/Dep
 import { DependencyRecordMapper } from "../DependencyRecordMapper.js";
 import { DependencyRecord } from "../DependencyRecord.js";
 
-export class SqliteDependencyRemovedProjector implements IDependencyRemovedProjector, IDependencyRemoveReader {
+export class SqliteDependencyRemovedProjector
+  implements IDependencyRemovedProjector, IDependencyRemoveReader
+{
   private readonly mapper = new DependencyRecordMapper();
 
   constructor(private db: Database) {}
@@ -34,12 +36,14 @@ export class SqliteDependencyRemovedProjector implements IDependencyRemovedProje
       event.payload.reason,
       event.timestamp,
       event.version,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 
   async findById(id: string): Promise<DependencyView | null> {
-    const row = this.db.prepare('SELECT * FROM dependency_views WHERE dependencyId = ?').get(id);
+    const row = this.db
+      .prepare("SELECT * FROM dependency_views WHERE dependencyId = ?")
+      .get(id);
     return row ? this.mapRowToView(row as Record<string, unknown>) : null;
   }
 

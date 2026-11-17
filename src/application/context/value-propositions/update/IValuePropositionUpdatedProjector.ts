@@ -9,5 +9,7 @@ export interface IValuePropositionUpdatedProjector {
   /**
    * Applies a ValuePropositionUpdatedEvent event to update the materialized view.
    */
-  applyValuePropositionUpdated(event: ValuePropositionUpdatedEvent): Promise<void>;
+  applyValuePropositionUpdated(
+    event: ValuePropositionUpdatedEvent,
+  ): Promise<void>;
 }

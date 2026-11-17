@@ -4,9 +4,7 @@ import { ResumeGoalResponse } from "./ResumeGoalResponse.js";
 import { ResumeGoalCommandHandler } from "./ResumeGoalCommandHandler.js";
 
 export class LocalResumeGoalGateway implements IResumeGoalGateway {
-  constructor(
-    private readonly commandHandler: ResumeGoalCommandHandler
-  ) {}
+  constructor(private readonly commandHandler: ResumeGoalCommandHandler) {}
 
   async resumeGoal(request: ResumeGoalRequest): Promise<ResumeGoalResponse> {
     const contextualGoalView = await this.commandHandler.execute({

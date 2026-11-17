@@ -40,7 +40,7 @@ export class SqliteGoalRejectedProjector
       event.payload.reviewIssues,
       event.version,
       event.timestamp,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 

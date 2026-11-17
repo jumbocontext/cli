@@ -14,9 +14,7 @@ import { ContextualGoalView } from "./ContextualGoalView.js";
  * - Presentation layer: renders for specific use cases
  */
 export class GoalContextQueryHandler {
-  constructor(
-    private readonly assembler: IGoalContextAssembler
-  ) {}
+  constructor(private readonly assembler: IGoalContextAssembler) {}
 
   /**
    * Execute the query to get goal context

@@ -9,10 +9,12 @@ export class RemoveComponentCommandHandler {
   constructor(
     private readonly eventWriter: IComponentRemovedEventWriter,
     private readonly eventBus: IEventBus,
-    private readonly reader: IComponentRemoveReader
+    private readonly reader: IComponentRemoveReader,
   ) {}
 
-  async execute(command: RemoveComponentCommand): Promise<{ componentId: string; name: string }> {
+  async execute(
+    command: RemoveComponentCommand,
+  ): Promise<{ componentId: string; name: string }> {
     // 1. Check component exists
     const existing = await this.reader.findById(command.componentId);
     if (!existing) {
@@ -21,7 +23,10 @@ export class RemoveComponentCommandHandler {
 
     // 2. Rehydrate aggregate from event history
     const history = await this.eventWriter.readStream(command.componentId);
-    const component = Component.rehydrate(command.componentId, history as ComponentEvent[]);
+    const component = Component.rehydrate(
+      command.componentId,
+      history as ComponentEvent[],
+    );
 
     // 3. Domain logic produces event
     const event = component.remove();

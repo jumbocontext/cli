@@ -10,13 +10,17 @@ export class ProjectShowOutputBuilder {
 
   build(project: ProjectView | null): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(this.yamlFormatter.toYaml({ project: this.buildProjectData(project) }));
+    this.builder.addPrompt(
+      this.yamlFormatter.toYaml({ project: this.buildProjectData(project) }),
+    );
     return this.builder.build();
   }
 
   buildNorthStar(northStar: ProjectNorthStarView | null): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(this.yamlFormatter.toYaml(this.buildNorthStarData(northStar)));
+    this.builder.addPrompt(
+      this.yamlFormatter.toYaml(this.buildNorthStarData(northStar)),
+    );
     return this.builder.build();
   }
 
@@ -28,13 +32,17 @@ export class ProjectShowOutputBuilder {
     return this.builder.build();
   }
 
-  buildStructuredNorthStar(northStar: ProjectNorthStarView | null): TerminalOutput {
+  buildStructuredNorthStar(
+    northStar: ProjectNorthStarView | null,
+  ): TerminalOutput {
     this.builder.reset();
     this.builder.addData(this.buildNorthStarData(northStar));
     return this.builder.build();
   }
 
-  private buildNorthStarData(northStar: ProjectNorthStarView | null): Record<string, unknown> {
+  private buildNorthStarData(
+    northStar: ProjectNorthStarView | null,
+  ): Record<string, unknown> {
     if (!northStar) {
       return {
         project: null,
@@ -75,7 +83,9 @@ export class ProjectShowOutputBuilder {
     };
   }
 
-  private buildProjectData(project: ProjectView | null): Record<string, unknown> | null {
+  private buildProjectData(
+    project: ProjectView | null,
+  ): Record<string, unknown> | null {
     if (!project) {
       return null;
     }

@@ -23,9 +23,7 @@ export class NameRequiredRule implements ValidationRule<string> {
 }
 
 export class NameMaxLengthRule implements ValidationRule<string> {
-  constructor(
-    private maxLength: number = AudienceLimits.NAME_MAX_LENGTH
-  ) {}
+  constructor(private maxLength: number = AudienceLimits.NAME_MAX_LENGTH) {}
 
   validate(name: string): ValidationResult {
     const isValid = name.length <= this.maxLength;

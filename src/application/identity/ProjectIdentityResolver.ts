@@ -29,13 +29,16 @@ export class ProjectIdentityResolver implements IProjectIdentityResolver {
     const configuredProjectId = settings.project?.id;
 
     if (this.isConfiguredProjectId(configuredProjectId)) {
-      if (!hasProjectHistory || await hasProjectHistory(configuredProjectId)) {
+      if (
+        !hasProjectHistory ||
+        (await hasProjectHistory(configuredProjectId))
+      ) {
         return configuredProjectId;
       }
 
       if (
         configuredProjectId !== projectedProjectId &&
-        await hasProjectHistory(projectedProjectId)
+        (await hasProjectHistory(projectedProjectId))
       ) {
         await this.writeProjectId(settings, projectedProjectId);
         return projectedProjectId;

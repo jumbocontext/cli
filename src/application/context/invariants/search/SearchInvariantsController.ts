@@ -8,11 +8,11 @@ import { SearchInvariantsRequest } from "./SearchInvariantsRequest.js";
 import { SearchInvariantsResponse } from "./SearchInvariantsResponse.js";
 
 export class SearchInvariantsController {
-  constructor(
-    private readonly gateway: ISearchInvariantsGateway
-  ) {}
+  constructor(private readonly gateway: ISearchInvariantsGateway) {}
 
-  async handle(request: SearchInvariantsRequest): Promise<SearchInvariantsResponse> {
+  async handle(
+    request: SearchInvariantsRequest,
+  ): Promise<SearchInvariantsResponse> {
     return this.gateway.searchInvariants(request);
   }
 }

@@ -1,6 +1,6 @@
-import { Section } from './Section.js';
+import { Section } from "./Section.js";
 
 export interface PromptSection extends Section {
-  type: 'prompt';
+  type: "prompt";
   content: string;
 }

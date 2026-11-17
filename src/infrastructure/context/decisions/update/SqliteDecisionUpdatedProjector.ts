@@ -11,11 +11,15 @@ import { IDecisionUpdateReader } from "../../../../application/context/decisions
 import { DecisionUpdatedEvent } from "../../../../domain/decisions/update/DecisionUpdatedEvent.js";
 import { DecisionView } from "../../../../application/context/decisions/DecisionView.js";
 
-export class SqliteDecisionUpdatedProjector implements IDecisionUpdatedProjector, IDecisionUpdateReader {
+export class SqliteDecisionUpdatedProjector
+  implements IDecisionUpdatedProjector, IDecisionUpdateReader
+{
   constructor(private db: Database) {}
 
   async applyDecisionUpdated(event: DecisionUpdatedEvent): Promise<void> {
-    const current = this.db.prepare('SELECT * FROM decision_views WHERE decisionId = ?').get(event.aggregateId) as Record<string, unknown>;
+    const current = this.db
+      .prepare("SELECT * FROM decision_views WHERE decisionId = ?")
+      .get(event.aggregateId) as Record<string, unknown>;
 
     const stmt = this.db.prepare(`
       UPDATE decision_views
@@ -32,17 +36,25 @@ export class SqliteDecisionUpdatedProjector implements IDecisionUpdatedProjector
     stmt.run(
       event.payload.title ?? current.title,
       event.payload.context ?? current.context,
-      event.payload.rationale !== undefined ? event.payload.rationale : current.rationale,
-      event.payload.alternatives ? JSON.stringify(event.payload.alternatives) : current.alternatives,
-      event.payload.consequences !== undefined ? event.payload.consequences : current.consequences,
+      event.payload.rationale !== undefined
+        ? event.payload.rationale
+        : current.rationale,
+      event.payload.alternatives
+        ? JSON.stringify(event.payload.alternatives)
+        : current.alternatives,
+      event.payload.consequences !== undefined
+        ? event.payload.consequences
+        : current.consequences,
       event.version,
       event.timestamp,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 
   async findById(decisionId: string): Promise<DecisionView | null> {
-    const row = this.db.prepare('SELECT * FROM decision_views WHERE decisionId = ?').get(decisionId) as Record<string, unknown> | undefined;
+    const row = this.db
+      .prepare("SELECT * FROM decision_views WHERE decisionId = ?")
+      .get(decisionId) as Record<string, unknown> | undefined;
     return row ? this.mapRowToView(row) : null;
   }
 
@@ -52,9 +64,9 @@ export class SqliteDecisionUpdatedProjector implements IDecisionUpdatedProjector
       title: row.title as string,
       context: row.context as string,
       rationale: (row.rationale as string) ?? null,
-      alternatives: JSON.parse((row.alternatives as string) || '[]'),
+      alternatives: JSON.parse((row.alternatives as string) || "[]"),
       consequences: (row.consequences as string) ?? null,
-      status: row.status as DecisionView['status'],
+      status: row.status as DecisionView["status"],
       supersededBy: (row.supersededBy as string) ?? null,
       reversalReason: (row.reversalReason as string) ?? null,
       reversedAt: (row.reversedAt as string) ?? null,

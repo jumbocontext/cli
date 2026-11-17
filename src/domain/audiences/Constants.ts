@@ -32,7 +32,8 @@ export const AudienceErrorMessages = {
   NAME_REQUIRED: "Audience name must be provided",
   NAME_TOO_LONG: "Audience name must be less than {max} characters",
   DESCRIPTION_REQUIRED: "Audience description must be provided",
-  DESCRIPTION_TOO_LONG: "Audience description must be less than {max} characters",
+  DESCRIPTION_TOO_LONG:
+    "Audience description must be less than {max} characters",
   INVALID_PRIORITY: "Priority must be one of: primary, secondary, tertiary",
   NO_CHANGES: "No changes detected for update",
 } as const;
@@ -53,10 +54,10 @@ export const AudienceLimits = {
  */
 export function formatErrorMessage(
   template: string,
-  replacements: Record<string, string | number>
+  replacements: Record<string, string | number>,
 ): string {
   return Object.entries(replacements).reduce(
     (msg, [key, value]) => msg.replace(`{${key}}`, String(value)),
-    template
+    template,
   );
 }

@@ -1,8 +1,12 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { GoalPausedReasonsType } from '../../../../../domain/goals/GoalPausedReasons.js';
-import { Colors, Symbols } from '../../../rendering/StyleConfig.js';
-import { heading, contentLine, metaField } from '../../../rendering/OutputLayout.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { GoalPausedReasonsType } from "../../../../../domain/goals/GoalPausedReasons.js";
+import { Colors, Symbols } from "../../../rendering/StyleConfig.js";
+import {
+  heading,
+  contentLine,
+  metaField,
+} from "../../../rendering/OutputLayout.js";
 
 /**
  * Specialized builder for goal.pause command output.
@@ -26,13 +30,15 @@ export class GoalPauseOutputBuilder {
     goalId: string,
     objective: string,
     status: string,
-    reason: GoalPausedReasonsType
+    reason: GoalPausedReasonsType,
   ): TerminalOutput {
     this.builder.reset();
     const lines: string[] = [];
     lines.push("");
     lines.push(heading("Goal Paused"));
-    lines.push(contentLine(`${Symbols.check} ${Colors.success("Goal has been paused")}`));
+    lines.push(
+      contentLine(`${Symbols.check} ${Colors.success("Goal has been paused")}`),
+    );
     lines.push("");
     lines.push(metaField("Id", Colors.muted(goalId)));
     lines.push(metaField("Objective", Colors.primary(objective)));
@@ -49,9 +55,11 @@ export class GoalPauseOutputBuilder {
    */
   buildFailureError(error: Error | string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Failed to pause goal")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Failed to pause goal")}`,
+    );
     this.builder.addData({
-      message: error instanceof Error ? error.message : error
+      message: error instanceof Error ? error.message : error,
     });
     return this.builder.build();
   }

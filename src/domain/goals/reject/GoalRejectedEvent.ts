@@ -10,9 +10,9 @@ import { GoalEventType, GoalStatusType } from "../Constants.js";
 export interface GoalRejectedEvent extends BaseEvent {
   readonly type: typeof GoalEventType.REJECTED;
   readonly payload: {
-    readonly status: GoalStatusType;       // Will be 'rejected'
-    readonly rejectedAt: string;           // ISO 8601 timestamp when rejected
-    readonly reviewIssues: string;         // Description of implementation problems
+    readonly status: GoalStatusType; // Will be 'rejected'
+    readonly rejectedAt: string; // ISO 8601 timestamp when rejected
+    readonly reviewIssues: string; // Description of implementation problems
     /** @deprecated Legacy field from persisted events. Use reviewIssues instead. */
     readonly auditFindings?: string;
   };

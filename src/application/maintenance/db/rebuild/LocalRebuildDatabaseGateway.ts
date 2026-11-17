@@ -5,10 +5,12 @@ import { IDatabaseRebuildService } from "./IDatabaseRebuildService.js";
 
 export class LocalRebuildDatabaseGateway implements IRebuildDatabaseGateway {
   constructor(
-    private readonly databaseRebuildService: IDatabaseRebuildService
+    private readonly databaseRebuildService: IDatabaseRebuildService,
   ) {}
 
-  async rebuildDatabase(request: RebuildDatabaseRequest): Promise<RebuildDatabaseResponse> {
+  async rebuildDatabase(
+    request: RebuildDatabaseRequest,
+  ): Promise<RebuildDatabaseResponse> {
     const result = await this.databaseRebuildService.rebuild();
     return {
       eventsReplayed: result.eventsReplayed,

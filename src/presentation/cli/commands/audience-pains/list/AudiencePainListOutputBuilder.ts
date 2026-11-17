@@ -1,8 +1,17 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { AudiencePainView } from '../../../../../application/context/audience-pains/AudiencePainView.js';
-import { Colors, BrandColors, Symbols } from '../../../rendering/StyleConfig.js';
-import { heading, contentLine, metaField, wrapContent } from '../../../rendering/OutputLayout.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { AudiencePainView } from "../../../../../application/context/audience-pains/AudiencePainView.js";
+import {
+  Colors,
+  BrandColors,
+  Symbols,
+} from "../../../rendering/StyleConfig.js";
+import {
+  heading,
+  contentLine,
+  metaField,
+  wrapContent,
+} from "../../../rendering/OutputLayout.js";
 
 export class AudiencePainListOutputBuilder {
   private builder = new TerminalOutputBuilder();
@@ -17,7 +26,11 @@ export class AudiencePainListOutputBuilder {
     for (let i = 0; i < pains.length; i++) {
       const p = pains[i];
       if (i > 0) lines.push("");
-      lines.push(contentLine(`${Colors.dim(`[${p.status.toUpperCase()}]`)} ${BrandColors.accentCyan(p.title)}`));
+      lines.push(
+        contentLine(
+          `${Colors.dim(`[${p.status.toUpperCase()}]`)} ${BrandColors.accentCyan(p.title)}`,
+        ),
+      );
       lines.push(...wrapContent(p.description));
       lines.push(metaField("ID", Colors.muted(p.painId), 4));
     }
@@ -44,7 +57,9 @@ export class AudiencePainListOutputBuilder {
 
   buildFailureError(error: Error | string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Failed to list audience pains")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Failed to list audience pains")}`,
+    );
     this.builder.addData({
       message: error instanceof Error ? error.message : error,
     });

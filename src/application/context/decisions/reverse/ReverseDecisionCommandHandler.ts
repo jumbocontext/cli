@@ -3,7 +3,10 @@ import { IDecisionReversedEventWriter } from "./IDecisionReversedEventWriter.js"
 import { IDecisionReverseReader } from "./IDecisionReverseReader.js";
 import { IEventBus } from "../../../messaging/IEventBus.js";
 import { Decision } from "../../../../domain/decisions/Decision.js";
-import { DecisionErrorMessages, formatErrorMessage } from "../../../../domain/decisions/Constants.js";
+import {
+  DecisionErrorMessages,
+  formatErrorMessage,
+} from "../../../../domain/decisions/Constants.js";
 
 /**
  * Handles reversing of an architectural decision.
@@ -13,15 +16,19 @@ export class ReverseDecisionCommandHandler {
   constructor(
     private readonly eventWriter: IDecisionReversedEventWriter,
     private readonly reader: IDecisionReverseReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
-  async execute(command: ReverseDecisionCommand): Promise<{ decisionId: string }> {
+  async execute(
+    command: ReverseDecisionCommand,
+  ): Promise<{ decisionId: string }> {
     // 1. Check decision exists (query projection for fast check)
     const view = await this.reader.findById(command.decisionId);
     if (!view) {
       throw new Error(
-        formatErrorMessage(DecisionErrorMessages.DECISION_NOT_FOUND, { id: command.decisionId })
+        formatErrorMessage(DecisionErrorMessages.DECISION_NOT_FOUND, {
+          id: command.decisionId,
+        }),
       );
     }
 

@@ -8,7 +8,11 @@ export interface ILogger {
   /**
    * Log an error message
    */
-  error(message: string, error?: Error | unknown, context?: Record<string, unknown>): void;
+  error(
+    message: string,
+    error?: Error | unknown,
+    context?: Record<string, unknown>,
+  ): void;
 
   /**
    * Log a warning message
@@ -38,5 +42,5 @@ export enum LogLevel {
   ERROR = "ERROR",
   WARN = "WARN",
   INFO = "INFO",
-  DEBUG = "DEBUG"
+  DEBUG = "DEBUG",
 }

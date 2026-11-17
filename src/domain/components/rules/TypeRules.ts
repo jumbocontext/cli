@@ -1,12 +1,12 @@
 import {
   ValidationRule,
-  ValidationResult
+  ValidationResult,
 } from "../../validation/ValidationRule.js";
 import {
   ComponentType,
   ComponentTypeValue,
   ComponentErrorMessages,
-  formatErrorMessage
+  formatErrorMessage,
 } from "../Constants.js";
 
 export class TypeRequiredRule implements ValidationRule<string> {
@@ -27,15 +27,13 @@ export class TypeValidRule implements ValidationRule<string> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(
-            ComponentErrorMessages.TYPE_INVALID,
-            { types: validTypes.join(', ') }
-          )],
+        : [
+            formatErrorMessage(ComponentErrorMessages.TYPE_INVALID, {
+              types: validTypes.join(", "),
+            }),
+          ],
     };
   }
 }
 
-export const TYPE_RULES = [
-  new TypeRequiredRule(),
-  new TypeValidRule(),
-];
+export const TYPE_RULES = [new TypeRequiredRule(), new TypeValidRule()];

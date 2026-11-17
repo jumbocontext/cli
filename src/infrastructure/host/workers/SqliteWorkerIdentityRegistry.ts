@@ -23,13 +23,18 @@ import { IWorkerIdentifiedEventWriter } from "../../../application/host/workers/
 import { IEventBus } from "../../../application/messaging/IEventBus.js";
 import { WorkerId } from "../../../application/host/workers/WorkerId.js";
 import { WorkerMode } from "../../../application/host/workers/WorkerMode.js";
-import { WorkerIdentifiedEvent, WorkerEventType } from "../../../domain/workers/identify/WorkerIdentifiedEvent.js";
+import {
+  WorkerIdentifiedEvent,
+  WorkerEventType,
+} from "../../../domain/workers/identify/WorkerIdentifiedEvent.js";
 import { WorkerId as DomainWorkerId } from "../../../domain/workers/WorkerId.js";
 import { HostSessionKeyResolver } from "../session/HostSessionKeyResolver.js";
 import { WorkerRecord } from "./WorkerRecord.js";
 import { WorkerRecordMapper } from "./WorkerRecordMapper.js";
 
-export class SqliteWorkerIdentityRegistry implements IWorkerIdentityReader, IWorkerModeAccessor {
+export class SqliteWorkerIdentityRegistry
+  implements IWorkerIdentityReader, IWorkerModeAccessor
+{
   private readonly db: Database;
   private readonly sessionKeyResolver: HostSessionKeyResolver;
   private readonly eventWriter: IWorkerIdentifiedEventWriter;
@@ -42,7 +47,7 @@ export class SqliteWorkerIdentityRegistry implements IWorkerIdentityReader, IWor
     db: Database,
     sessionKeyResolver: HostSessionKeyResolver,
     eventWriter: IWorkerIdentifiedEventWriter,
-    eventBus: IEventBus
+    eventBus: IEventBus,
   ) {
     this.db = db;
     this.sessionKeyResolver = sessionKeyResolver;
@@ -82,7 +87,7 @@ export class SqliteWorkerIdentityRegistry implements IWorkerIdentityReader, IWor
   get workerId(): WorkerId {
     if (this.resolvedWorkerId === null) {
       throw new Error(
-        "SqliteWorkerIdentityRegistry is not initialized. Call await initialize() before accessing workerId."
+        "SqliteWorkerIdentityRegistry is not initialized. Call await initialize() before accessing workerId.",
       );
     }
 
@@ -95,7 +100,9 @@ export class SqliteWorkerIdentityRegistry implements IWorkerIdentityReader, IWor
   getMode(): WorkerMode {
     const { key: hostSessionKey } = this.sessionKeyResolver.resolve();
     const row = this.db
-      .prepare("SELECT workerId, hostSessionKey, mode, createdAt, lastSeenAt FROM workers WHERE hostSessionKey = ?")
+      .prepare(
+        "SELECT workerId, hostSessionKey, mode, createdAt, lastSeenAt FROM workers WHERE hostSessionKey = ?",
+      )
       .get(hostSessionKey) as WorkerRecord | undefined;
 
     if (!row) {
@@ -129,7 +136,9 @@ export class SqliteWorkerIdentityRegistry implements IWorkerIdentityReader, IWor
     const { key: hostSessionKey } = this.sessionKeyResolver.resolve();
 
     const existingRow = this.db
-      .prepare("SELECT workerId, hostSessionKey, mode, createdAt, lastSeenAt FROM workers WHERE hostSessionKey = ?")
+      .prepare(
+        "SELECT workerId, hostSessionKey, mode, createdAt, lastSeenAt FROM workers WHERE hostSessionKey = ?",
+      )
       .get(hostSessionKey) as WorkerRecord | undefined;
 
     if (existingRow) {
@@ -167,6 +176,12 @@ export class SqliteWorkerIdentityRegistry implements IWorkerIdentityReader, IWor
     await this.eventWriter.append(event);
     await this.eventBus.publish(event);
 
-    return this.mapper.toWorkerId({ workerId: newWorkerId, hostSessionKey, mode: null, createdAt: now, lastSeenAt: now });
+    return this.mapper.toWorkerId({
+      workerId: newWorkerId,
+      hostSessionKey,
+      mode: null,
+      createdAt: now,
+      lastSeenAt: now,
+    });
   }
 }

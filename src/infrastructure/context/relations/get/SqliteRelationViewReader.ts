@@ -49,11 +49,15 @@ export class SqliteRelationViewReader implements IRelationViewReader {
     query += " ORDER BY createdAt ASC, relationId ASC";
 
     const rows = this.db.prepare(query).all(...params);
-    return rows.map((row) => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   async findEndpointTypes(entityId: string): Promise<EntityTypeValue[]> {
-    const rows = this.db.prepare(`
+    const rows = this.db
+      .prepare(
+        `
       SELECT entityType
       FROM (
         SELECT fromEntityType AS entityType FROM relation_views WHERE fromEntityId = ?
@@ -61,7 +65,9 @@ export class SqliteRelationViewReader implements IRelationViewReader {
         SELECT toEntityType AS entityType FROM relation_views WHERE toEntityId = ?
       )
       ORDER BY entityType ASC
-    `).all(entityId, entityId) as Array<{ entityType: EntityTypeValue }>;
+    `,
+      )
+      .all(entityId, entityId) as Array<{ entityType: EntityTypeValue }>;
 
     return rows.map((row) => row.entityType);
   }
@@ -69,7 +75,7 @@ export class SqliteRelationViewReader implements IRelationViewReader {
   private appendEndpointFilter(
     filter: RelationListFilter | undefined,
     params: (string | number)[],
-    append: (clause: string) => void
+    append: (clause: string) => void,
   ): void {
     const entityType = filter?.entity?.entityType ?? filter?.entityType;
     const entityId = filter?.entity?.entityId ?? filter?.entityId;
@@ -86,14 +92,18 @@ export class SqliteRelationViewReader implements IRelationViewReader {
 
     const direction = filter?.direction ?? "both";
     if (direction === "out") {
-      append(`${from}${filter?.relatedEntityType ? " AND toEntityType = ?" : ""}`);
+      append(
+        `${from}${filter?.relatedEntityType ? " AND toEntityType = ?" : ""}`,
+      );
       this.pushEndpointParams(params, entityType, entityId);
       if (filter?.relatedEntityType) params.push(filter.relatedEntityType);
       return;
     }
 
     if (direction === "in") {
-      append(`${to}${filter?.relatedEntityType ? " AND fromEntityType = ?" : ""}`);
+      append(
+        `${to}${filter?.relatedEntityType ? " AND fromEntityType = ?" : ""}`,
+      );
       this.pushEndpointParams(params, entityType, entityId);
       if (filter?.relatedEntityType) params.push(filter.relatedEntityType);
       return;
@@ -111,7 +121,7 @@ export class SqliteRelationViewReader implements IRelationViewReader {
   private endpointClause(
     endpoint: "from" | "to",
     entityType: EntityTypeValue | undefined,
-    entityId: string | undefined
+    entityId: string | undefined,
   ): string | undefined {
     if (entityType && entityId) {
       return `${endpoint}EntityType = ? AND ${endpoint}EntityId = ?`;
@@ -124,7 +134,7 @@ export class SqliteRelationViewReader implements IRelationViewReader {
   private pushEndpointParams(
     params: (string | number)[],
     entityType: EntityTypeValue | undefined,
-    entityId: string | undefined
+    entityId: string | undefined,
   ): void {
     if (entityType) params.push(entityType);
     if (entityId) params.push(entityId);

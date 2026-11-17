@@ -3,7 +3,7 @@
  * Must match the hook contract expected by the invoking agent harness.
  */
 export interface HookOutput {
-  decision: 'allow' | 'deny' | 'modify';
+  decision: "allow" | "deny" | "modify";
   promptSections: Array<{
     type: string;
     content: unknown;

@@ -7,7 +7,10 @@ import {
   ComponentUndeprecatedEvent,
   ComponentUpdatedEvent,
 } from "../../../../domain/components/EventIndex.js";
-import { ComponentEventType, ComponentStatus } from "../../../../domain/components/Constants.js";
+import {
+  ComponentEventType,
+  ComponentStatus,
+} from "../../../../domain/components/Constants.js";
 import { ISearchDocumentProjector } from "../ISearchDocumentProjector.js";
 import { SearchCategory } from "../SearchCategory.js";
 import { SearchDocument } from "../SearchDocument.js";
@@ -22,13 +25,19 @@ export class ComponentSearchDocumentProjector implements ISearchDocumentProjecto
     return { type: SearchCategory.COMPONENT, id: event.aggregateId };
   }
 
-  project(event: BaseEvent, current: SearchDocument | null): SearchDocumentChange | null {
+  project(
+    event: BaseEvent,
+    current: SearchDocument | null,
+  ): SearchDocumentChange | null {
     if (event.type === ComponentEventType.REMOVED) {
       return { operation: "remove", source: this.getSource(event) };
     }
 
     if (event.type === ComponentEventType.ADDED) {
-      return { operation: "upsert", document: this.fromAdded(event as ComponentAddedEvent) };
+      return {
+        operation: "upsert",
+        document: this.fromAdded(event as ComponentAddedEvent),
+      };
     }
 
     if (!current) return null;
@@ -37,8 +46,10 @@ export class ComponentSearchDocumentProjector implements ISearchDocumentProjecto
 
     if (event.type === ComponentEventType.UPDATED) {
       const payload = (event as ComponentUpdatedEvent).payload;
-      if (payload.description !== undefined) metadata.description = payload.description;
-      if (payload.responsibility !== undefined) metadata.responsibility = payload.responsibility;
+      if (payload.description !== undefined)
+        metadata.description = payload.description;
+      if (payload.responsibility !== undefined)
+        metadata.responsibility = payload.responsibility;
       if (payload.path !== undefined) metadata.path = payload.path;
       if (payload.type !== undefined) metadata.type = payload.type;
     }
@@ -56,10 +67,15 @@ export class ComponentSearchDocumentProjector implements ISearchDocumentProjecto
     if (event.type === ComponentEventType.UNDEPRECATED) {
       metadata.status = ComponentStatus.ACTIVE;
       metadata.deprecationReason = null;
-      metadata.undeprecationReason = (event as ComponentUndeprecatedEvent).payload.reason;
+      metadata.undeprecationReason = (
+        event as ComponentUndeprecatedEvent
+      ).payload.reason;
     }
 
-    return { operation: "upsert", document: this.fromMetadata(event, current, metadata) };
+    return {
+      operation: "upsert",
+      document: this.fromMetadata(event, current, metadata),
+    };
   }
 
   private fromAdded(event: ComponentAddedEvent): SearchDocument {
@@ -79,7 +95,7 @@ export class ComponentSearchDocumentProjector implements ISearchDocumentProjecto
   private fromMetadata(
     event: BaseEvent,
     current: SearchDocument | null,
-    metadata: Record<string, SearchFacetValue>
+    metadata: Record<string, SearchFacetValue>,
   ): SearchDocument {
     const title = String(metadata.name ?? current?.title ?? event.aggregateId);
     const summary = this.optionalString(metadata.description);

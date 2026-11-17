@@ -4,9 +4,7 @@ import { UpdateGoalResponse } from "./UpdateGoalResponse.js";
 import { UpdateGoalCommandHandler } from "./UpdateGoalCommandHandler.js";
 
 export class LocalUpdateGoalGateway implements IUpdateGoalGateway {
-  constructor(
-    private readonly commandHandler: UpdateGoalCommandHandler
-  ) {}
+  constructor(private readonly commandHandler: UpdateGoalCommandHandler) {}
 
   async updateGoal(request: UpdateGoalRequest): Promise<UpdateGoalResponse> {
     const result = await this.commandHandler.execute({

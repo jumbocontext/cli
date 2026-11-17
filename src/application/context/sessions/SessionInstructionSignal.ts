@@ -6,4 +6,4 @@ export const SessionInstructionSignal = {
 } as const;
 
 export type SessionInstructionSignalValue =
-  typeof SessionInstructionSignal[keyof typeof SessionInstructionSignal];
+  (typeof SessionInstructionSignal)[keyof typeof SessionInstructionSignal];

@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { GoalErrorMessages, GoalLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  GoalErrorMessages,
+  GoalLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 /**
  * Validates that a note is provided (not empty or whitespace).
@@ -26,7 +33,11 @@ export class NoteMaxLengthRule implements ValidationRule<string> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(GoalErrorMessages.NOTE_TOO_LONG, { max: this.maxLength })],
+        : [
+            formatErrorMessage(GoalErrorMessages.NOTE_TOO_LONG, {
+              max: this.maxLength,
+            }),
+          ],
     };
   }
 }
@@ -35,16 +46,11 @@ export class NoteMaxLengthRule implements ValidationRule<string> {
  * Composite set of validation rules for required note fields.
  * Used when blocking or completing goals.
  */
-export const NOTE_RULES = [
-  new NoteRequiredRule(),
-  new NoteMaxLengthRule(),
-];
+export const NOTE_RULES = [new NoteRequiredRule(), new NoteMaxLengthRule()];
 
 /**
  * Composite set of validation rules for optional note fields.
  * Used when unblocking goals (resolution note is optional).
  * Only validates length if note is provided.
  */
-export const OPTIONAL_NOTE_RULES = [
-  new NoteMaxLengthRule(),
-];
+export const OPTIONAL_NOTE_RULES = [new NoteMaxLengthRule()];

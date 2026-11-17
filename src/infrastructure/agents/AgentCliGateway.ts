@@ -1,10 +1,20 @@
 import { spawn } from "node:child_process";
 import { IAgentGateway } from "../../application/agents/IAgentGateway.js";
-import { AgentInvocation, AgentInvocationResult } from "../../application/agents/AgentInvocation.js";
+import {
+  AgentInvocation,
+  AgentInvocationResult,
+} from "../../application/agents/AgentInvocation.js";
 import { ITelemetryClient } from "../../application/telemetry/ITelemetryClient.js";
+import { ApplicationRoot } from "../../application/host/ApplicationRoot.js";
 
-export const SUPPORTED_AGENT_IDS = ["claude", "antigravity", "copilot", "codex", "vibe"] as const;
-export type SupportedAgentId = typeof SUPPORTED_AGENT_IDS[number];
+export const SUPPORTED_AGENT_IDS = [
+  "claude",
+  "antigravity",
+  "copilot",
+  "codex",
+  "vibe",
+] as const;
+export type SupportedAgentId = (typeof SUPPORTED_AGENT_IDS)[number];
 
 interface AgentCommand {
   readonly executable: string;
@@ -13,7 +23,25 @@ interface AgentCommand {
   readonly direct?: boolean;
 }
 
-const CODEX_NON_INTERACTIVE_EXEC_ARGS = ["exec", "--skip-git-repo-check"] as const;
+const CODEX_NON_INTERACTIVE_EXEC_ARGS = [
+  "exec",
+  "--skip-git-repo-check",
+] as const;
+
+/**
+ * Codex `exec` defaults to a read-only sandbox, which prevents Jumbo's
+ * daemon-driven agents (refiner, codifier, reviewer) from writing goal
+ * events, the project database, and logs. Grant write access to the
+ * workspace (the project checkout) and the Jumbo application root.
+ */
+function buildCodexSandboxArgs(): string[] {
+  return [
+    "--sandbox",
+    "workspace-write",
+    "--add-dir",
+    ApplicationRoot.getInstance().path,
+  ];
+}
 const AGENT_OUTPUT_TAIL_MAX_LENGTH = 16_384;
 
 const AGENT_COMMANDS: Record<SupportedAgentId, AgentCommand> = {
@@ -35,14 +63,18 @@ export class AgentCliGateway implements IAgentGateway {
       const stdout = new BoundedTextTail(AGENT_OUTPUT_TAIL_MAX_LENGTH);
       const stderr = new BoundedTextTail(AGENT_OUTPUT_TAIL_MAX_LENGTH);
       const child = command.direct
-        ? spawn(command.executable, this.buildCommandArguments(command, invocation.prompt), {
-            stdio: ["ignore", "pipe", "pipe"],
-            shell: false,
-          })
+        ? spawn(
+            command.executable,
+            this.buildCommandArguments(command, invocation.prompt),
+            {
+              stdio: ["ignore", "pipe", "pipe"],
+              shell: false,
+            },
+          )
         : spawn(this.buildCommandLine(command, invocation.prompt), [], {
-        stdio: ["ignore", "pipe", "pipe"],
-        shell: true,
-      });
+            stdio: ["ignore", "pipe", "pipe"],
+            shell: true,
+          });
 
       child.stdout?.on("data", (chunk: Buffer) => {
         const text = chunk.toString();
@@ -59,7 +91,11 @@ export class AgentCliGateway implements IAgentGateway {
       child.on("close", (code) => {
         const exitCode = code ?? 1;
         this.trackInvocation(invocation.agentId, exitCode, startedAt);
-        resolve({ exitCode, stdout: stdout.toString(), stderr: stderr.toString() });
+        resolve({
+          exitCode,
+          stdout: stdout.toString(),
+          stderr: stderr.toString(),
+        });
       });
 
       child.on("error", (error) => {
@@ -67,7 +103,9 @@ export class AgentCliGateway implements IAgentGateway {
         resolve({
           exitCode: 1,
           stdout: stdout.toString(),
-          stderr: stderr.toString() || limitTextTail(error.message, AGENT_OUTPUT_TAIL_MAX_LENGTH),
+          stderr:
+            stderr.toString() ||
+            limitTextTail(error.message, AGENT_OUTPUT_TAIL_MAX_LENGTH),
         });
       });
     });
@@ -79,13 +117,23 @@ export class AgentCliGateway implements IAgentGateway {
     }
 
     const command = AGENT_COMMANDS[agentId];
-    const override = process.env[`JUMBO_AGENT_COMMAND_${agentId.toUpperCase()}`];
+    const override =
+      process.env[`JUMBO_AGENT_COMMAND_${agentId.toUpperCase()}`];
     if (override !== undefined && override.trim().length > 0) {
       const overrideArgs = this.resolveOverrideArgs(agentId);
       return {
         ...command,
         executable: override.trim(),
-        ...(overrideArgs === undefined ? {} : { args: overrideArgs, direct: true }),
+        ...(overrideArgs === undefined
+          ? {}
+          : { args: overrideArgs, direct: true }),
+      };
+    }
+
+    if (agentId === "codex") {
+      return {
+        ...command,
+        args: [...CODEX_NON_INTERACTIVE_EXEC_ARGS, ...buildCodexSandboxArgs()],
       };
     }
 
@@ -102,7 +150,10 @@ export class AgentCliGateway implements IAgentGateway {
     ].join(" ");
   }
 
-  private buildCommandArguments(command: AgentCommand, prompt: string): string[] {
+  private buildCommandArguments(
+    command: AgentCommand,
+    prompt: string,
+  ): string[] {
     return [
       ...(command.args ?? []),
       ...(command.promptFlag === undefined ? [] : [command.promptFlag]),
@@ -110,14 +161,19 @@ export class AgentCliGateway implements IAgentGateway {
     ];
   }
 
-  private resolveOverrideArgs(agentId: SupportedAgentId): readonly string[] | undefined {
+  private resolveOverrideArgs(
+    agentId: SupportedAgentId,
+  ): readonly string[] | undefined {
     const value = process.env[`JUMBO_AGENT_ARGS_${agentId.toUpperCase()}`];
     if (value === undefined) {
       return undefined;
     }
 
     const parsed: unknown = JSON.parse(value);
-    if (!Array.isArray(parsed) || !parsed.every((argument) => typeof argument === "string")) {
+    if (
+      !Array.isArray(parsed) ||
+      !parsed.every((argument) => typeof argument === "string")
+    ) {
       throw new Error(`Invalid agent argument override for ${agentId}`);
     }
 
@@ -138,7 +194,9 @@ export class AgentCliGateway implements IAgentGateway {
       agentId,
       exitCode,
       success: exitCode === 0,
-      durationMs: Number((process.hrtime.bigint() - startedAt) / BigInt(1_000_000)),
+      durationMs: Number(
+        (process.hrtime.bigint() - startedAt) / BigInt(1_000_000),
+      ),
       ...(error
         ? {
             errorType: error.name,

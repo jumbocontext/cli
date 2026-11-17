@@ -3,11 +3,11 @@ import { UpdateAudiencePainResponse } from "./UpdateAudiencePainResponse.js";
 import { IUpdateAudiencePainGateway } from "./IUpdateAudiencePainGateway.js";
 
 export class UpdateAudiencePainController {
-  constructor(
-    private readonly gateway: IUpdateAudiencePainGateway
-  ) {}
+  constructor(private readonly gateway: IUpdateAudiencePainGateway) {}
 
-  async handle(request: UpdateAudiencePainRequest): Promise<UpdateAudiencePainResponse> {
+  async handle(
+    request: UpdateAudiencePainRequest,
+  ): Promise<UpdateAudiencePainResponse> {
     return this.gateway.updateAudiencePain(request);
   }
 }

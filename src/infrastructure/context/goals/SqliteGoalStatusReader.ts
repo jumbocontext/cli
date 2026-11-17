@@ -22,7 +22,7 @@ export class SqliteGoalStatusReader
   async findByStatus(status: GoalStatusType): Promise<GoalView[]> {
     const rows = this.db
       .prepare(
-        "SELECT *, goalId AS id FROM goal_views WHERE status = ? ORDER BY createdAt DESC"
+        "SELECT *, goalId AS id FROM goal_views WHERE status = ? ORDER BY createdAt DESC",
       )
       .all(status) as GoalRecord[];
     return rows.map((row) => this.mapper.toView(row));

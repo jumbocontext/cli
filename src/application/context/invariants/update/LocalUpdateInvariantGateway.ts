@@ -7,10 +7,12 @@ import { IInvariantUpdateReader } from "./IInvariantUpdateReader.js";
 export class LocalUpdateInvariantGateway implements IUpdateInvariantGateway {
   constructor(
     private readonly commandHandler: UpdateInvariantCommandHandler,
-    private readonly invariantReader: IInvariantUpdateReader
+    private readonly invariantReader: IInvariantUpdateReader,
   ) {}
 
-  async updateInvariant(request: UpdateInvariantRequest): Promise<UpdateInvariantResponse> {
+  async updateInvariant(
+    request: UpdateInvariantRequest,
+  ): Promise<UpdateInvariantResponse> {
     // 1. Delegate write-side orchestration to command handler
     await this.commandHandler.execute({
       invariantId: request.invariantId,

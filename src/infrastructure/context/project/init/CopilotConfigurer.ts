@@ -57,7 +57,7 @@ export class CopilotConfigurer implements IConfigurer {
     const copilotInstructionsPath = path.join(
       projectRoot,
       ".github",
-      "copilot-instructions.md"
+      "copilot-instructions.md",
     );
 
     try {
@@ -71,7 +71,7 @@ export class CopilotConfigurer implements IConfigurer {
         await fs.writeFile(
           copilotInstructionsPath,
           CopilotInstructionsContent.getCopilotInstructions(),
-          "utf-8"
+          "utf-8",
         );
         return;
       }
@@ -80,15 +80,19 @@ export class CopilotConfigurer implements IConfigurer {
       const content = await fs.readFile(copilotInstructionsPath, "utf-8");
       const jumboMarker = CopilotInstructionsContent.getCopilotSectionMarker();
 
-      if (!content.includes(jumboMarker) && !content.includes("## Jumbo Context Management")) {
-        const updatedContent = content + "\n\n" + CopilotInstructionsContent.getCopilotSection();
+      if (
+        !content.includes(jumboMarker) &&
+        !content.includes("## Jumbo Context Management")
+      ) {
+        const updatedContent =
+          content + "\n\n" + CopilotInstructionsContent.getCopilotSection();
         await fs.writeFile(copilotInstructionsPath, updatedContent, "utf-8");
       }
       // else: Jumbo section already present - no-op
     } catch (error) {
       // Graceful degradation - log but don't throw
       console.warn(
-        `Warning: Failed to update .github/copilot-instructions.md: ${error instanceof Error ? error.message : String(error)}`
+        `Warning: Failed to update .github/copilot-instructions.md: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
@@ -98,19 +102,30 @@ export class CopilotConfigurer implements IConfigurer {
    */
   private async ensureGitHubHooks(projectRoot: string): Promise<void> {
     try {
-      const hooksPath = path.join(projectRoot, ".github", "hooks", "hooks.json");
+      const hooksPath = path.join(
+        projectRoot,
+        ".github",
+        "hooks",
+        "hooks.json",
+      );
 
       // Ensure .github/hooks directory exists
       await fs.ensureDir(path.join(projectRoot, ".github", "hooks"));
 
-      const jumboHooks = AgentFileAssetContent.readJson<CopilotHooksDocument>("copilot-hooks.fragment.json");
+      const jumboHooks = AgentFileAssetContent.readJson<CopilotHooksDocument>(
+        "copilot-hooks.fragment.json",
+      );
 
       // Check if file exists
       const exists = await fs.pathExists(hooksPath);
 
       if (!exists) {
         // File doesn't exist - create with full content
-        await fs.writeFile(hooksPath, JSON.stringify(jumboHooks, null, 2) + "\n", "utf-8");
+        await fs.writeFile(
+          hooksPath,
+          JSON.stringify(jumboHooks, null, 2) + "\n",
+          "utf-8",
+        );
         return;
       }
 
@@ -123,7 +138,11 @@ export class CopilotConfigurer implements IConfigurer {
           existingHooks = JSON.parse(existingContent);
         } catch (parseError) {
           // If JSON is malformed, overwrite with our content
-          await fs.writeFile(hooksPath, JSON.stringify(jumboHooks, null, 2) + "\n", "utf-8");
+          await fs.writeFile(
+            hooksPath,
+            JSON.stringify(jumboHooks, null, 2) + "\n",
+            "utf-8",
+          );
           return;
         }
       }
@@ -131,12 +150,15 @@ export class CopilotConfigurer implements IConfigurer {
       // Merge hooks - ensure sessionStart hooks are present
       const mergedHooks = this.mergeHooks(existingHooks, jumboHooks);
 
-      await fs.writeFile(hooksPath, JSON.stringify(mergedHooks, null, 2) + "\n", "utf-8");
-
+      await fs.writeFile(
+        hooksPath,
+        JSON.stringify(mergedHooks, null, 2) + "\n",
+        "utf-8",
+      );
     } catch (error) {
       // Graceful degradation - log but don't throw
       console.warn(
-        `Warning: Failed to configure GitHub hooks: ${error instanceof Error ? error.message : String(error)}`
+        `Warning: Failed to configure GitHub hooks: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
@@ -144,7 +166,10 @@ export class CopilotConfigurer implements IConfigurer {
   /**
    * Merge hooks, preserving existing content and adding missing Jumbo hooks
    */
-  private mergeHooks(existing: CopilotHooksDocument, jumbo: CopilotHooksDocument): CopilotHooksDocument {
+  private mergeHooks(
+    existing: CopilotHooksDocument,
+    jumbo: CopilotHooksDocument,
+  ): CopilotHooksDocument {
     const result: CopilotHooksDocument = { ...existing };
 
     // Ensure version is set
@@ -154,7 +179,9 @@ export class CopilotConfigurer implements IConfigurer {
 
     // Merge hooks
     if (jumbo.hooks) {
-      const mergedHooks: Record<string, CopilotHook[]> = { ...(result.hooks ?? {}) };
+      const mergedHooks: Record<string, CopilotHook[]> = {
+        ...(result.hooks ?? {}),
+      };
 
       for (const [hookType, hooks] of Object.entries(jumbo.hooks)) {
         if (hooks && Array.isArray(hooks)) {
@@ -172,9 +199,12 @@ export class CopilotConfigurer implements IConfigurer {
   /**
    * Merge hook arrays, deduplicating by command content
    */
-  private mergeHookArray(existing: CopilotHook[], additions: CopilotHook[]): CopilotHook[] {
+  private mergeHookArray(
+    existing: CopilotHook[],
+    additions: CopilotHook[],
+  ): CopilotHook[] {
     const merged = [...existing];
-    const existingCommands = new Set(existing.map(h => JSON.stringify(h)));
+    const existingCommands = new Set(existing.map((h) => JSON.stringify(h)));
 
     for (const addition of additions) {
       const additionKey = JSON.stringify(addition);
@@ -202,7 +232,7 @@ export class CopilotConfigurer implements IConfigurer {
     const copilotInstructionsPath = path.join(
       projectRoot,
       ".github",
-      "copilot-instructions.md"
+      "copilot-instructions.md",
     );
 
     try {
@@ -214,24 +244,26 @@ export class CopilotConfigurer implements IConfigurer {
         await fs.writeFile(
           copilotInstructionsPath,
           CopilotInstructionsContent.getCopilotInstructions(),
-          "utf-8"
+          "utf-8",
         );
         return;
       }
 
       const content = await fs.readFile(copilotInstructionsPath, "utf-8");
-      const replaced = CopilotInstructionsContent.replaceCopilotSection(content);
+      const replaced =
+        CopilotInstructionsContent.replaceCopilotSection(content);
 
       if (replaced !== null) {
         // Jumbo section found (current or legacy) - replace with thin reference
         await fs.writeFile(copilotInstructionsPath, replaced, "utf-8");
       } else {
-        const updatedContent = content + "\n\n" + CopilotInstructionsContent.getCopilotSection();
+        const updatedContent =
+          content + "\n\n" + CopilotInstructionsContent.getCopilotSection();
         await fs.writeFile(copilotInstructionsPath, updatedContent, "utf-8");
       }
     } catch (error) {
       console.warn(
-        `Warning: Failed to repair .github/copilot-instructions.md: ${error instanceof Error ? error.message : String(error)}`
+        `Warning: Failed to repair .github/copilot-instructions.md: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
@@ -239,18 +271,22 @@ export class CopilotConfigurer implements IConfigurer {
   /**
    * Return what changes this configurer will make without executing.
    */
-  async getPlannedFileChanges(projectRoot: string): Promise<PlannedFileChange[]> {
+  async getPlannedFileChanges(
+    projectRoot: string,
+  ): Promise<PlannedFileChange[]> {
     const copilotInstructionsPath = path.join(
       projectRoot,
       ".github",
-      "copilot-instructions.md"
+      "copilot-instructions.md",
     );
     const hooksPath = path.join(projectRoot, ".github", "hooks", "hooks.json");
 
     return [
       {
         path: ".github/copilot-instructions.md",
-        action: (await fs.pathExists(copilotInstructionsPath)) ? "modify" : "create",
+        action: (await fs.pathExists(copilotInstructionsPath))
+          ? "modify"
+          : "create",
         description: "Add Jumbo instructions",
       },
       {

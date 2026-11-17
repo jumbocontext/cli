@@ -1,8 +1,8 @@
-import { Section } from './Section.js';
-import { Annotation } from './Annotation.js';
+import { Section } from "./Section.js";
+import { Annotation } from "./Annotation.js";
 
 export interface GroupSection extends Section {
-  type: 'group';
+  type: "group";
   content: unknown[];
   metadata: {
     groupHeader?: string;

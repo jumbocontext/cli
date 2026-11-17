@@ -18,26 +18,37 @@ export class GuidelineSearchDocumentProjector implements ISearchDocumentProjecto
     return { type: SearchCategory.GUIDELINE, id: event.aggregateId };
   }
 
-  project(event: BaseEvent, current: SearchDocument | null): SearchDocumentChange | null {
+  project(
+    event: BaseEvent,
+    current: SearchDocument | null,
+  ): SearchDocumentChange | null {
     if (event.type === GuidelineEventType.REMOVED) {
       return { operation: "remove", source: this.getSource(event) };
     }
 
     if (event.type === GuidelineEventType.ADDED) {
-      return { operation: "upsert", document: this.fromAdded(event as GuidelineAddedEvent) };
+      return {
+        operation: "upsert",
+        document: this.fromAdded(event as GuidelineAddedEvent),
+      };
     }
 
     if (!current) return null;
 
     const payload = (event as GuidelineUpdatedEvent).payload;
     const metadata = { ...current.metadata };
-    if (payload.category !== undefined) metadata.guidelineCategory = payload.category;
+    if (payload.category !== undefined)
+      metadata.guidelineCategory = payload.category;
     if (payload.title !== undefined) metadata.title = payload.title;
-    if (payload.description !== undefined) metadata.description = payload.description;
+    if (payload.description !== undefined)
+      metadata.description = payload.description;
     if (payload.rationale !== undefined) metadata.rationale = payload.rationale;
     if (payload.examples !== undefined) metadata.examples = payload.examples;
 
-    return { operation: "upsert", document: this.fromMetadata(event, current, metadata) };
+    return {
+      operation: "upsert",
+      document: this.fromMetadata(event, current, metadata),
+    };
   }
 
   private fromAdded(event: GuidelineAddedEvent): SearchDocument {
@@ -53,7 +64,7 @@ export class GuidelineSearchDocumentProjector implements ISearchDocumentProjecto
   private fromMetadata(
     event: BaseEvent,
     current: SearchDocument | null,
-    metadata: Record<string, SearchFacetValue>
+    metadata: Record<string, SearchFacetValue>,
   ): SearchDocument {
     const title = String(metadata.title ?? current?.title ?? event.aggregateId);
     const summary = this.optionalString(metadata.description);

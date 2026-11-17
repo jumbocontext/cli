@@ -5,7 +5,9 @@ import type { ProjectStatsResponse } from "./ProjectStatsResponse.js";
 export class ProjectStatsController {
   constructor(private readonly gateway: IProjectStatsGateway) {}
 
-  async handle(request: ProjectStatsRequest = {}): Promise<ProjectStatsResponse> {
+  async handle(
+    request: ProjectStatsRequest = {},
+  ): Promise<ProjectStatsResponse> {
     return this.gateway.getProjectStats(request);
   }
 }

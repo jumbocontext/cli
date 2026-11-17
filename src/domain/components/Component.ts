@@ -9,14 +9,14 @@ import {
   ComponentDeprecatedEvent,
   ComponentRemovedEvent,
   ComponentRenamedEvent,
-  ComponentUndeprecatedEvent
+  ComponentUndeprecatedEvent,
 } from "./EventIndex.js";
 import {
   ComponentEventType,
   ComponentStatus,
   ComponentStatusValue,
   ComponentTypeValue,
-  ComponentErrorMessages
+  ComponentErrorMessages,
 } from "./Constants.js";
 import { NAME_RULES } from "./rules/NameRules.js";
 import { TYPE_RULES } from "./rules/TypeRules.js";
@@ -61,8 +61,10 @@ export class Component extends BaseAggregate<ComponentState, ComponentEvent> {
       }
       case ComponentEventType.UPDATED: {
         const e = event as ComponentUpdatedEvent;
-        if (e.payload.description !== undefined) state.description = e.payload.description;
-        if (e.payload.responsibility !== undefined) state.responsibility = e.payload.responsibility;
+        if (e.payload.description !== undefined)
+          state.description = e.payload.description;
+        if (e.payload.responsibility !== undefined)
+          state.responsibility = e.payload.responsibility;
         if (e.payload.path !== undefined) state.path = e.payload.path;
         if (e.payload.type !== undefined) state.type = e.payload.type;
         state.version = e.version;
@@ -141,7 +143,7 @@ export class Component extends BaseAggregate<ComponentState, ComponentEvent> {
     type: ComponentTypeValue,
     description: string,
     responsibility: string,
-    path: string
+    path: string,
   ): ComponentAddedEvent {
     // Validation using rule pattern
     ValidationRuleSet.ensure(name, NAME_RULES);
@@ -158,9 +160,9 @@ export class Component extends BaseAggregate<ComponentState, ComponentEvent> {
         description,
         responsibility,
         path,
-        status: ComponentStatus.ACTIVE
+        status: ComponentStatus.ACTIVE,
       },
-      Component.apply
+      Component.apply,
     );
   }
 
@@ -168,7 +170,7 @@ export class Component extends BaseAggregate<ComponentState, ComponentEvent> {
     description?: string,
     responsibility?: string,
     path?: string,
-    type?: ComponentTypeValue
+    type?: ComponentTypeValue,
   ): ComponentUpdatedEvent {
     if (this.state.status === ComponentStatus.REMOVED) {
       throw new Error(ComponentErrorMessages.ALREADY_REMOVED);
@@ -180,8 +182,10 @@ export class Component extends BaseAggregate<ComponentState, ComponentEvent> {
     }
 
     // Validate changed fields
-    if (description !== undefined) ValidationRuleSet.ensure(description, DESCRIPTION_RULES);
-    if (responsibility !== undefined) ValidationRuleSet.ensure(responsibility, RESPONSIBILITY_RULES);
+    if (description !== undefined)
+      ValidationRuleSet.ensure(description, DESCRIPTION_RULES);
+    if (responsibility !== undefined)
+      ValidationRuleSet.ensure(responsibility, RESPONSIBILITY_RULES);
     if (path !== undefined) ValidationRuleSet.ensure(path, PATH_RULES);
     if (type !== undefined) ValidationRuleSet.ensure(type, TYPE_RULES);
 
@@ -191,9 +195,9 @@ export class Component extends BaseAggregate<ComponentState, ComponentEvent> {
         description,
         responsibility,
         path,
-        type
+        type,
       },
-      Component.apply
+      Component.apply,
     );
   }
 
@@ -213,7 +217,7 @@ export class Component extends BaseAggregate<ComponentState, ComponentEvent> {
     return this.makeEvent<ComponentRenamedEvent>(
       ComponentEventType.RENAMED,
       { name },
-      Component.apply
+      Component.apply,
     );
   }
 
@@ -234,9 +238,9 @@ export class Component extends BaseAggregate<ComponentState, ComponentEvent> {
       ComponentEventType.DEPRECATED,
       {
         reason: reason || null,
-        status: ComponentStatus.DEPRECATED
+        status: ComponentStatus.DEPRECATED,
       },
-      Component.apply
+      Component.apply,
     );
   }
 
@@ -248,9 +252,9 @@ export class Component extends BaseAggregate<ComponentState, ComponentEvent> {
     return this.makeEvent<ComponentRemovedEvent>(
       ComponentEventType.REMOVED,
       {
-        status: ComponentStatus.REMOVED
+        status: ComponentStatus.REMOVED,
       },
-      Component.apply
+      Component.apply,
     );
   }
 
@@ -268,9 +272,9 @@ export class Component extends BaseAggregate<ComponentState, ComponentEvent> {
       ComponentEventType.UNDEPRECATED,
       {
         reason: reason.trim(),
-        undeprecatedAt: new Date().toISOString() as ISO8601
+        undeprecatedAt: new Date().toISOString() as ISO8601,
       },
-      Component.apply
+      Component.apply,
     );
   }
 }

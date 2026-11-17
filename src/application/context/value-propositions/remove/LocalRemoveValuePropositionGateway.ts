@@ -11,16 +11,18 @@ import {
 export class LocalRemoveValuePropositionGateway implements IRemoveValuePropositionGateway {
   constructor(
     private readonly commandHandler: RemoveValuePropositionCommandHandler,
-    private readonly reader: IValuePropositionRemoveReader
+    private readonly reader: IValuePropositionRemoveReader,
   ) {}
 
-  async removeValueProposition(request: RemoveValuePropositionRequest): Promise<RemoveValuePropositionResponse> {
+  async removeValueProposition(
+    request: RemoveValuePropositionRequest,
+  ): Promise<RemoveValuePropositionResponse> {
     const view = await this.reader.findById(request.valuePropositionId);
     if (!view) {
       throw new Error(
         formatErrorMessage(ValuePropositionErrorMessages.NOT_FOUND, {
           id: request.valuePropositionId,
-        })
+        }),
       );
     }
 

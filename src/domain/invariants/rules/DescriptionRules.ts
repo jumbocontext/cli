@@ -24,7 +24,7 @@ export class DescriptionRequiredRule implements ValidationRule<string> {
 
 export class DescriptionMaxLengthRule implements ValidationRule<string> {
   constructor(
-    private maxLength: number = InvariantLimits.DESCRIPTION_MAX_LENGTH
+    private maxLength: number = InvariantLimits.DESCRIPTION_MAX_LENGTH,
   ) {}
 
   validate(description: string): ValidationResult {

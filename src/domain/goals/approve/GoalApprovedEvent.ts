@@ -9,7 +9,7 @@ import { GoalEventType, GoalStatusType } from "../Constants.js";
 export interface GoalApprovedEvent extends BaseEvent {
   readonly type: typeof GoalEventType.APPROVED;
   readonly payload: {
-    readonly status: GoalStatusType;  // Will be 'approved'
-    readonly approvedAt: string;      // ISO 8601 timestamp when approved
+    readonly status: GoalStatusType; // Will be 'approved'
+    readonly approvedAt: string; // ISO 8601 timestamp when approved
   };
 }

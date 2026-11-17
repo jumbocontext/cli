@@ -38,38 +38,43 @@ export class SqliteGoalContextAssembler implements IGoalContextAssembler {
     private readonly dependencyReader: IDependencyViewReader,
     private readonly decisionReader: IDecisionViewReader,
     private readonly invariantReader: IInvariantViewReader,
-    private readonly guidelineReader: IGuidelineViewReader
+    private readonly guidelineReader: IGuidelineViewReader,
   ) {}
 
-  async assembleContextForGoal(goalId: string): Promise<ContextualGoalView | null> {
+  async assembleContextForGoal(
+    goalId: string,
+  ): Promise<ContextualGoalView | null> {
     // 1. Fetch goal
     const goal = await this.goalReader.findById(goalId);
     if (!goal) return null;
 
     // 2. Query relations where fromEntity = goal and status = active
-    const allRelations = await this.relationReader.findByFromEntity(EntityType.GOAL, goalId);
-    const relations = allRelations.filter(r => r.status === 'active');
+    const allRelations = await this.relationReader.findByFromEntity(
+      EntityType.GOAL,
+      goalId,
+    );
+    const relations = allRelations.filter((r) => r.status === "active");
 
     // 3. Group related entity IDs by type
     const componentIds = relations
-      .filter(r => r.toEntityType === EntityType.COMPONENT)
-      .map(r => r.toEntityId);
+      .filter((r) => r.toEntityType === EntityType.COMPONENT)
+      .map((r) => r.toEntityId);
 
     const dependencyIds = relations
-      .filter(r => r.toEntityType === EntityType.DEPENDENCY)
-      .map(r => r.toEntityId);
+      .filter((r) => r.toEntityType === EntityType.DEPENDENCY)
+      .map((r) => r.toEntityId);
 
     const decisionIds = relations
-      .filter(r => r.toEntityType === EntityType.DECISION)
-      .map(r => r.toEntityId);
+      .filter((r) => r.toEntityType === EntityType.DECISION)
+      .map((r) => r.toEntityId);
 
     const invariantIds = relations
-      .filter(r => r.toEntityType === EntityType.INVARIANT)
-      .map(r => r.toEntityId);
+      .filter((r) => r.toEntityType === EntityType.INVARIANT)
+      .map((r) => r.toEntityId);
 
     const guidelineIds = relations
-      .filter(r => r.toEntityType === EntityType.GUIDELINE)
-      .map(r => r.toEntityId);
+      .filter((r) => r.toEntityType === EntityType.GUIDELINE)
+      .map((r) => r.toEntityId);
 
     // 4. Batch fetch entities (parallel queries)
     const [
@@ -77,39 +82,54 @@ export class SqliteGoalContextAssembler implements IGoalContextAssembler {
       dependencyViews,
       decisionViews,
       invariantViews,
-      guidelineViews
+      guidelineViews,
     ] = await Promise.all([
       this.componentReader.findByIds(componentIds),
       this.dependencyReader.findByIds(dependencyIds),
       this.decisionReader.findByIds(decisionIds),
       this.invariantReader.findByIds(invariantIds),
-      this.guidelineReader.findByIds(guidelineIds)
+      this.guidelineReader.findByIds(guidelineIds),
     ]);
 
     // 5. Merge entity data with relation metadata into RelatedContext<T>
     // Create lookup maps for O(1) relation metadata access
     const relationMap = new Map(
-      relations.map(r => [`${r.toEntityType}:${r.toEntityId}`, r])
+      relations.map((r) => [`${r.toEntityType}:${r.toEntityId}`, r]),
     );
 
     const components = this.toRelatedContexts(
-      componentViews, EntityType.COMPONENT, v => v.componentId, relationMap
+      componentViews,
+      EntityType.COMPONENT,
+      (v) => v.componentId,
+      relationMap,
     );
 
     const dependencies = this.toRelatedContexts(
-      dependencyViews, EntityType.DEPENDENCY, v => v.dependencyId, relationMap
+      dependencyViews,
+      EntityType.DEPENDENCY,
+      (v) => v.dependencyId,
+      relationMap,
     );
 
     const decisions = this.toRelatedContexts(
-      decisionViews, EntityType.DECISION, v => v.decisionId, relationMap
+      decisionViews,
+      EntityType.DECISION,
+      (v) => v.decisionId,
+      relationMap,
     );
 
     const invariants = this.toRelatedContexts(
-      invariantViews, EntityType.INVARIANT, v => v.invariantId, relationMap
+      invariantViews,
+      EntityType.INVARIANT,
+      (v) => v.invariantId,
+      relationMap,
     );
 
     const guidelines = this.toRelatedContexts(
-      guidelineViews, EntityType.GUIDELINE, v => v.guidelineId, relationMap
+      guidelineViews,
+      EntityType.GUIDELINE,
+      (v) => v.guidelineId,
+      relationMap,
     );
 
     // 6. Return assembled ContextualGoalView
@@ -120,8 +140,8 @@ export class SqliteGoalContextAssembler implements IGoalContextAssembler {
         dependencies,
         decisions,
         invariants,
-        guidelines
-      }
+        guidelines,
+      },
     };
   }
 
@@ -133,7 +153,7 @@ export class SqliteGoalContextAssembler implements IGoalContextAssembler {
     views: T[],
     entityType: string,
     getId: (view: T) => string,
-    relationMap: Map<string, RelationView>
+    relationMap: Map<string, RelationView>,
   ): RelatedContext<T>[] {
     return views
       .map((view): RelatedContext<T> | null => {
@@ -142,7 +162,7 @@ export class SqliteGoalContextAssembler implements IGoalContextAssembler {
         return {
           entity: view,
           relationType: relation.relationType,
-          relationDescription: relation.description ?? ''
+          relationDescription: relation.description ?? "",
         };
       })
       .filter((item): item is RelatedContext<T> => item !== null);

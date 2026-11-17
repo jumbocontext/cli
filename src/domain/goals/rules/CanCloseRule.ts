@@ -1,6 +1,13 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
 import { GoalState } from "../Goal.js";
-import { GoalStatus, GoalErrorMessages, formatErrorMessage } from "../Constants.js";
+import {
+  GoalStatus,
+  GoalErrorMessages,
+  formatErrorMessage,
+} from "../Constants.js";
 
 /**
  * Validates that a goal can be closed.
@@ -19,10 +26,11 @@ export class CanCloseRule implements ValidationRule<GoalState> {
     if (state.status !== GoalStatus.CODIFYING) {
       return {
         isValid: false,
-        errors: [formatErrorMessage(
-          GoalErrorMessages.CANNOT_CLOSE_IN_STATUS,
-          { status: state.status }
-        )],
+        errors: [
+          formatErrorMessage(GoalErrorMessages.CANNOT_CLOSE_IN_STATUS, {
+            status: state.status,
+          }),
+        ],
       };
     }
 

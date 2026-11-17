@@ -16,10 +16,12 @@ import { IEventBus } from "../../../messaging/IEventBus.js";
 export class RebuildDatabaseCommandHandler {
   constructor(
     private readonly eventStore: IEventStore,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
-  async handle(command: RebuildDatabaseCommand): Promise<RebuildDatabaseResult> {
+  async handle(
+    command: RebuildDatabaseCommand,
+  ): Promise<RebuildDatabaseResult> {
     // Get all events sorted by timestamp
     const events = await this.eventStore.getAllEvents();
 

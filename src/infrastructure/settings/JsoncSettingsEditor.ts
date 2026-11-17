@@ -5,12 +5,7 @@ import * as jsonc from "jsonc-parser";
  * without resorting to `any` at the JSONC editing boundary.
  */
 export type JsonValue =
-  | string
-  | number
-  | boolean
-  | null
-  | JsonValue[]
-  | { [key: string]: JsonValue };
+  string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 
 export type JsonObject = { [key: string]: JsonValue };
 
@@ -34,9 +29,14 @@ export function assertValidJsonc(content: string, filePath: string): void {
   jsonc.parse(content, errors, { allowTrailingComma: true });
   if (errors.length > 0) {
     const formatted = errors
-      .map((err) => `Error at offset ${err.offset}: ${jsonc.printParseErrorCode(err.error)}`)
+      .map(
+        (err) =>
+          `Error at offset ${err.offset}: ${jsonc.printParseErrorCode(err.error)}`,
+      )
       .join(", ");
-    throw new Error(`Invalid JSON in settings file at ${filePath}: ${formatted}`);
+    throw new Error(
+      `Invalid JSON in settings file at ${filePath}: ${formatted}`,
+    );
   }
 }
 
@@ -44,8 +44,14 @@ export function assertValidJsonc(content: string, filePath: string): void {
  * Set a single value at `path` within JSONC `content`, preserving comments,
  * formatting, and every other entry in the document.
  */
-export function setJsoncValue(content: string, path: jsonc.JSONPath, value: JsonValue): string {
-  const edits = jsonc.modify(content, path, value, { formattingOptions: FORMATTING_OPTIONS });
+export function setJsoncValue(
+  content: string,
+  path: jsonc.JSONPath,
+  value: JsonValue,
+): string {
+  const edits = jsonc.modify(content, path, value, {
+    formattingOptions: FORMATTING_OPTIONS,
+  });
   return jsonc.applyEdits(content, edits);
 }
 
@@ -72,7 +78,7 @@ export interface MissingEntry {
 export function collectMissingDefaults(
   content: string,
   defaults: JsonObject,
-  basePath: jsonc.JSONPath = []
+  basePath: jsonc.JSONPath = [],
 ): MissingEntry[] {
   const entries: MissingEntry[] = [];
   for (const key of Object.keys(defaults)) {
@@ -91,7 +97,10 @@ export function collectMissingDefaults(
  * Apply every missing default entry to `content`, returning the updated
  * document. Returns `content` unchanged if there is nothing to add.
  */
-export function applyMissingDefaults(content: string, defaults: JsonObject): string {
+export function applyMissingDefaults(
+  content: string,
+  defaults: JsonObject,
+): string {
   const entries = collectMissingDefaults(content, defaults);
   let updated = content;
   for (const entry of entries) {

@@ -8,7 +8,7 @@ import { EntityType } from "../../../../domain/relations/Constants.js";
 export class ComponentUpdatedEventHandler implements IEventHandler {
   constructor(
     private readonly projector: IComponentUpdatedProjector,
-    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar
+    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar,
   ) {}
 
   async handle(event: BaseEvent): Promise<void> {
@@ -17,7 +17,7 @@ export class ComponentUpdatedEventHandler implements IEventHandler {
     await this.relationMaintenanceGoalRegistrar.execute(
       EntityType.COMPONENT,
       componentUpdatedEvent.aggregateId,
-      "component was updated"
+      "component was updated",
     );
   }
 }

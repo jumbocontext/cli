@@ -42,16 +42,16 @@ export function buildGradient(from: RGB, to: RGB, steps = 10): RGB[] {
  * Each gradient has 10 color stops.
  */
 export const GRADIENTS: RGB[][] = [
-  buildGradient([255, 182, 193], [150, 0, 0]),        // 1  red: light pink → dark maroon
-  buildGradient([200, 100, 0], [255, 200, 140]),       // 2  orange: deep orange → light peach
-  buildGradient([255, 255, 180], [200, 180, 0]),       // 3  yellow: light yellow → golden
-  buildGradient([100, 140, 0], [240, 255, 180]),       // 4  yellow-green: olive → light lime
-  buildGradient([200, 255, 200], [0, 80, 0]),          // 5  green: light mint → dark green
-  buildGradient([30, 80, 160], [140, 200, 255]),       // 6  jumbo blue: dark → light
-  buildGradient([200, 200, 255], [0, 0, 80]),          // 7  blue: light lavender → dark navy
-  buildGradient([100, 60, 120], [220, 200, 230]),      // 8  purple/mauve: dark → light lavender
-  buildGradient([255, 180, 255], [50, 0, 80]),         // 9  purple: light pink → dark indigo
-  buildGradient([100, 0, 50], [255, 200, 230]),        // 10 magenta: dark wine → light pink
+  buildGradient([255, 182, 193], [150, 0, 0]), // 1  red: light pink → dark maroon
+  buildGradient([200, 100, 0], [255, 200, 140]), // 2  orange: deep orange → light peach
+  buildGradient([255, 255, 180], [200, 180, 0]), // 3  yellow: light yellow → golden
+  buildGradient([100, 140, 0], [240, 255, 180]), // 4  yellow-green: olive → light lime
+  buildGradient([200, 255, 200], [0, 80, 0]), // 5  green: light mint → dark green
+  buildGradient([30, 80, 160], [140, 200, 255]), // 6  jumbo blue: dark → light
+  buildGradient([200, 200, 255], [0, 0, 80]), // 7  blue: light lavender → dark navy
+  buildGradient([100, 60, 120], [220, 200, 230]), // 8  purple/mauve: dark → light lavender
+  buildGradient([255, 180, 255], [50, 0, 80]), // 9  purple: light pink → dark indigo
+  buildGradient([100, 0, 50], [255, 200, 230]), // 10 magenta: dark wine → light pink
 ];
 
 /** All gradient colors flattened into one continuous sequence */

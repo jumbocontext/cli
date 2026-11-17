@@ -4,9 +4,7 @@ import { AddAudienceResponse } from "./AddAudienceResponse.js";
 import { AddAudienceCommandHandler } from "./AddAudienceCommandHandler.js";
 
 export class LocalAddAudienceGateway implements IAddAudienceGateway {
-  constructor(
-    private readonly commandHandler: AddAudienceCommandHandler
-  ) {}
+  constructor(private readonly commandHandler: AddAudienceCommandHandler) {}
 
   async addAudience(request: AddAudienceRequest): Promise<AddAudienceResponse> {
     const result = await this.commandHandler.execute({

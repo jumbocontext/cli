@@ -9,7 +9,9 @@ import { InvariantAddedEvent } from "../../../../domain/invariants/add/Invariant
 import { InvariantView } from "../../../../application/context/invariants/InvariantView.js";
 import { UUID } from "../../../../domain/BaseEvent.js";
 
-export class SqliteInvariantAddedProjector implements IInvariantAddedProjector, IInvariantAddReader {
+export class SqliteInvariantAddedProjector
+  implements IInvariantAddedProjector, IInvariantAddReader
+{
   constructor(private db: Database) {}
 
   async applyInvariantAdded(event: InvariantAddedEvent): Promise<void> {
@@ -27,7 +29,7 @@ export class SqliteInvariantAddedProjector implements IInvariantAddedProjector, 
       event.payload.rationale,
       event.version,
       event.timestamp,
-      event.timestamp
+      event.timestamp,
     );
   }
 

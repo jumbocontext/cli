@@ -7,10 +7,12 @@ import { IInvariantRemoveReader } from "./IInvariantRemoveReader.js";
 export class LocalRemoveInvariantGateway implements IRemoveInvariantGateway {
   constructor(
     private readonly commandHandler: RemoveInvariantCommandHandler,
-    private readonly invariantReader: IInvariantRemoveReader
+    private readonly invariantReader: IInvariantRemoveReader,
   ) {}
 
-  async removeInvariant(request: RemoveInvariantRequest): Promise<RemoveInvariantResponse> {
+  async removeInvariant(
+    request: RemoveInvariantRequest,
+  ): Promise<RemoveInvariantResponse> {
     // Fetch view before removal for display
     const view = await this.invariantReader.findById(request.invariantId);
 

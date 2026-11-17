@@ -25,8 +25,7 @@ export interface LegacyComponentDependencyPayload {
 }
 
 export type DependencyAddedEventPayload =
-  | ExternalDependencyPayload
-  | LegacyComponentDependencyPayload;
+  ExternalDependencyPayload | LegacyComponentDependencyPayload;
 
 export interface DependencyAddedEvent extends BaseEvent {
   readonly type: typeof DependencyEventType.ADDED;

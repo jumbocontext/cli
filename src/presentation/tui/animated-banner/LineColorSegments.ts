@@ -45,7 +45,10 @@ export function getAnimatedBannerLineColorSegments(
       });
     } else if (character === "█" || character === "░") {
       let textSegment = "";
-      while (index < line.length && (line[index] === "█" || line[index] === "░")) {
+      while (
+        index < line.length &&
+        (line[index] === "█" || line[index] === "░")
+      ) {
         textSegment += line[index];
         index++;
       }

@@ -14,13 +14,14 @@
  *   - Empty array if no components exist
  */
 
-import { IComponentViewReader, ComponentStatusFilter } from "./IComponentViewReader.js";
+import {
+  IComponentViewReader,
+  ComponentStatusFilter,
+} from "./IComponentViewReader.js";
 import { ComponentView } from "../ComponentView.js";
 
 export class GetComponentsQueryHandler {
-  constructor(
-    private readonly componentViewReader: IComponentViewReader
-  ) {}
+  constructor(private readonly componentViewReader: IComponentViewReader) {}
 
   /**
    * Execute query to retrieve components.
@@ -28,7 +29,9 @@ export class GetComponentsQueryHandler {
    * @param status - Optional filter by status ("active", "deprecated", "removed", "all")
    * @returns Array of ComponentView sorted by name
    */
-  async execute(status: ComponentStatusFilter = "all"): Promise<ComponentView[]> {
+  async execute(
+    status: ComponentStatusFilter = "all",
+  ): Promise<ComponentView[]> {
     return this.componentViewReader.findAll(status);
   }
 }

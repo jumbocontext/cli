@@ -1,8 +1,17 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { InvariantView } from '../../../../../application/context/invariants/InvariantView.js';
-import { Colors, BrandColors, Symbols } from '../../../rendering/StyleConfig.js';
-import { heading, contentLine, metaField, wrapContent } from '../../../rendering/OutputLayout.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { InvariantView } from "../../../../../application/context/invariants/InvariantView.js";
+import {
+  Colors,
+  BrandColors,
+  Symbols,
+} from "../../../rendering/StyleConfig.js";
+import {
+  heading,
+  contentLine,
+  metaField,
+  wrapContent,
+} from "../../../rendering/OutputLayout.js";
 
 export class InvariantListOutputBuilder {
   private builder = new TerminalOutputBuilder();
@@ -44,7 +53,9 @@ export class InvariantListOutputBuilder {
 
   buildFailureError(error: Error | string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Failed to list invariants")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Failed to list invariants")}`,
+    );
     this.builder.addData({
       message: error instanceof Error ? error.message : error,
     });

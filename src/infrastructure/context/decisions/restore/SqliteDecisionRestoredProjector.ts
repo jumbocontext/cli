@@ -4,7 +4,9 @@ import { IDecisionRestoreReader } from "../../../../application/context/decision
 import { DecisionRestoredEvent } from "../../../../domain/decisions/restore/DecisionRestoredEvent.js";
 import { DecisionView } from "../../../../application/context/decisions/DecisionView.js";
 
-export class SqliteDecisionRestoredProjector implements IDecisionRestoredProjector, IDecisionRestoreReader {
+export class SqliteDecisionRestoredProjector
+  implements IDecisionRestoredProjector, IDecisionRestoreReader
+{
   constructor(private db: Database) {}
 
   async applyDecisionRestored(event: DecisionRestoredEvent): Promise<void> {
@@ -19,15 +21,13 @@ export class SqliteDecisionRestoredProjector implements IDecisionRestoredProject
       WHERE decisionId = ?
     `);
 
-    stmt.run(
-      event.version,
-      event.timestamp,
-      event.aggregateId
-    );
+    stmt.run(event.version, event.timestamp, event.aggregateId);
   }
 
   async findById(decisionId: string): Promise<DecisionView | null> {
-    const row = this.db.prepare("SELECT * FROM decision_views WHERE decisionId = ?").get(decisionId) as Record<string, unknown> | undefined;
+    const row = this.db
+      .prepare("SELECT * FROM decision_views WHERE decisionId = ?")
+      .get(decisionId) as Record<string, unknown> | undefined;
     return row ? this.mapRowToView(row) : null;
   }
 

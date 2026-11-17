@@ -49,7 +49,7 @@ export class GuidelineShowOutputBuilder {
     this.builder.reset();
     this.builder.addPrompt(
       `${guidelineShowStyle.error(TuiGlyphs.cross)} ${guidelineShowStyle.error("Guideline not found")}\n` +
-      `${guidelineShowStyle.muted(`No guideline exists with ID: ${guidelineId}`)}`
+        `${guidelineShowStyle.muted(`No guideline exists with ID: ${guidelineId}`)}`,
     );
     return this.builder.build();
   }
@@ -59,17 +59,21 @@ export class GuidelineShowOutputBuilder {
     const details = error instanceof Error ? error.message : error;
     this.builder.addPrompt(
       `${guidelineShowStyle.error(TuiGlyphs.cross)} ${guidelineShowStyle.error("Failed to show guideline")}\n` +
-      guidelineShowStyle.muted(details)
+        guidelineShowStyle.muted(details),
     );
     return this.builder.build();
   }
 
-  private field(label: string, value: string | number | boolean | null): string {
-    const rendered = value === null
-      ? guidelineShowStyle.muted("(null)")
-      : value === ""
-        ? guidelineShowStyle.muted("(empty)")
-        : guidelineShowStyle.primary(String(value));
+  private field(
+    label: string,
+    value: string | number | boolean | null,
+  ): string {
+    const rendered =
+      value === null
+        ? guidelineShowStyle.muted("(null)")
+        : value === ""
+          ? guidelineShowStyle.muted("(empty)")
+          : guidelineShowStyle.primary(String(value));
 
     return `${guidelineShowStyle.label(`${label}:`)} ${rendered}`;
   }
@@ -81,7 +85,10 @@ export class GuidelineShowOutputBuilder {
     }
 
     return `${label}\n${values
-      .map((value) => `  ${guidelineShowStyle.muted(TuiGlyphs.bullet)} ${guidelineShowStyle.primary(value === "" ? "(empty)" : value)}`)
+      .map(
+        (value) =>
+          `  ${guidelineShowStyle.muted(TuiGlyphs.bullet)} ${guidelineShowStyle.primary(value === "" ? "(empty)" : value)}`,
+      )
       .join("\n")}`;
   }
 }

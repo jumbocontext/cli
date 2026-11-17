@@ -4,11 +4,11 @@ import { ReverseDecisionResponse } from "./ReverseDecisionResponse.js";
 import { ReverseDecisionCommandHandler } from "./ReverseDecisionCommandHandler.js";
 
 export class LocalReverseDecisionGateway implements IReverseDecisionGateway {
-  constructor(
-    private readonly commandHandler: ReverseDecisionCommandHandler
-  ) {}
+  constructor(private readonly commandHandler: ReverseDecisionCommandHandler) {}
 
-  async reverseDecision(request: ReverseDecisionRequest): Promise<ReverseDecisionResponse> {
+  async reverseDecision(
+    request: ReverseDecisionRequest,
+  ): Promise<ReverseDecisionResponse> {
     const result = await this.commandHandler.execute({
       decisionId: request.decisionId,
       reason: request.reason,

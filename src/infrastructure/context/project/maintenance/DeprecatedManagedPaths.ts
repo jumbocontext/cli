@@ -12,5 +12,7 @@ const SKILL_PLATFORMS = [
 ] as const;
 
 export const DEPRECATED_MANAGED_PATHS: readonly string[] = [
-  ...SKILL_PLATFORMS.map(platform => `${platform}/${RETIRED_DISCOVERY_SKILL}`),
+  ...SKILL_PLATFORMS.map(
+    (platform) => `${platform}/${RETIRED_DISCOVERY_SKILL}`,
+  ),
 ];

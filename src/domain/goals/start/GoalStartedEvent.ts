@@ -11,8 +11,8 @@ export interface GoalStartedEvent extends BaseEvent {
   readonly payload: {
     readonly status: GoalStatusType; // "doing"
     // Claim fields - populated when worker claims the goal
-    readonly claimedBy?: string;      // WorkerId of the claiming worker
-    readonly claimedAt?: string;      // ISO 8601 timestamp when claim was created
+    readonly claimedBy?: string; // WorkerId of the claiming worker
+    readonly claimedAt?: string; // ISO 8601 timestamp when claim was created
     readonly claimExpiresAt?: string; // ISO 8601 timestamp when claim expires
   };
 }

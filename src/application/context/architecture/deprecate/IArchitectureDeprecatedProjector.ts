@@ -5,5 +5,7 @@ import { ArchitectureDeprecatedEvent } from "../../../../domain/architecture/dep
  * Used by ArchitectureDeprecatedEventHandler to update the projection store.
  */
 export interface IArchitectureDeprecatedProjector {
-  applyArchitectureDeprecated(event: ArchitectureDeprecatedEvent): Promise<void>;
+  applyArchitectureDeprecated(
+    event: ArchitectureDeprecatedEvent,
+  ): Promise<void>;
 }

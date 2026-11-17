@@ -11,7 +11,9 @@ import { IDecisionSupersedeReader } from "../../../../application/context/decisi
 import { DecisionSupersededEvent } from "../../../../domain/decisions/supersede/DecisionSupersededEvent.js";
 import { DecisionView } from "../../../../application/context/decisions/DecisionView.js";
 
-export class SqliteDecisionSupersededProjector implements IDecisionSupersededProjector, IDecisionSupersedeReader {
+export class SqliteDecisionSupersededProjector
+  implements IDecisionSupersededProjector, IDecisionSupersedeReader
+{
   constructor(private db: Database) {}
 
   async applyDecisionSuperseded(event: DecisionSupersededEvent): Promise<void> {
@@ -28,12 +30,14 @@ export class SqliteDecisionSupersededProjector implements IDecisionSupersededPro
       event.payload.supersededBy,
       event.version,
       event.timestamp,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 
   async findById(decisionId: string): Promise<DecisionView | null> {
-    const row = this.db.prepare('SELECT * FROM decision_views WHERE decisionId = ?').get(decisionId) as Record<string, unknown> | undefined;
+    const row = this.db
+      .prepare("SELECT * FROM decision_views WHERE decisionId = ?")
+      .get(decisionId) as Record<string, unknown> | undefined;
     return row ? this.mapRowToView(row) : null;
   }
 
@@ -43,9 +47,9 @@ export class SqliteDecisionSupersededProjector implements IDecisionSupersededPro
       title: row.title as string,
       context: row.context as string,
       rationale: (row.rationale as string) ?? null,
-      alternatives: JSON.parse((row.alternatives as string) || '[]'),
+      alternatives: JSON.parse((row.alternatives as string) || "[]"),
       consequences: (row.consequences as string) ?? null,
-      status: row.status as DecisionView['status'],
+      status: row.status as DecisionView["status"],
       supersededBy: (row.supersededBy as string) ?? null,
       reversalReason: (row.reversalReason as string) ?? null,
       reversedAt: (row.reversedAt as string) ?? null,

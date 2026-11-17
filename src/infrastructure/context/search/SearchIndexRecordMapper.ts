@@ -19,7 +19,11 @@ export class SearchIndexRecordMapper {
     };
   }
 
-  toHit(record: SearchIndexRecord, query: string | undefined, score: number): SearchHit {
+  toHit(
+    record: SearchIndexRecord,
+    query: string | undefined,
+    score: number,
+  ): SearchHit {
     return {
       source: { type: record.sourceType, id: record.sourceId },
       category: record.category,
@@ -36,7 +40,10 @@ export class SearchIndexRecordMapper {
     return parsed;
   }
 
-  private buildSnippet(record: SearchIndexRecord, query: string | undefined): string | null {
+  private buildSnippet(
+    record: SearchIndexRecord,
+    query: string | undefined,
+  ): string | null {
     const normalizedQuery = query?.trim().toLowerCase();
     if (!normalizedQuery) return record.summary;
 
@@ -45,7 +52,10 @@ export class SearchIndexRecordMapper {
     if (matchIndex < 0) return record.summary;
 
     const start = Math.max(0, matchIndex - 40);
-    const end = Math.min(record.content.length, matchIndex + normalizedQuery.length + 80);
+    const end = Math.min(
+      record.content.length,
+      matchIndex + normalizedQuery.length + 80,
+    );
     return record.content.slice(start, end).replace(/\s+/g, " ").trim();
   }
 }

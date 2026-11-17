@@ -9,10 +9,12 @@ export class UpdateComponentCommandHandler {
   constructor(
     private readonly eventWriter: IComponentUpdatedEventWriter,
     private readonly eventBus: IEventBus,
-    private readonly reader: IComponentUpdateReader
+    private readonly reader: IComponentUpdateReader,
   ) {}
 
-  async execute(command: UpdateComponentCommand): Promise<{ componentId: string }> {
+  async execute(
+    command: UpdateComponentCommand,
+  ): Promise<{ componentId: string }> {
     // 1. Check component exists
     const existing = await this.reader.findById(command.componentId);
     if (!existing) {
@@ -21,14 +23,17 @@ export class UpdateComponentCommandHandler {
 
     // 2. Rehydrate aggregate from event history
     const history = await this.eventWriter.readStream(command.componentId);
-    const component = Component.rehydrate(command.componentId, history as ComponentEvent[]);
+    const component = Component.rehydrate(
+      command.componentId,
+      history as ComponentEvent[],
+    );
 
     // 3. Domain logic produces event
     const event = component.update(
       command.description,
       command.responsibility,
       command.path,
-      command.type
+      command.type,
     );
 
     // 4. Persist event

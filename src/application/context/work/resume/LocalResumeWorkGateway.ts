@@ -16,7 +16,7 @@ export class LocalResumeWorkGateway implements IResumeWorkGateway {
     private readonly goalStatusReader: IGoalStatusReader,
     private readonly resumeGoalCommandHandler: ResumeGoalCommandHandler,
     private readonly sessionContextQueryHandler: SessionContextQueryHandler,
-    private readonly logger: ILogger
+    private readonly logger: ILogger,
   ) {}
 
   async resumeWork(_request: ResumeWorkRequest): Promise<ResumeWorkResponse> {
@@ -24,19 +24,25 @@ export class LocalResumeWorkGateway implements IResumeWorkGateway {
     const workerId = this.workerIdentityReader.workerId;
 
     // 2. Query for goals in 'paused' status
-    const pausedGoals = await this.goalStatusReader.findByStatus(GoalStatus.PAUSED);
+    const pausedGoals = await this.goalStatusReader.findByStatus(
+      GoalStatus.PAUSED,
+    );
 
     // 3. Find the goal claimed by this worker
     const pausedGoal = pausedGoals.find(
-      (goal: GoalView) => goal.claimedBy === workerId
+      (goal: GoalView) => goal.claimedBy === workerId,
     );
 
     if (!pausedGoal) {
-      this.logger.error("[LocalResumeWorkGateway] No paused goal found for worker", undefined, {
-        workerId,
-        pausedGoalsCount: pausedGoals.length,
-        allClaimedBy: pausedGoals.map(g => g.claimedBy),
-      });
+      this.logger.error(
+        "[LocalResumeWorkGateway] No paused goal found for worker",
+        undefined,
+        {
+          workerId,
+          pausedGoalsCount: pausedGoals.length,
+          allClaimedBy: pausedGoals.map((g) => g.claimedBy),
+        },
+      );
 
       throw new Error("No paused goal found for current worker");
     }

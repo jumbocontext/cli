@@ -36,6 +36,7 @@ import type { AddGoalRequest } from "../../../application/context/goals/add/AddG
 import type { AddGoalResponse } from "../../../application/context/goals/add/AddGoalResponse.js";
 import type { ProjectLifecycleState } from "../../../application/context/project/ProjectLifecycleState.js";
 import type { ISettingsReader } from "../../../application/settings/ISettingsReader.js";
+import type { ILogger } from "../../../application/logging/ILogger.js";
 import type { GoalStatusType } from "../../../domain/goals/Constants.js";
 import { ProjectLifecycle } from "../../../domain/project/Constants.js";
 import { SubprocessStatus } from "../daemon-subprocesses/SubprocessStatus.js";
@@ -99,6 +100,7 @@ interface AppProps {
   readonly subprocessManager?: ISubprocessManager;
   readonly settingsReader?: Pick<ISettingsReader, "read" | "write">;
   readonly cliUpdateController?: Pick<CliUpdateController, "check" | "upgrade">;
+  readonly logger?: ILogger;
   readonly launchAnimationEnabled?: boolean;
 }
 
@@ -119,6 +121,7 @@ export function App({
   subprocessManager,
   settingsReader,
   cliUpdateController,
+  logger,
   launchAnimationEnabled = true,
 }: AppProps = {}): React.ReactElement {
   const [activeStateReaderControllers, setActiveStateReaderControllers] =
@@ -149,6 +152,7 @@ export function App({
           subprocessManagerEnabled={false}
           settingsReader={settingsReader}
           cliUpdateController={cliUpdateController}
+          logger={logger}
           launchAnimationEnabled={launchAnimationEnabled}
         />
       ) : (
@@ -161,6 +165,7 @@ export function App({
             subprocessManagerEnabled={true}
             settingsReader={settingsReader}
             cliUpdateController={cliUpdateController}
+            logger={logger}
             launchAnimationEnabled={launchAnimationEnabled}
           />
         </SubprocessManagerProvider>
@@ -177,6 +182,7 @@ interface AppFrameProps {
   readonly subprocessManagerEnabled: boolean;
   readonly settingsReader?: Pick<ISettingsReader, "read" | "write">;
   readonly cliUpdateController?: Pick<CliUpdateController, "check" | "upgrade">;
+  readonly logger?: ILogger;
   readonly launchAnimationEnabled: boolean;
 }
 
@@ -188,6 +194,7 @@ function AppFrame({
   subprocessManagerEnabled,
   settingsReader,
   cliUpdateController,
+  logger,
   launchAnimationEnabled,
 }: AppFrameProps): React.ReactElement {
   const { exit } = useApp();
@@ -535,6 +542,7 @@ function AppFrame({
               actionControllers={actionControllers}
               onComplete={handleInitComplete}
               onCancel={handleInitCancel}
+              logger={logger}
             />
           </Box>
         )}

@@ -6,7 +6,10 @@
  */
 
 import { Database } from "better-sqlite3";
-import { ISessionViewReader, SessionStatusFilter } from "../../../../application/context/sessions/get/ISessionViewReader.js";
+import {
+  ISessionViewReader,
+  SessionStatusFilter,
+} from "../../../../application/context/sessions/get/ISessionViewReader.js";
 import { SessionView } from "../../../../application/context/sessions/SessionView.js";
 import { SessionRecord } from "../SessionRecord.js";
 import { SessionRecordMapper } from "../SessionRecordMapper.js";
@@ -28,12 +31,16 @@ export class SqliteSessionViewReader implements ISessionViewReader {
     query += " ORDER BY createdAt DESC";
 
     const rows = this.db.prepare(query).all(...params);
-    return rows.map((row) => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   async findActive(): Promise<SessionView | null> {
     const row = this.db
-      .prepare("SELECT * FROM session_views WHERE status = 'active' ORDER BY createdAt DESC LIMIT 1")
+      .prepare(
+        "SELECT * FROM session_views WHERE status = 'active' ORDER BY createdAt DESC LIMIT 1",
+      )
       .get() as Record<string, unknown> | undefined;
 
     if (!row) return null;

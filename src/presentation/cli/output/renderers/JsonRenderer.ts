@@ -1,7 +1,7 @@
-import { Section } from '../Section.js';
-import { TerminalOutput } from '../TerminalOutput.js';
-import { HookOutput } from '../HookOutput.js';
-import { EntityRendererRegistry } from './EntityRendererRegistry.js';
+import { Section } from "../Section.js";
+import { TerminalOutput } from "../TerminalOutput.js";
+import { HookOutput } from "../HookOutput.js";
+import { EntityRendererRegistry } from "./EntityRendererRegistry.js";
 
 /**
  * Renders TerminalOutput as strict JSON for hook integration.
@@ -14,55 +14,63 @@ export class JsonRenderer {
     const sections = output.getSections();
 
     return {
-      decision: 'allow',
-      promptSections: sections.map(section => this.renderSection(section)),
+      decision: "allow",
+      promptSections: sections.map((section) => this.renderSection(section)),
     };
   }
 
-  private renderSection(section: Section): { type: string; content: unknown; annotation?: string } {
+  private renderSection(section: Section): {
+    type: string;
+    content: unknown;
+    annotation?: string;
+  } {
     switch (section.type) {
-      case 'prompt':
+      case "prompt":
         return {
-          type: 'prompt',
+          type: "prompt",
           content: section.content,
         };
 
-      case 'data':
+      case "data":
         return {
-          type: 'data',
+          type: "data",
           content: section.content,
           annotation: section.metadata?.annotation?.text,
         };
 
-      case 'annotation':
+      case "annotation":
         return {
-          type: 'annotation',
+          type: "annotation",
           content: section.content,
         };
 
-      case 'group':
+      case "group":
         return this.renderGroupSection(section);
 
       default:
         return {
-          type: 'unknown',
+          type: "unknown",
           content: section.content,
         };
     }
   }
 
-  private renderGroupSection(section: Section): { type: string; content: unknown; annotation?: string } {
+  private renderGroupSection(section: Section): {
+    type: string;
+    content: unknown;
+    annotation?: string;
+  } {
     const { groupHeader, annotation, rendererType } = section.metadata || {};
     const entities = section.content as unknown[];
 
     // Use entity renderer if available
     const renderer = rendererType ? this.registry.get(rendererType) : null;
     const content = renderer
-      ? entities.map(entity => renderer.toJSON(entity))
+      ? entities.map((entity) => renderer.toJSON(entity))
       : entities;
 
     return {
-      type: 'group',
+      type: "group",
       content: {
         header: groupHeader,
         entities: content,

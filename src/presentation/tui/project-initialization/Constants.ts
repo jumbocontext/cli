@@ -12,8 +12,7 @@ export const InitFlowStage = {
   success: "success",
 } as const;
 
-export type InitFlowStage =
-  (typeof InitFlowStage)[keyof typeof InitFlowStage];
+export type InitFlowStage = (typeof InitFlowStage)[keyof typeof InitFlowStage];
 
 export const InitFlowRollback = {
   audience: "audience",
@@ -71,8 +70,7 @@ export const InitFlowControllerErrorCopy = {
     "Audience registration is unavailable. Restart Jumbo and try again.",
   requiredValueProposition:
     "Value proposition registration is unavailable. Restart Jumbo and try again.",
-  requiredProjectDetails:
-    "Project details are required before initialization.",
+  requiredProjectDetails: "Project details are required before initialization.",
 } as const;
 
 export const InitFlowCopy = {
@@ -129,7 +127,8 @@ export const InitFlowConfirmationCopy = {
   noChangesSummary:
     "No file changes are required. Confirm to initialize project state.",
   noChangesReview: "No file changes are required.",
-  summaryLead: "Jumbo will create project memory and configure selected agents.",
+  summaryLead:
+    "Jumbo will create project memory and configure selected agents.",
   plannedChangesLabel: "Planned changes",
   createLabel: "Create",
   modifyLabel: "Modify",

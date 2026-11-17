@@ -26,7 +26,7 @@ export class PauseWorkCommandHandler {
     private readonly workerIdentityReader: IWorkerIdentityReader,
     private readonly goalStatusReader: IGoalStatusReader,
     private readonly pauseGoalCommandHandler: PauseGoalCommandHandler,
-    private readonly logger: ILogger
+    private readonly logger: ILogger,
   ) {}
 
   async execute(_command: PauseWorkCommand): Promise<PauseWorkResult> {
@@ -34,48 +34,60 @@ export class PauseWorkCommandHandler {
 
     // 1. Get current worker's identity
     const workerId = this.workerIdentityReader.workerId;
-    this.logger.debug("[PauseWorkCommandHandler] Worker ID obtained", { workerId });
+    this.logger.debug("[PauseWorkCommandHandler] Worker ID obtained", {
+      workerId,
+    });
 
     // 2. Query for goals in 'doing' status
-    const doingGoals = await this.goalStatusReader.findByStatus(GoalStatus.DOING);
+    const doingGoals = await this.goalStatusReader.findByStatus(
+      GoalStatus.DOING,
+    );
     this.logger.info("[PauseWorkCommandHandler] Queried doing goals", {
       count: doingGoals.length,
-      goals: doingGoals.map(g => ({ id: g.goalId, claimedBy: g.claimedBy, objective: g.objective }))
+      goals: doingGoals.map((g) => ({
+        id: g.goalId,
+        claimedBy: g.claimedBy,
+        objective: g.objective,
+      })),
     });
 
     // 3. Find the goal claimed by this worker
     const activeGoal = doingGoals.find(
-      (goal: GoalView) => goal.claimedBy === workerId
+      (goal: GoalView) => goal.claimedBy === workerId,
     );
 
     if (!activeGoal) {
       const errorContext = {
         workerId,
         doingGoalsCount: doingGoals.length,
-        allClaimedBy: doingGoals.map(g => g.claimedBy)
+        allClaimedBy: doingGoals.map((g) => g.claimedBy),
       };
 
-      this.logger.error("[PauseWorkCommandHandler] No active goal found for worker", undefined, errorContext);
+      this.logger.error(
+        "[PauseWorkCommandHandler] No active goal found for worker",
+        undefined,
+        errorContext,
+      );
 
       throw new Error("No active goal found for current worker");
     }
 
     this.logger.info("[PauseWorkCommandHandler] Found active goal for worker", {
       goalId: activeGoal.goalId,
-      objective: activeGoal.objective
+      objective: activeGoal.objective,
     });
 
     // 4. Create and execute PauseGoalCommand
     const pauseCommand: PauseGoalCommand = {
       goalId: activeGoal.goalId,
-      reason: GoalPausedReasons.WorkPaused
+      reason: GoalPausedReasons.WorkPaused,
     };
 
     await this.pauseGoalCommandHandler.execute(pauseCommand);
 
     return {
       goalId: activeGoal.goalId,
-      objective: activeGoal.objective
+      objective: activeGoal.objective,
     };
   }
 }

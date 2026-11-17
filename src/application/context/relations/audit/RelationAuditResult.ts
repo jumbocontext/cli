@@ -1,4 +1,7 @@
-import { EntityTypeValue, RelationAuditCheckValue } from "../../../../domain/relations/Constants.js";
+import {
+  EntityTypeValue,
+  RelationAuditCheckValue,
+} from "../../../../domain/relations/Constants.js";
 import { AmbiguousRelationNodeFinding } from "./AmbiguousRelationNodeFinding.js";
 import { DanglingRelationFinding } from "./DanglingRelationFinding.js";
 import { InactiveOnlyRelationNodeFinding } from "./InactiveOnlyRelationNodeFinding.js";
@@ -10,9 +13,21 @@ export interface RelationAuditResult {
   readonly entityType: EntityTypeValue | null;
   readonly summary: RelationAuditSummary;
   readonly findings: {
-    readonly dangling: { readonly count: number; readonly items: readonly DanglingRelationFinding[] };
-    readonly isolated: { readonly count: number; readonly items: readonly IsolatedRelationNodeFinding[] };
-    readonly inactiveOnly: { readonly count: number; readonly items: readonly InactiveOnlyRelationNodeFinding[] };
-    readonly ambiguousId: { readonly count: number; readonly items: readonly AmbiguousRelationNodeFinding[] };
+    readonly dangling: {
+      readonly count: number;
+      readonly items: readonly DanglingRelationFinding[];
+    };
+    readonly isolated: {
+      readonly count: number;
+      readonly items: readonly IsolatedRelationNodeFinding[];
+    };
+    readonly inactiveOnly: {
+      readonly count: number;
+      readonly items: readonly InactiveOnlyRelationNodeFinding[];
+    };
+    readonly ambiguousId: {
+      readonly count: number;
+      readonly items: readonly AmbiguousRelationNodeFinding[];
+    };
   };
 }

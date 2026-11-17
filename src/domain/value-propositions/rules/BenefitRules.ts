@@ -13,16 +13,14 @@ export class BenefitRequiredRule implements ValidationRule<string> {
     const isValid = !!(benefit && benefit.trim() !== "");
     return {
       isValid,
-      errors: isValid
-        ? []
-        : [ValuePropositionErrorMessages.BENEFIT_REQUIRED],
+      errors: isValid ? [] : [ValuePropositionErrorMessages.BENEFIT_REQUIRED],
     };
   }
 }
 
 export class BenefitMaxLengthRule implements ValidationRule<string> {
   constructor(
-    private maxLength: number = ValuePropositionLimits.BENEFIT_MAX_LENGTH
+    private maxLength: number = ValuePropositionLimits.BENEFIT_MAX_LENGTH,
   ) {}
 
   validate(benefit: string): ValidationResult {
@@ -32,10 +30,9 @@ export class BenefitMaxLengthRule implements ValidationRule<string> {
       errors: isValid
         ? []
         : [
-            formatErrorMessage(
-              ValuePropositionErrorMessages.BENEFIT_TOO_LONG,
-              { max: this.maxLength }
-            ),
+            formatErrorMessage(ValuePropositionErrorMessages.BENEFIT_TOO_LONG, {
+              max: this.maxLength,
+            }),
           ],
     };
   }

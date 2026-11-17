@@ -10,8 +10,8 @@ import { GoalPausedReasonsType } from "../GoalPausedReasons.js";
 export interface GoalPausedEvent extends BaseEvent {
   readonly type: typeof GoalEventType.PAUSED;
   readonly payload: {
-    readonly status: GoalStatusType;     // Will be 'paused'
-    readonly reason: GoalPausedReasonsType;  // Reason for pausing
-    readonly note?: string;              // Optional additional context
+    readonly status: GoalStatusType; // Will be 'paused'
+    readonly reason: GoalPausedReasonsType; // Reason for pausing
+    readonly note?: string; // Optional additional context
   };
 }

@@ -9,10 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CLI startup construction**: Commander now validates the selected command before Jumbo loads its handler or constructs services. Help, version, and invalid arguments skip project discovery and do not open project storage. Project commands retain exact-working-directory guards, and bare launches below a project root retain their initialization flow instead of opening the ancestor project.
+- **User-level startup foundation**: Added isolated user-service construction and native Linux, macOS, and Windows application-path resolution without creating storage or reading project settings. Only test fixtures use this path; login and credential storage are not implemented.
+- **CLI command loading**: The generated registry loads lightweight metadata for help and command classification, then imports only the selected command implementation when it runs. Command syntax, aliases, options, and help content are unchanged.
 - **Command discovery skill**: Renamed the managed skill to `jumbo-discover-commands` and reduced it to a minimal pointer to `jumbo --help` and selected-command help.
 
 ### Fixed
 
+- **Version entrypoints**: `jumbo version` and `jumbo -v` report the CLI version without project services, alongside the existing `--version` and `-V` options.
 - **Retired skill cleanup**: `jumbo init` and `jumbo evolve --yes` remove deprecated `jumbo-command-discovery` directories and their contents from current and legacy skill locations. A dedicated project-maintenance module owns the extensible retirement list and cleanup mechanism.
 
 ## [3.26.0] - 2026-10-15

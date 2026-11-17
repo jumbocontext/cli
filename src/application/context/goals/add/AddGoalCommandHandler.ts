@@ -5,7 +5,10 @@ import { IGoalUpdatedEventReader } from "../update/IGoalUpdatedEventReader.js";
 import { IGoalUpdateReader } from "../update/IGoalUpdateReader.js";
 import { IEventBus } from "../../../messaging/IEventBus.js";
 import { Goal } from "../../../../domain/goals/Goal.js";
-import { GoalErrorMessages, formatErrorMessage } from "../../../../domain/goals/Constants.js";
+import {
+  GoalErrorMessages,
+  formatErrorMessage,
+} from "../../../../domain/goals/Constants.js";
 
 /**
  * Command handler for AddGoalCommand.
@@ -21,7 +24,7 @@ export class AddGoalCommandHandler {
     // Optional dependencies for goal chaining (updating previous goal)
     private readonly updateEventWriter?: IGoalUpdatedEventWriter,
     private readonly updateEventReader?: IGoalUpdatedEventReader,
-    private readonly goalReader?: IGoalUpdateReader
+    private readonly goalReader?: IGoalUpdateReader,
   ) {}
 
   async execute(command: AddGoalCommand): Promise<{ goalId: string }> {
@@ -39,7 +42,7 @@ export class AddGoalCommandHandler {
       command.nextGoalId,
       command.prerequisiteGoals,
       command.branch,
-      command.worktree
+      command.worktree,
     );
 
     // Persist event to file store
@@ -60,8 +63,15 @@ export class AddGoalCommandHandler {
    * Updates the previous goal's nextGoalId to point to the new goal.
    * This creates a chain: previousGoal -> newGoal
    */
-  private async updatePreviousGoalNextGoalId(previousGoalId: string, newGoalId: string): Promise<void> {
-    if (!this.updateEventWriter || !this.updateEventReader || !this.goalReader) {
+  private async updatePreviousGoalNextGoalId(
+    previousGoalId: string,
+    newGoalId: string,
+  ): Promise<void> {
+    if (
+      !this.updateEventWriter ||
+      !this.updateEventReader ||
+      !this.goalReader
+    ) {
       throw new Error("Goal chaining dependencies not configured");
     }
 
@@ -71,7 +81,7 @@ export class AddGoalCommandHandler {
       throw new Error(
         formatErrorMessage(GoalErrorMessages.NOT_FOUND, {
           goalId: previousGoalId,
-        })
+        }),
       );
     }
 
@@ -86,7 +96,7 @@ export class AddGoalCommandHandler {
       undefined,
       undefined,
       undefined,
-      newGoalId
+      newGoalId,
     );
 
     // Persist the update event

@@ -1,5 +1,9 @@
 import { MigrateDependenciesCommand } from "./MigrateDependenciesCommand.js";
-import { MigrateDependenciesResponse, ConvertedDependency, SkippedDependency } from "./MigrateDependenciesResponse.js";
+import {
+  MigrateDependenciesResponse,
+  ConvertedDependency,
+  SkippedDependency,
+} from "./MigrateDependenciesResponse.js";
 import { ILegacyDependencyReader } from "./ILegacyDependencyReader.js";
 import { AddRelationCommandHandler } from "../../context/relations/add/AddRelationCommandHandler.js";
 import { RemoveDependencyCommandHandler } from "../../context/dependencies/remove/RemoveDependencyCommandHandler.js";
@@ -21,10 +25,12 @@ export class MigrateDependenciesCommandHandler {
   constructor(
     private readonly legacyReader: ILegacyDependencyReader,
     private readonly addRelationHandler: AddRelationCommandHandler,
-    private readonly removeDependencyHandler: RemoveDependencyCommandHandler
+    private readonly removeDependencyHandler: RemoveDependencyCommandHandler,
   ) {}
 
-  async handle(command: MigrateDependenciesCommand): Promise<MigrateDependenciesResponse> {
+  async handle(
+    command: MigrateDependenciesCommand,
+  ): Promise<MigrateDependenciesResponse> {
     const dryRun = command.dryRun ?? false;
     const candidates = await this.legacyReader.findLegacyCouplings();
 

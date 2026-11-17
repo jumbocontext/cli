@@ -13,9 +13,7 @@ import {
 } from "../Constants.js";
 
 export class PurposeMaxLengthRule implements ValidationRule<string> {
-  constructor(
-    private maxLength: number = ProjectLimits.PURPOSE_MAX_LENGTH
-  ) {}
+  constructor(private maxLength: number = ProjectLimits.PURPOSE_MAX_LENGTH) {}
 
   validate(purpose: string): ValidationResult {
     const isValid = purpose.length <= this.maxLength;

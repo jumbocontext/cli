@@ -8,7 +8,7 @@ import { GoalEventType, GoalStatus } from "../Constants.js";
 export interface GoalUnblockedEvent extends BaseEvent {
   readonly type: typeof GoalEventType.UNBLOCKED;
   readonly payload: {
-    readonly status: typeof GoalStatus.UNBLOCKED;  // Transition to unblocked waiting state
-    readonly note?: string;        // Optional resolution note
+    readonly status: typeof GoalStatus.UNBLOCKED; // Transition to unblocked waiting state
+    readonly note?: string; // Optional resolution note
   };
 }

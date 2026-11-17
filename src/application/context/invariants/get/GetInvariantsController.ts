@@ -7,19 +7,23 @@ import { GetAllInvariantsRequest } from "./GetAllInvariantsRequest.js";
 import { GetAllInvariantsResponse } from "./GetAllInvariantsResponse.js";
 
 export class GetInvariantsController {
-  constructor(
-    private readonly gateway: IGetInvariantsGateway
-  ) {}
+  constructor(private readonly gateway: IGetInvariantsGateway) {}
 
-  async getInvariant(request: GetInvariantRequest): Promise<GetInvariantResponse> {
+  async getInvariant(
+    request: GetInvariantRequest,
+  ): Promise<GetInvariantResponse> {
     return this.gateway.getInvariant(request);
   }
 
-  async getInvariants(request: GetInvariantsRequest): Promise<GetInvariantsResponse> {
+  async getInvariants(
+    request: GetInvariantsRequest,
+  ): Promise<GetInvariantsResponse> {
     return this.gateway.getInvariants(request);
   }
 
-  async getAllInvariants(request: GetAllInvariantsRequest): Promise<GetAllInvariantsResponse> {
+  async getAllInvariants(
+    request: GetAllInvariantsRequest,
+  ): Promise<GetAllInvariantsResponse> {
     return this.gateway.getAllInvariants(request);
   }
 }

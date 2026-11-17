@@ -75,6 +75,13 @@ export class HostSessionKeyResolver {
   private getEnvHostSessionId(): SessionKeyPart | null {
     const env = process.env;
 
+    if (env.JUMBO_HOST_SESSION_KEY) {
+      return {
+        source: "JUMBO_HOST_SESSION_KEY",
+        value: env.JUMBO_HOST_SESSION_KEY,
+      };
+    }
+
     // IDE signals (when running inside VS Code, etc.)
     if (env.VSCODE_IPC_HOOK_CLI) {
       return { source: "VSCODE_IPC_HOOK_CLI", value: env.VSCODE_IPC_HOOK_CLI };

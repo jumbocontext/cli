@@ -5,32 +5,79 @@
  * scope, and notes.
  */
 
-import { CommandMetadata } from "../../registry/CommandMetadata.js";
-import { IApplicationContainer } from "../../../../../application/host/IApplicationContainer.js";
+import type { Command } from "commander";
+import type { CommandExample } from "../../registry/CommandMetadata.js";
+import type { ShowGoalController } from "../../../../../application/context/goals/get/ShowGoalController.js";
+import { LeafContainerBuilder } from "../../../../../infrastructure/host/LeafContainerBuilder.js";
 import { Renderer } from "../../../rendering/Renderer.js";
+import {
+  formatSubcommandHelp,
+  metadataFromCommand,
+} from "../../../help/SubcommandHelpFormatter.js";
+import { COMMAND_CATEGORY } from "../../../help/CommandCategories.js";
 import { GoalShowOutputBuilder } from "./GoalShowOutputBuilder.js";
 
 /**
- * Command metadata for auto-registration
+ * Help copy owned by this leaf, shown in the EXAMPLES section of `--help`.
  */
-export const metadata: CommandMetadata = {
-  description: "Display full goal details",
-  category: "work",
-  requiredOptions: [
-    {
-      flags: "-i, --id <id>",
-      description: "ID of the goal to show"
-    }
-  ],
-  examples: [
-    {
-      command: "jumbo goal show --id abc123",
-      description: "Show complete goal details"
-    }
-  ],
-  related: ["goal add", "goal start", "goal update", "goal complete"],
-  requiresProject: true
-};
+const EXAMPLES: CommandExample[] = [
+  {
+    command: "jumbo goal show --id abc123",
+    description: "Show complete goal details",
+  },
+];
+
+/**
+ * Examples and related commands are the only help copy this leaf owns;
+ * flags, descriptions, and the command description derive from the
+ * canonical registration chain via metadataFromCommand().
+ */
+const RELATED_COMMANDS = ["goal add", "goal start", "goal update", "goal complete"];
+
+/**
+ * The abstract ports the `goal show` leaf requires. Satisfied structurally
+ * by the LeafContainerBuilder composition below; a missing `with*Feature()`
+ * call fails to compile here, at the leaf that made the demand.
+ */
+interface GoalShowDependencies {
+  readonly showGoalController: ShowGoalController;
+}
+
+/**
+ * Composes exactly the feature the `goal show` leaf uses.
+ */
+async function createGoalShowDependencies(): Promise<GoalShowDependencies> {
+  return new LeafContainerBuilder().withShowGoalFeature().build();
+}
+
+/** Registers the `goal show` leaf under the parent supplied by its group. */
+export function registerGoalShowCommand(goal: Command): void {
+  const command = goal
+    .command("show")
+    .description("Display full goal details")
+    .requiredOption("-i, --id <id>", "ID of the goal to show");
+
+  command.helpInformation = () =>
+    formatSubcommandHelp({
+      path: "goal show",
+      metadata: metadataFromCommand(command, {
+        category: COMMAND_CATEGORY.work,
+        examples: EXAMPLES,
+        related: RELATED_COMMANDS,
+      }),
+    });
+
+  let dependencies: GoalShowDependencies | undefined;
+
+  command.hook("preAction", async () => {
+    dependencies = await createGoalShowDependencies();
+  });
+
+  command.action(async (options: { id: string }) => {
+    if (!dependencies) throw new Error("Goal show dependencies were not initialized.");
+    await goalShow(options, dependencies);
+  });
+}
 
 /**
  * Command handler
@@ -38,14 +85,14 @@ export const metadata: CommandMetadata = {
  */
 export async function goalShow(
   options: { id: string },
-  container: IApplicationContainer
+  container: GoalShowDependencies,
 ) {
   const renderer = Renderer.getInstance();
 
   try {
     // 1. Execute via controller — returns typed response
     const { contextualGoalView } = await container.showGoalController.handle({
-      goalId: options.id
+      goalId: options.id,
     });
 
     // 2. Build and render output using builder pattern
@@ -58,12 +105,11 @@ export async function goalShow(
       const output = outputBuilder.buildStructuredOutput(contextualGoalView);
       // For non-TTY (pipes/redirects), extract data and output as JSON
       const sections = output.getSections();
-      const dataSection = sections.find(s => s.type === 'data');
+      const dataSection = sections.find((s) => s.type === "data");
       if (dataSection) {
         renderer.data(dataSection.content as Record<string, unknown>);
       }
     }
-
   } catch (error) {
     const outputBuilder = new GoalShowOutputBuilder();
 
@@ -75,7 +121,9 @@ export async function goalShow(
     }
 
     // Handle other errors
-    const output = outputBuilder.buildFailureError(error instanceof Error ? error : String(error));
+    const output = outputBuilder.buildFailureError(
+      error instanceof Error ? error : String(error),
+    );
     renderer.info(output.toHumanReadable());
     process.exit(1);
   }

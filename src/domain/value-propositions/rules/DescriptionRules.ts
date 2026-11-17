@@ -22,7 +22,7 @@ export class DescriptionRequiredRule implements ValidationRule<string> {
 
 export class DescriptionMaxLengthRule implements ValidationRule<string> {
   constructor(
-    private maxLength: number = ValuePropositionLimits.DESCRIPTION_MAX_LENGTH
+    private maxLength: number = ValuePropositionLimits.DESCRIPTION_MAX_LENGTH,
   ) {}
 
   validate(description: string): ValidationResult {
@@ -34,7 +34,7 @@ export class DescriptionMaxLengthRule implements ValidationRule<string> {
         : [
             formatErrorMessage(
               ValuePropositionErrorMessages.DESCRIPTION_TOO_LONG,
-              { max: this.maxLength }
+              { max: this.maxLength },
             ),
           ],
     };

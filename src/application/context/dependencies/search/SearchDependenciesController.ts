@@ -8,11 +8,11 @@ import { SearchDependenciesRequest } from "./SearchDependenciesRequest.js";
 import { SearchDependenciesResponse } from "./SearchDependenciesResponse.js";
 
 export class SearchDependenciesController {
-  constructor(
-    private readonly gateway: ISearchDependenciesGateway
-  ) {}
+  constructor(private readonly gateway: ISearchDependenciesGateway) {}
 
-  async handle(request: SearchDependenciesRequest): Promise<SearchDependenciesResponse> {
+  async handle(
+    request: SearchDependenciesRequest,
+  ): Promise<SearchDependenciesResponse> {
     return this.gateway.searchDependencies(request);
   }
 }

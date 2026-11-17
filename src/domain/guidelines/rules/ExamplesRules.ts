@@ -33,7 +33,7 @@ export class ExamplesMaxCountRule implements ValidationRule<string[]> {
 
 export class ExamplePathMaxLengthRule implements ValidationRule<string[]> {
   constructor(
-    private maxLength: number = GuidelineLimits.EXAMPLE_PATH_MAX_LENGTH
+    private maxLength: number = GuidelineLimits.EXAMPLE_PATH_MAX_LENGTH,
   ) {}
 
   validate(examples: string[]): ValidationResult {
@@ -44,7 +44,7 @@ export class ExamplePathMaxLengthRule implements ValidationRule<string[]> {
         errors.push(
           formatErrorMessage(GuidelineErrorMessages.EXAMPLE_PATH_TOO_LONG, {
             max: this.maxLength,
-          })
+          }),
         );
         break; // Only report once
       }

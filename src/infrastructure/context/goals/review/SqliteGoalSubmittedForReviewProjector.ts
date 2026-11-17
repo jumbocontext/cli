@@ -20,7 +20,9 @@ export class SqliteGoalSubmittedForReviewProjector
 
   constructor(private db: Database) {}
 
-  async applyGoalSubmittedForReview(event: GoalSubmittedForReviewEvent): Promise<void> {
+  async applyGoalSubmittedForReview(
+    event: GoalSubmittedForReviewEvent,
+  ): Promise<void> {
     const stmt = this.db.prepare(`
       UPDATE goal_views
       SET status = ?,
@@ -39,7 +41,7 @@ export class SqliteGoalSubmittedForReviewProjector
       event.payload.claimExpiresAt ?? null,
       event.version,
       event.timestamp,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 

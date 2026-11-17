@@ -14,7 +14,7 @@ export class DecisionSupersededEventHandler implements IEventHandler {
   constructor(
     private readonly projector: IDecisionSupersededProjector,
     private readonly relationDeactivationCascade: RelationDeactivationCascade,
-    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar
+    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar,
   ) {}
 
   async handle(event: BaseEvent): Promise<void> {
@@ -23,12 +23,12 @@ export class DecisionSupersededEventHandler implements IEventHandler {
     await this.relationMaintenanceGoalRegistrar.execute(
       EntityType.DECISION,
       decisionSupersededEvent.aggregateId,
-      `decision was superseded by decision ${decisionSupersededEvent.payload.supersededBy}`
+      `decision was superseded by decision ${decisionSupersededEvent.payload.supersededBy}`,
     );
     await this.relationDeactivationCascade.execute(
       EntityType.DECISION,
       decisionSupersededEvent.aggregateId,
-      `Automatically deactivated because decision ${decisionSupersededEvent.aggregateId} was superseded by decision ${decisionSupersededEvent.payload.supersededBy}`
+      `Automatically deactivated because decision ${decisionSupersededEvent.aggregateId} was superseded by decision ${decisionSupersededEvent.payload.supersededBy}`,
     );
   }
 }

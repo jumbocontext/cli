@@ -21,10 +21,12 @@ export class UpdateAudiencePainCommandHandler {
   constructor(
     private readonly eventWriter: IAudiencePainUpdatedEventWriter,
     private readonly eventBus: IEventBus,
-    private readonly reader: IAudiencePainUpdateReader
+    private readonly reader: IAudiencePainUpdateReader,
   ) {}
 
-  async execute(command: UpdateAudiencePainCommand): Promise<{ painId: string }> {
+  async execute(
+    command: UpdateAudiencePainCommand,
+  ): Promise<{ painId: string }> {
     // 1. Check if pain exists
     const existingPain = await this.reader.findById(command.painId);
     if (!existingPain) {
@@ -33,7 +35,10 @@ export class UpdateAudiencePainCommandHandler {
 
     // 2. Rehydrate aggregate from event history
     const history = await this.eventWriter.readStream(command.painId);
-    const pain = AudiencePain.rehydrate(command.painId, history as AudiencePainEvent[]);
+    const pain = AudiencePain.rehydrate(
+      command.painId,
+      history as AudiencePainEvent[],
+    );
 
     // 3. Domain logic produces event
     const event = pain.update(command.title, command.description);

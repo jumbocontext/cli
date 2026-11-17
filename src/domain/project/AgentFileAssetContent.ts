@@ -8,26 +8,33 @@ const assetRoot = path.resolve(
   "..",
   "..",
   "assets",
-  "agent-files"
+  "agent-files",
 );
 
 export class AgentFileAssetContent {
   static readMarkdown(fileName: string): string {
     return this.withTrailingNewline(
-      readFileSync(path.join(assetRoot, "markdown", fileName), "utf-8")
-        .replace(/\r\n/g, "\n")
+      readFileSync(path.join(assetRoot, "markdown", fileName), "utf-8").replace(
+        /\r\n/g,
+        "\n",
+      ),
     );
   }
 
   static readJson<T = unknown>(fileName: string): T {
-    const content = readFileSync(path.join(assetRoot, "json", fileName), "utf-8");
+    const content = readFileSync(
+      path.join(assetRoot, "json", fileName),
+      "utf-8",
+    );
     return JSON.parse(content) as T;
   }
 
   static readScript(fileName: string): string {
     return this.withTrailingNewline(
-      readFileSync(path.join(assetRoot, "scripts", fileName), "utf-8")
-        .replace(/\r\n/g, "\n")
+      readFileSync(path.join(assetRoot, "scripts", fileName), "utf-8").replace(
+        /\r\n/g,
+        "\n",
+      ),
     );
   }
 

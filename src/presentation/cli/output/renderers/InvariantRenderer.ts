@@ -1,5 +1,5 @@
-import { EntityRenderer } from './EntityRenderer.js';
-import { Annotation } from '../Annotation.js';
+import { EntityRenderer } from "./EntityRenderer.js";
+import { Annotation } from "../Annotation.js";
 
 /**
  * InvariantContextView from ContextualGoalView
@@ -29,12 +29,12 @@ export class InvariantRenderer implements EntityRenderer<InvariantContextView> {
 
   getDefaultAnnotation(): Annotation {
     return {
-      type: 'emphasis',
-      text: 'INSTRUCTION: You (the developer) MUST adhere to ALL of these invariants while implementing this goal.',
+      type: "emphasis",
+      text: "INSTRUCTION: You (the developer) MUST adhere to ALL of these invariants while implementing this goal.",
     };
   }
 
   getGroupHeader(): string {
-    return '## Invariants:';
+    return "## Invariants:";
   }
 }

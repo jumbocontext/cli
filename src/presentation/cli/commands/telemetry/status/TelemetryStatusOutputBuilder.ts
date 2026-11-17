@@ -37,7 +37,7 @@ export class TelemetryStatusOutputBuilder {
   }
 
   private buildHumanReadablePrompt(
-    response: GetTelemetryStatusResponse
+    response: GetTelemetryStatusResponse,
   ): string {
     return [
       "Telemetry status",

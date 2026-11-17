@@ -15,22 +15,32 @@ export class RelationDiscoveryGoalRegistrar implements IRelationDiscoveryGoalReg
   constructor(
     private readonly goalTitleReader: IGoalTitleReader,
     private readonly addGoalCommandHandler: AddGoalCommandHandler,
-    private readonly logger: ILogger
+    private readonly logger: ILogger,
   ) {}
 
-  async execute(entityType: EntityTypeValue, entityId: string): Promise<string | null> {
+  async execute(
+    entityType: EntityTypeValue,
+    entityId: string,
+  ): Promise<string | null> {
     try {
       const title = `Discover relations for ${entityType} ${entityId}`;
 
-      this.logger.debug("Checking for existing relation-discovery goal", { entityType, entityId, title });
+      this.logger.debug("Checking for existing relation-discovery goal", {
+        entityType,
+        entityId,
+        title,
+      });
 
       const existingGoal = await this.goalTitleReader.findByTitle(title);
       if (existingGoal) {
-        this.logger.info("Relation-discovery goal already exists, skipping registration", {
-          entityType,
-          entityId,
-          existingGoalId: existingGoal.goalId,
-        });
+        this.logger.info(
+          "Relation-discovery goal already exists, skipping registration",
+          {
+            entityType,
+            entityId,
+            existingGoalId: existingGoal.goalId,
+          },
+        );
         return null;
       }
 
@@ -43,11 +53,18 @@ export class RelationDiscoveryGoalRegistrar implements IRelationDiscoveryGoalReg
         ],
       });
 
-      this.logger.info("Relation-discovery goal registered", { entityType, entityId, goalId });
+      this.logger.info("Relation-discovery goal registered", {
+        entityType,
+        entityId,
+        goalId,
+      });
 
       return goalId;
     } catch (error) {
-      this.logger.error("Failed to register relation-discovery goal", error, { entityType, entityId });
+      this.logger.error("Failed to register relation-discovery goal", error, {
+        entityType,
+        entityId,
+      });
       return null;
     }
   }

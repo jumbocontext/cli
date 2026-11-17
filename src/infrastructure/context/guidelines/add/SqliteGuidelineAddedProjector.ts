@@ -28,14 +28,14 @@ export class SqliteGuidelineAddedProjector implements IGuidelineAddedProjector {
       JSON.stringify(event.payload.examples),
       event.version,
       event.timestamp,
-      event.timestamp
+      event.timestamp,
     );
   }
 
   async findByCategory(category: string): Promise<GuidelineView[]> {
     const rows = this.db
       .prepare(
-        "SELECT * FROM guideline_views WHERE category = ? ORDER BY createdAt DESC"
+        "SELECT * FROM guideline_views WHERE category = ? ORDER BY createdAt DESC",
       )
       .all(category);
     return rows.map((row) => this.mapRowToView(row as Record<string, unknown>));

@@ -5,53 +5,92 @@
  * is deprecated, with migration guidance directing to individual entities.
  */
 
-import { CommandMetadata } from "../../registry/CommandMetadata.js";
-import { IApplicationContainer } from "../../../../../application/host/IApplicationContainer.js";
+import type { Command } from "commander";
+import type { CommandExample } from "../../registry/CommandMetadata.js";
+import type { UpdateArchitectureController } from "../../../../../application/context/architecture/update/UpdateArchitectureController.js";
+import { LeafContainerBuilder } from "../../../../../infrastructure/host/LeafContainerBuilder.js";
 import { Renderer } from "../../../rendering/Renderer.js";
 import { ArchitectureErrorMessages } from "../../../../../domain/architecture/Constants.js";
 import { ARCHITECTURE_REJECTION_MESSAGE } from "../../../../../application/context/architecture/ArchitectureDeprecationConstants.js";
+import {
+  formatSubcommandHelp,
+  metadataFromCommand,
+} from "../../../help/SubcommandHelpFormatter.js";
+import { COMMAND_CATEGORY } from "../../../help/CommandCategories.js";
 
 /**
- * Command metadata for auto-registration
+ * Help copy owned by this leaf, shown in the EXAMPLES section of `--help`.
  */
-export const metadata: CommandMetadata = {
-  description: "Update project architecture details (deprecated)",
-  category: "solution",
-  options: [
-    {
-      flags: "-d, --description <description>",
-      description: "High-level architectural overview"
-    },
-    {
-      flags: "--organization <organization>",
-      description: "Architectural organization (e.g., 'Clean Architecture', 'Hexagonal')"
-    },
-    {
-      flags: "--pattern <patterns...>",
-      description: "Architectural patterns used"
-    },
-    {
-      flags: "--principle <principles...>",
-      description: "Design principles followed"
-    },
-    {
-      flags: "--data-store <dataStores...>",
-      description: "Data stores (format: name:type:purpose)"
-    },
-    {
-      flags: "--stack <stack...>",
-      description: "Technology stack items"
-    }
-  ],
-  examples: [
-    {
-      command: "jumbo architecture update --pattern DDD CQRS EventSourcing --principle SOLID DRY",
-      description: "Update architecture patterns and principles"
-    },
-  ],
-  related: ["decision add", "invariant add", "component add", "dependency add"],
-  requiresProject: true
-};
+const EXAMPLES: CommandExample[] = [
+  {
+    command:
+      "jumbo architecture update --pattern DDD CQRS EventSourcing --principle SOLID DRY",
+    description: "Update architecture patterns and principles",
+  },
+];
+
+const RELATED_COMMANDS = ["decision add", "invariant add", "component add", "dependency add"];
+
+/**
+ * The abstract ports the `architecture update` leaf requires. Satisfied structurally
+ * by the LeafContainerBuilder composition below; a missing `with*Feature()`
+ * call fails to compile here, at the leaf that made the demand.
+ */
+export interface ArchitectureUpdateDependencies {
+  readonly updateArchitectureController: UpdateArchitectureController;
+}
+
+/**
+ * Composes exactly the feature the `architecture update` leaf uses.
+ */
+async function createArchitectureUpdateDependencies(): Promise<ArchitectureUpdateDependencies> {
+  return new LeafContainerBuilder().withUpdateArchitectureFeature().build();
+}
+
+/** Registers the `architecture update` leaf under the parent supplied by its group. */
+export function registerArchitectureUpdateCommand(
+  architecture: Command,
+): void {
+  const command = architecture
+    .command("update")
+    .description("Update project architecture details (deprecated)")
+    .option("-d, --description <description>", "High-level architectural overview")
+    .option(
+      "--organization <organization>",
+      "Architectural organization (e.g., 'Clean Architecture', 'Hexagonal')",
+    )
+    .option("--pattern <patterns...>", "Architectural patterns used")
+    .option("--principle <principles...>", "Design principles followed")
+    .option(
+      "--data-store <dataStores...>",
+      "Data stores (format: name:type:purpose)",
+    )
+    .option("--stack <stack...>", "Technology stack items");
+
+  command.helpInformation = () =>
+    formatSubcommandHelp({
+      path: "architecture update",
+      metadata: metadataFromCommand(command, {
+        category: COMMAND_CATEGORY.solution,
+        examples: EXAMPLES,
+        related: RELATED_COMMANDS,
+      }),
+    });
+
+  let dependencies: ArchitectureUpdateDependencies | undefined;
+
+  command.hook("preAction", async () => {
+    dependencies = await createArchitectureUpdateDependencies();
+  });
+
+  command.action(async (options) => {
+    if (!dependencies)
+      throw new Error(
+        "Architecture update dependencies were not initialized.",
+      );
+    await architectureUpdate(options, dependencies);
+  });
+}
 
 /**
  * Command handler — delegates to controller; rejects with migration guidance
@@ -66,7 +105,7 @@ export async function architectureUpdate(
     dataStore?: string[];
     stack?: string[];
   },
-  container: IApplicationContainer
+  container: ArchitectureUpdateDependencies,
 ) {
   const renderer = Renderer.getInstance();
 
@@ -77,7 +116,7 @@ export async function architectureUpdate(
       patterns: options.pattern,
       principles: options.principle,
       dataStores: options.dataStore,
-      stack: options.stack
+      stack: options.stack,
     });
 
     renderer.success("Architecture updated successfully");
@@ -86,7 +125,10 @@ export async function architectureUpdate(
     if (message === ArchitectureErrorMessages.DEPRECATED) {
       renderer.error(ARCHITECTURE_REJECTION_MESSAGE);
     } else {
-      renderer.error("Failed to update architecture", error instanceof Error ? error : String(error));
+      renderer.error(
+        "Failed to update architecture",
+        error instanceof Error ? error : String(error),
+      );
     }
     process.exit(1);
   }

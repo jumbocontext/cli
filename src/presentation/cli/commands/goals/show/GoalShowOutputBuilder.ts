@@ -1,26 +1,73 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { ContextualGoalView } from '../../../../../application/context/goals/get/ContextualGoalView.js';
-import { Colors, BrandColors, Symbols, Templates, wordWrap } from '../../../rendering/StyleConfig.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { ContextualGoalView } from "../../../../../application/context/goals/get/ContextualGoalView.js";
 import {
-  EDGE, CONTENT_PAD, INDENT_PAD, WRAP_CONTENT, WRAP_INDENT,
-  bar, divider, heading, metaField, contentLine, indentLine,
-  wrapContent, wrapBulletContinuation,
-} from '../../../rendering/OutputLayout.js';
+  Colors,
+  BrandColors,
+  Symbols,
+  Templates,
+  wordWrap,
+} from "../../../rendering/StyleConfig.js";
+import {
+  EDGE,
+  CONTENT_PAD,
+  INDENT_PAD,
+  WRAP_CONTENT,
+  WRAP_INDENT,
+  bar,
+  divider,
+  heading,
+  metaField,
+  contentLine,
+  indentLine,
+  wrapContent,
+  wrapBulletContinuation,
+} from "../../../rendering/OutputLayout.js";
 
-const STATUS_DISPLAY: Record<string, { symbol: string; color: (s: string) => string; label: string }> = {
-  doing:       { symbol: Symbols.filledCircle, color: Colors.success,  label: "In Progress" },
-  blocked:     { symbol: Symbols.cross,        color: Colors.error,    label: "Blocked" },
-  defined:     { symbol: Symbols.dot,          color: Colors.muted,    label: "Planned" },
-  postponed:   { symbol: Symbols.dot,          color: Colors.warning,  label: "Postponed" },
-  done:        { symbol: Symbols.check,        color: Colors.success,  label: "Completed" },
-  refined:     { symbol: Symbols.check,        color: Colors.accent,   label: "Ready to Start" },
-  paused:      { symbol: Symbols.dot,          color: Colors.warning,  label: "Paused" },
-  "in-review": { symbol: Symbols.filledCircle, color: Colors.warning,  label: "Awaiting QA" },
-  approved:    { symbol: Symbols.check,        color: Colors.success,  label: "Ready for Codification" },
-  rejected:    { symbol: Symbols.cross,        color: Colors.error,    label: "Needs Rework" },
-  submitted:   { symbol: Symbols.filledCircle, color: Colors.success,  label: "Submitted" },
-  unblocked:   { symbol: Symbols.filledCircle, color: Colors.accent,   label: "Ready to Resume" },
+const STATUS_DISPLAY: Record<
+  string,
+  { symbol: string; color: (s: string) => string; label: string }
+> = {
+  doing: {
+    symbol: Symbols.filledCircle,
+    color: Colors.success,
+    label: "In Progress",
+  },
+  blocked: { symbol: Symbols.cross, color: Colors.error, label: "Blocked" },
+  defined: { symbol: Symbols.dot, color: Colors.muted, label: "Planned" },
+  postponed: { symbol: Symbols.dot, color: Colors.warning, label: "Postponed" },
+  done: { symbol: Symbols.check, color: Colors.success, label: "Completed" },
+  refined: {
+    symbol: Symbols.check,
+    color: Colors.accent,
+    label: "Ready to Start",
+  },
+  paused: { symbol: Symbols.dot, color: Colors.warning, label: "Paused" },
+  "in-review": {
+    symbol: Symbols.filledCircle,
+    color: Colors.warning,
+    label: "Awaiting QA",
+  },
+  approved: {
+    symbol: Symbols.check,
+    color: Colors.success,
+    label: "Ready for Codification",
+  },
+  rejected: {
+    symbol: Symbols.cross,
+    color: Colors.error,
+    label: "Needs Rework",
+  },
+  submitted: {
+    symbol: Symbols.filledCircle,
+    color: Colors.success,
+    label: "Submitted",
+  },
+  unblocked: {
+    symbol: Symbols.filledCircle,
+    color: Colors.accent,
+    label: "Ready to Resume",
+  },
 };
 
 /**
@@ -66,7 +113,9 @@ export class GoalShowOutputBuilder {
         current += " " + word;
       } else {
         if (isFirst) {
-          resultLines.push(`${EDGE}${CONTENT_PAD}${BrandColors.accentCyan(prefix)} ${Colors.primary(current)}`);
+          resultLines.push(
+            `${EDGE}${CONTENT_PAD}${BrandColors.accentCyan(prefix)} ${Colors.primary(current)}`,
+          );
           isFirst = false;
         } else {
           resultLines.push(`${EDGE}${CONTENT_PAD}${Colors.primary(current)}`);
@@ -76,7 +125,9 @@ export class GoalShowOutputBuilder {
     }
     if (current.length > 0) {
       if (isFirst) {
-        resultLines.push(`${EDGE}${CONTENT_PAD}${BrandColors.accentCyan(prefix)} ${Colors.primary(current)}`);
+        resultLines.push(
+          `${EDGE}${CONTENT_PAD}${BrandColors.accentCyan(prefix)} ${Colors.primary(current)}`,
+        );
       } else {
         resultLines.push(`${EDGE}${CONTENT_PAD}${Colors.primary(current)}`);
       }
@@ -168,13 +219,19 @@ export class GoalShowOutputBuilder {
       if (goal.scopeIn.length > 0) {
         lines.push(contentLine(Colors.bold("In:")));
         for (const item of goal.scopeIn) {
-          lines.push(indentLine(`${Colors.success(Symbols.check)} ${Colors.primary(item)}`));
+          lines.push(
+            indentLine(
+              `${Colors.success(Symbols.check)} ${Colors.primary(item)}`,
+            ),
+          );
         }
       }
       if (goal.scopeOut.length > 0) {
         lines.push(contentLine(Colors.bold("Out:")));
         for (const item of goal.scopeOut) {
-          lines.push(indentLine(`${Colors.error(Symbols.cross)} ${Colors.dim(item)}`));
+          lines.push(
+            indentLine(`${Colors.error(Symbols.cross)} ${Colors.dim(item)}`),
+          );
         }
       }
     }
@@ -204,7 +261,8 @@ export class GoalShowOutputBuilder {
 
     // ── Band 2: Related Context ──
 
-    const hasArchContext = context.components.length > 0 ||
+    const hasArchContext =
+      context.components.length > 0 ||
       context.dependencies.length > 0 ||
       context.decisions.length > 0 ||
       context.invariants.length > 0 ||
@@ -221,7 +279,11 @@ export class GoalShowOutputBuilder {
         band2.push(heading("Related Components"));
         for (let i = 0; i < context.components.length; i++) {
           if (i > 0) band2.push("");
-          band2.push(contentLine(BrandColors.accentCyan(context.components[i].entity.name)));
+          band2.push(
+            contentLine(
+              BrandColors.accentCyan(context.components[i].entity.name),
+            ),
+          );
           band2.push(...wrapContent(context.components[i].entity.description));
         }
       }
@@ -232,9 +294,20 @@ export class GoalShowOutputBuilder {
         for (let i = 0; i < context.dependencies.length; i++) {
           if (i > 0) band2.push("");
           const dependency = context.dependencies[i];
-          const version = dependency.entity.versionConstraint ? `@${dependency.entity.versionConstraint}` : "";
-          const purpose = dependency.entity.contract || dependency.entity.endpoint || "External dependency";
-          band2.push(contentLine(BrandColors.accentCyan(`${dependency.entity.ecosystem}:${dependency.entity.packageName}${version}`)));
+          const version = dependency.entity.versionConstraint
+            ? `@${dependency.entity.versionConstraint}`
+            : "";
+          const purpose =
+            dependency.entity.contract ||
+            dependency.entity.endpoint ||
+            "External dependency";
+          band2.push(
+            contentLine(
+              BrandColors.accentCyan(
+                `${dependency.entity.ecosystem}:${dependency.entity.packageName}${version}`,
+              ),
+            ),
+          );
           band2.push(...wrapContent(purpose));
         }
       }
@@ -262,7 +335,11 @@ export class GoalShowOutputBuilder {
         band2.push(heading("Invariants"));
         for (let i = 0; i < context.invariants.length; i++) {
           if (i > 0) band2.push("");
-          band2.push(contentLine(BrandColors.accentCyan(context.invariants[i].entity.title)));
+          band2.push(
+            contentLine(
+              BrandColors.accentCyan(context.invariants[i].entity.title),
+            ),
+          );
           band2.push(...wrapContent(context.invariants[i].entity.description));
         }
       }
@@ -272,10 +349,12 @@ export class GoalShowOutputBuilder {
         band2.push(heading("Guidelines"));
         for (let i = 0; i < context.guidelines.length; i++) {
           if (i > 0) band2.push("");
-          band2.push(...this.wrapContentWithPrefix(
-            `[${context.guidelines[i].entity.category}]`,
-            context.guidelines[i].entity.description
-          ));
+          band2.push(
+            ...this.wrapContentWithPrefix(
+              `[${context.guidelines[i].entity.category}]`,
+              context.guidelines[i].entity.description,
+            ),
+          );
         }
       }
 
@@ -284,8 +363,10 @@ export class GoalShowOutputBuilder {
 
     // Footer — divider + directive
     this.builder.addPrompt(
-      "\n" + divider() + "\n\n" +
-      `${EDGE}${Colors.primary("➤")} ${Colors.primary(`To start: jumbo goal start --id ${goal.goalId}`)}\n`
+      "\n" +
+        divider() +
+        "\n\n" +
+        `${EDGE}${Colors.primary("➤")} ${Colors.primary(`To start: jumbo goal start --id ${goal.goalId}`)}\n`,
     );
 
     return this.builder.build();
@@ -321,13 +402,13 @@ export class GoalShowOutputBuilder {
         claimedAt: goal.claimedAt,
         claimExpiresAt: goal.claimExpiresAt,
         branch: goal.branch,
-        worktree: goal.worktree
+        worktree: goal.worktree,
       },
       components: context.components,
       dependencies: context.dependencies,
       decisions: context.decisions,
       invariants: context.invariants,
-      guidelines: context.guidelines
+      guidelines: context.guidelines,
     });
     return this.builder.build();
   }
@@ -351,7 +432,7 @@ export class GoalShowOutputBuilder {
     this.builder.reset();
     this.builder.addPrompt(Templates.errorMessage("Failed to show goal"));
     this.builder.addData({
-      message: error instanceof Error ? error.message : error
+      message: error instanceof Error ? error.message : error,
     });
     return this.builder.build();
   }

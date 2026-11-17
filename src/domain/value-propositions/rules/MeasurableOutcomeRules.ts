@@ -10,7 +10,7 @@ import {
 
 export class MeasurableOutcomeMaxLengthRule implements ValidationRule<string> {
   constructor(
-    private maxLength: number = ValuePropositionLimits.MEASURABLE_OUTCOME_MAX_LENGTH
+    private maxLength: number = ValuePropositionLimits.MEASURABLE_OUTCOME_MAX_LENGTH,
   ) {}
 
   validate(measurableOutcome: string): ValidationResult {
@@ -22,7 +22,7 @@ export class MeasurableOutcomeMaxLengthRule implements ValidationRule<string> {
         : [
             formatErrorMessage(
               ValuePropositionErrorMessages.MEASURABLE_OUTCOME_TOO_LONG,
-              { max: this.maxLength }
+              { max: this.maxLength },
             ),
           ],
     };
@@ -30,6 +30,4 @@ export class MeasurableOutcomeMaxLengthRule implements ValidationRule<string> {
 }
 
 // Measurable outcome is optional, so only max length validation needed
-export const MEASURABLE_OUTCOME_RULES = [
-  new MeasurableOutcomeMaxLengthRule(),
-];
+export const MEASURABLE_OUTCOME_RULES = [new MeasurableOutcomeMaxLengthRule()];

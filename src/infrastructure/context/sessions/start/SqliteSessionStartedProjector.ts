@@ -29,7 +29,7 @@ export class SqliteSessionStartedProjector implements ISessionStartedProjector {
       event.timestamp,
       null,
       event.timestamp,
-      event.timestamp
+      event.timestamp,
     );
   }
 }

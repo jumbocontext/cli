@@ -5,7 +5,11 @@ import { ValidationRuleSet } from "../validation/ValidationRule.js";
 import { ValuePropositionAddedEvent } from "./add/ValuePropositionAddedEvent.js";
 import { ValuePropositionUpdatedEvent } from "./update/ValuePropositionUpdatedEvent.js";
 import { ValuePropositionRemovedEvent } from "./remove/ValuePropositionRemovedEvent.js";
-import { ValuePropositionProjection, ValuePropositionState, ValuePropositionEvent } from "./ValuePropositionProjection.js";
+import {
+  ValuePropositionProjection,
+  ValuePropositionState,
+  ValuePropositionEvent,
+} from "./ValuePropositionProjection.js";
 import {
   ValuePropositionEventType,
   ValuePropositionErrorMessages,
@@ -39,7 +43,7 @@ export class ValueProposition extends BaseAggregate<
 
   static rehydrate(
     id: UUID,
-    history: ValuePropositionEvent[]
+    history: ValuePropositionEvent[],
   ): ValueProposition {
     const state = ValuePropositionProjection.rehydrate(
       ValuePropositionId.fromLegacy(id),
@@ -52,7 +56,7 @@ export class ValueProposition extends BaseAggregate<
     title: string,
     description: string,
     benefit: string,
-    measurableOutcome?: string
+    measurableOutcome?: string,
   ): ValuePropositionEvent {
     // Validation using rule pattern
     ValidationRuleSet.ensure(title, TITLE_RULES);
@@ -71,7 +75,7 @@ export class ValueProposition extends BaseAggregate<
         benefit,
         measurableOutcome: measurableOutcome || null,
       },
-      ValuePropositionProjection.apply // Pass projection's apply function
+      ValuePropositionProjection.apply, // Pass projection's apply function
     );
   }
 
@@ -79,7 +83,7 @@ export class ValueProposition extends BaseAggregate<
     title?: string,
     description?: string,
     benefit?: string,
-    measurableOutcome?: string | null
+    measurableOutcome?: string | null,
   ): ValuePropositionUpdatedEvent {
     // 1. Ensure at least one field is being updated
     if (
@@ -114,7 +118,7 @@ export class ValueProposition extends BaseAggregate<
         benefit,
         measurableOutcome,
       },
-      ValuePropositionProjection.apply
+      ValuePropositionProjection.apply,
     );
   }
 
@@ -124,7 +128,7 @@ export class ValueProposition extends BaseAggregate<
     return this.makeEvent<ValuePropositionRemovedEvent>(
       ValuePropositionEventType.REMOVED,
       {}, // Empty payload as per event definition
-      ValuePropositionProjection.apply
+      ValuePropositionProjection.apply,
     );
   }
 }

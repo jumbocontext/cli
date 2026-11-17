@@ -3,11 +3,11 @@ import { RemoveComponentResponse } from "./RemoveComponentResponse.js";
 import { IRemoveComponentGateway } from "./IRemoveComponentGateway.js";
 
 export class RemoveComponentController {
-  constructor(
-    private readonly gateway: IRemoveComponentGateway
-  ) {}
+  constructor(private readonly gateway: IRemoveComponentGateway) {}
 
-  async handle(request: RemoveComponentRequest): Promise<RemoveComponentResponse> {
+  async handle(
+    request: RemoveComponentRequest,
+  ): Promise<RemoveComponentResponse> {
     return this.gateway.removeComponent(request);
   }
 }

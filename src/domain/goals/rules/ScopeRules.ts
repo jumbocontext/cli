@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { GoalErrorMessages, GoalLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  GoalErrorMessages,
+  GoalLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class ScopeMaxCountRule implements ValidationRule<string[]> {
   constructor(private maxCount: number = GoalLimits.MAX_SCOPE_ITEMS) {}
@@ -10,7 +17,11 @@ export class ScopeMaxCountRule implements ValidationRule<string[]> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(GoalErrorMessages.TOO_MANY_SCOPE_ITEMS, { max: this.maxCount })],
+        : [
+            formatErrorMessage(GoalErrorMessages.TOO_MANY_SCOPE_ITEMS, {
+              max: this.maxCount,
+            }),
+          ],
     };
   }
 }
@@ -25,7 +36,11 @@ export class ScopeItemMaxLengthRule implements ValidationRule<string[]> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(GoalErrorMessages.SCOPE_ITEM_TOO_LONG, { max: this.maxLength })],
+        : [
+            formatErrorMessage(GoalErrorMessages.SCOPE_ITEM_TOO_LONG, {
+              max: this.maxLength,
+            }),
+          ],
     };
   }
 }

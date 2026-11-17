@@ -1,8 +1,17 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { DecisionView } from '../../../../../application/context/decisions/DecisionView.js';
-import { Colors, BrandColors, Symbols } from '../../../rendering/StyleConfig.js';
-import { heading, contentLine, metaField, wrapContent } from '../../../rendering/OutputLayout.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { DecisionView } from "../../../../../application/context/decisions/DecisionView.js";
+import {
+  Colors,
+  BrandColors,
+  Symbols,
+} from "../../../rendering/StyleConfig.js";
+import {
+  heading,
+  contentLine,
+  metaField,
+  wrapContent,
+} from "../../../rendering/OutputLayout.js";
 
 export class DecisionListOutputBuilder {
   private builder = new TerminalOutputBuilder();
@@ -13,18 +22,30 @@ export class DecisionListOutputBuilder {
     const lines: string[] = [];
 
     lines.push("");
-    lines.push(heading(`Architectural Decisions${filterLabel} (${decisions.length})`));
+    lines.push(
+      heading(`Architectural Decisions${filterLabel} (${decisions.length})`),
+    );
 
     for (let i = 0; i < decisions.length; i++) {
       const d = decisions[i];
       if (i > 0) lines.push("");
-      lines.push(contentLine(`${BrandColors.accentCyan(d.title)} ${Colors.dim(`[${d.status}]`)}`));
+      lines.push(
+        contentLine(
+          `${BrandColors.accentCyan(d.title)} ${Colors.dim(`[${d.status}]`)}`,
+        ),
+      );
       if (d.context) {
-        const truncated = d.context.length > 100 ? d.context.substring(0, 100) + "..." : d.context;
+        const truncated =
+          d.context.length > 100
+            ? d.context.substring(0, 100) + "..."
+            : d.context;
         lines.push(...wrapContent(truncated));
       }
       if (d.rationale) {
-        const truncated = d.rationale.length > 100 ? d.rationale.substring(0, 100) + "..." : d.rationale;
+        const truncated =
+          d.rationale.length > 100
+            ? d.rationale.substring(0, 100) + "..."
+            : d.rationale;
         lines.push(metaField("Rationale", Colors.primary(truncated), 11));
       }
       if (d.supersededBy) {
@@ -40,7 +61,10 @@ export class DecisionListOutputBuilder {
     return this.builder.build();
   }
 
-  buildStructuredOutput(decisions: DecisionView[], filter: string): TerminalOutput {
+  buildStructuredOutput(
+    decisions: DecisionView[],
+    filter: string,
+  ): TerminalOutput {
     this.builder.reset();
     this.builder.addData({
       count: decisions.length,
@@ -65,7 +89,9 @@ export class DecisionListOutputBuilder {
 
   buildFailureError(error: Error | string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Failed to list decisions")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Failed to list decisions")}`,
+    );
     this.builder.addData({
       message: error instanceof Error ? error.message : error,
     });

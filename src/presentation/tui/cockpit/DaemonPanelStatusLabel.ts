@@ -1,9 +1,5 @@
-import {
-  DaemonEventStatus,
-} from "../daemon-subprocesses/DaemonEventStatus.js";
-import {
-  SubprocessStatus,
-} from "../daemon-subprocesses/SubprocessStatus.js";
+import { DaemonEventStatus } from "../daemon-subprocesses/DaemonEventStatus.js";
+import { SubprocessStatus } from "../daemon-subprocesses/SubprocessStatus.js";
 import type { CockpitDaemonSnapshot } from "./CockpitDaemonSnapshot.js";
 import type { IDaemonConstants } from "./daemons/IDaemonConstants.js";
 

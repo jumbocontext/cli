@@ -1,4 +1,7 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
 import { RelationErrorMessages } from "../Constants.js";
 
 export class RelationIdRequiredRule implements ValidationRule<string> {
@@ -11,6 +14,4 @@ export class RelationIdRequiredRule implements ValidationRule<string> {
   }
 }
 
-export const RELATION_ID_RULES = [
-  new RelationIdRequiredRule(),
-];
+export const RELATION_ID_RULES = [new RelationIdRequiredRule()];

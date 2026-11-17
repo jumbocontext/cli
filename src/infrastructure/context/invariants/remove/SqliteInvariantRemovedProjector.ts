@@ -9,7 +9,9 @@ import { InvariantRemovedEvent } from "../../../../domain/invariants/remove/Inva
 import { InvariantView } from "../../../../application/context/invariants/InvariantView.js";
 import { UUID } from "../../../../domain/BaseEvent.js";
 
-export class SqliteInvariantRemovedProjector implements IInvariantRemovedProjector, IInvariantRemoveReader {
+export class SqliteInvariantRemovedProjector
+  implements IInvariantRemovedProjector, IInvariantRemoveReader
+{
   constructor(private db: Database) {}
 
   async applyInvariantRemoved(event: InvariantRemovedEvent): Promise<void> {

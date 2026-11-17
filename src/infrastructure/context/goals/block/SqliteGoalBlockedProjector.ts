@@ -27,7 +27,7 @@ export class SqliteGoalBlockedProjector implements IGoalBlockedProjector {
       event.payload.note,
       event.version,
       event.timestamp,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 }

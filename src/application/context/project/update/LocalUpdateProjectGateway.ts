@@ -7,10 +7,12 @@ import { IProjectUpdateReader } from "./IProjectUpdateReader.js";
 export class LocalUpdateProjectGateway implements IUpdateProjectGateway {
   constructor(
     private readonly commandHandler: UpdateProjectCommandHandler,
-    private readonly reader: IProjectUpdateReader
+    private readonly reader: IProjectUpdateReader,
   ) {}
 
-  async updateProject(request: UpdateProjectRequest): Promise<UpdateProjectResponse> {
+  async updateProject(
+    request: UpdateProjectRequest,
+  ): Promise<UpdateProjectResponse> {
     const result = await this.commandHandler.execute({
       purpose: request.purpose,
     });

@@ -6,7 +6,10 @@
  */
 
 import { Database } from "better-sqlite3";
-import { IComponentViewReader, ComponentStatusFilter } from "../../../../application/context/components/get/IComponentViewReader.js";
+import {
+  IComponentViewReader,
+  ComponentStatusFilter,
+} from "../../../../application/context/components/get/IComponentViewReader.js";
 import { ComponentView } from "../../../../application/context/components/ComponentView.js";
 import { ComponentSearchCriteria } from "../../../../application/context/components/search/ComponentSearchCriteria.js";
 import { ComponentRecord } from "../ComponentRecord.js";
@@ -17,7 +20,9 @@ export class SqliteComponentViewReader implements IComponentViewReader {
 
   constructor(private db: Database) {}
 
-  async findAll(status: ComponentStatusFilter = "all"): Promise<ComponentView[]> {
+  async findAll(
+    status: ComponentStatusFilter = "all",
+  ): Promise<ComponentView[]> {
     let query = "SELECT * FROM component_views";
     const params: string[] = [];
 
@@ -29,7 +34,9 @@ export class SqliteComponentViewReader implements IComponentViewReader {
     query += " ORDER BY name";
 
     const rows = this.db.prepare(query).all(...params);
-    return rows.map((row) => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   async findByIds(ids: string[]): Promise<ComponentView[]> {
@@ -38,7 +45,9 @@ export class SqliteComponentViewReader implements IComponentViewReader {
     const placeholders = ids.map(() => "?").join(",");
     const query = `SELECT * FROM component_views WHERE componentId IN (${placeholders}) ORDER BY name`;
     const rows = this.db.prepare(query).all(...ids);
-    return rows.map((row) => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   async search(criteria: ComponentSearchCriteria): Promise<ComponentView[]> {
@@ -75,7 +84,9 @@ export class SqliteComponentViewReader implements IComponentViewReader {
     query += " ORDER BY name";
 
     const rows = this.db.prepare(query).all(...params);
-    return rows.map((row) => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   /**

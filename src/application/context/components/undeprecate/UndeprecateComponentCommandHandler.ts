@@ -9,17 +9,22 @@ export class UndeprecateComponentCommandHandler {
   constructor(
     private readonly eventWriter: IComponentUndeprecatedEventWriter,
     private readonly eventBus: IEventBus,
-    private readonly reader: IComponentUndeprecateReader
+    private readonly reader: IComponentUndeprecateReader,
   ) {}
 
-  async execute(command: UndeprecateComponentCommand): Promise<{ componentId: string }> {
+  async execute(
+    command: UndeprecateComponentCommand,
+  ): Promise<{ componentId: string }> {
     const existing = await this.reader.findById(command.componentId);
     if (!existing) {
       throw new Error(`Component not found: ${command.componentId}`);
     }
 
     const history = await this.eventWriter.readStream(command.componentId);
-    const component = Component.rehydrate(command.componentId, history as ComponentEvent[]);
+    const component = Component.rehydrate(
+      command.componentId,
+      history as ComponentEvent[],
+    );
 
     const event = component.undeprecate(command.reason);
 

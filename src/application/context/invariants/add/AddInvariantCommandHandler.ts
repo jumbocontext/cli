@@ -19,10 +19,12 @@ export class AddInvariantCommandHandler {
   constructor(
     private readonly eventWriter: IInvariantAddedEventWriter,
     private readonly invariantReader: IInvariantAddReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
-  async execute(command: AddInvariantCommand): Promise<{ invariantId: string }> {
+  async execute(
+    command: AddInvariantCommand,
+  ): Promise<{ invariantId: string }> {
     // Check for duplicate title (idempotency)
     const existing = await this.invariantReader.findByTitle(command.title);
     if (existing) {
@@ -37,7 +39,7 @@ export class AddInvariantCommandHandler {
     const event = invariant.add(
       command.title,
       command.description,
-      command.rationale
+      command.rationale,
     );
 
     // 3. Persist event to file store

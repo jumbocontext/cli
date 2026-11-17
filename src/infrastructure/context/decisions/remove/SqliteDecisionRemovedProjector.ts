@@ -6,10 +6,19 @@ export class SqliteDecisionRemovedProjector implements IDecisionRemovedProjector
   constructor(private readonly db: Database) {}
 
   async applyDecisionRemoved(event: DecisionRemovedEvent): Promise<void> {
-    this.db.prepare(`
+    this.db
+      .prepare(
+        `
       UPDATE decision_views
       SET status = ?, version = ?, updatedAt = ?
       WHERE decisionId = ?
-    `).run(event.payload.status, event.version, event.timestamp, event.aggregateId);
+    `,
+      )
+      .run(
+        event.payload.status,
+        event.version,
+        event.timestamp,
+        event.aggregateId,
+      );
   }
 }

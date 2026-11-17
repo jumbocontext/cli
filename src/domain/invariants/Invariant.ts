@@ -5,14 +5,16 @@
  * Invariants ensure all work respects technical, business, or process constraints.
  */
 
-import {
-  BaseAggregate,
-  AggregateState,
-} from "../BaseAggregate.js";
+import { BaseAggregate, AggregateState } from "../BaseAggregate.js";
 import { UUID, ISO8601 } from "../BaseEvent.js";
 import { InvariantId } from "./InvariantId.js";
 import { ValidationRuleSet } from "../validation/ValidationRule.js";
-import { InvariantEvent, InvariantAddedEvent, InvariantUpdatedEvent, InvariantRemovedEvent } from "./EventIndex.js";
+import {
+  InvariantEvent,
+  InvariantAddedEvent,
+  InvariantUpdatedEvent,
+  InvariantRemovedEvent,
+} from "./EventIndex.js";
 import { InvariantEventType, InvariantErrorMessages } from "./Constants.js";
 import { TITLE_RULES } from "./rules/TitleRules.js";
 import { DESCRIPTION_RULES } from "./rules/DescriptionRules.js";
@@ -51,8 +53,10 @@ export class Invariant extends BaseAggregate<InvariantState, InvariantEvent> {
       case InvariantEventType.UPDATED: {
         const e = event as InvariantUpdatedEvent;
         if (e.payload.title !== undefined) state.title = e.payload.title;
-        if (e.payload.description !== undefined) state.description = e.payload.description;
-        if (e.payload.rationale !== undefined) state.rationale = e.payload.rationale;
+        if (e.payload.description !== undefined)
+          state.description = e.payload.description;
+        if (e.payload.rationale !== undefined)
+          state.rationale = e.payload.rationale;
         state.version = e.version;
         break;
       }
@@ -111,7 +115,7 @@ export class Invariant extends BaseAggregate<InvariantState, InvariantEvent> {
   add(
     title: string,
     description: string,
-    rationale?: string
+    rationale?: string,
   ): InvariantAddedEvent {
     // Input validation using rule pattern
     ValidationRuleSet.ensure(title, TITLE_RULES);
@@ -126,7 +130,7 @@ export class Invariant extends BaseAggregate<InvariantState, InvariantEvent> {
         description,
         rationale: rationale || null,
       },
-      Invariant.apply
+      Invariant.apply,
     );
   }
 
@@ -172,13 +176,14 @@ export class Invariant extends BaseAggregate<InvariantState, InvariantEvent> {
     } = {};
 
     if (updates.title !== undefined) payload.title = updates.title;
-    if (updates.description !== undefined) payload.description = updates.description;
+    if (updates.description !== undefined)
+      payload.description = updates.description;
     if (updates.rationale !== undefined) payload.rationale = updates.rationale;
 
     return this.makeEvent<InvariantUpdatedEvent>(
       InvariantEventType.UPDATED,
       payload,
-      Invariant.apply
+      Invariant.apply,
     );
   }
 
@@ -197,7 +202,7 @@ export class Invariant extends BaseAggregate<InvariantState, InvariantEvent> {
       {
         removedAt: new Date().toISOString() as ISO8601,
       },
-      Invariant.apply
+      Invariant.apply,
     );
   }
 }

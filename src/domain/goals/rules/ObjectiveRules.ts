@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { GoalErrorMessages, GoalLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  GoalErrorMessages,
+  GoalLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class ObjectiveRequiredRule implements ValidationRule<string> {
   validate(objective: string): ValidationResult {
@@ -20,7 +27,11 @@ export class ObjectiveMaxLengthRule implements ValidationRule<string> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(GoalErrorMessages.OBJECTIVE_TOO_LONG, { max: this.maxLength })],
+        : [
+            formatErrorMessage(GoalErrorMessages.OBJECTIVE_TOO_LONG, {
+              max: this.maxLength,
+            }),
+          ],
     };
   }
 }

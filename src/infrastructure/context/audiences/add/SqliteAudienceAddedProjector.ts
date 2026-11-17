@@ -28,7 +28,7 @@ export class SqliteAudienceAddedProjector implements IAudienceAddedProjector {
       0, // isRemoved = false
       event.version,
       event.timestamp,
-      event.timestamp
+      event.timestamp,
     );
   }
 }

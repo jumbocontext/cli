@@ -4,7 +4,10 @@ import { IDependencyRemovedEventReader } from "./IDependencyRemovedEventReader.j
 import { IDependencyRemoveReader } from "./IDependencyRemoveReader.js";
 import { IEventBus } from "../../../messaging/IEventBus.js";
 import { Dependency } from "../../../../domain/dependencies/Dependency.js";
-import { DependencyErrorMessages, formatErrorMessage } from "../../../../domain/dependencies/Constants.js";
+import {
+  DependencyErrorMessages,
+  formatErrorMessage,
+} from "../../../../domain/dependencies/Constants.js";
 
 /**
  * Application layer command handler for removing a dependency.
@@ -15,15 +18,21 @@ export class RemoveDependencyCommandHandler {
     private readonly eventWriter: IDependencyRemovedEventWriter,
     private readonly eventReader: IDependencyRemovedEventReader,
     private readonly dependencyReader: IDependencyRemoveReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
-  async execute(command: RemoveDependencyCommand): Promise<{ dependencyId: string }> {
+  async execute(
+    command: RemoveDependencyCommand,
+  ): Promise<{ dependencyId: string }> {
     // 1. Check if dependency exists
-    const existingView = await this.dependencyReader.findById(command.dependencyId);
+    const existingView = await this.dependencyReader.findById(
+      command.dependencyId,
+    );
     if (!existingView) {
       throw new Error(
-        formatErrorMessage(DependencyErrorMessages.NOT_FOUND, { id: command.dependencyId })
+        formatErrorMessage(DependencyErrorMessages.NOT_FOUND, {
+          id: command.dependencyId,
+        }),
       );
     }
 

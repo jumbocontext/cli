@@ -9,11 +9,11 @@ import { SearchDecisionsRequest } from "./SearchDecisionsRequest.js";
 import { SearchDecisionsResponse } from "./SearchDecisionsResponse.js";
 
 export class LocalSearchDecisionsGateway implements ISearchDecisionsGateway {
-  constructor(
-    private readonly decisionViewReader: IDecisionViewReader
-  ) {}
+  constructor(private readonly decisionViewReader: IDecisionViewReader) {}
 
-  async searchDecisions(request: SearchDecisionsRequest): Promise<SearchDecisionsResponse> {
+  async searchDecisions(
+    request: SearchDecisionsRequest,
+  ): Promise<SearchDecisionsResponse> {
     const decisions = await this.decisionViewReader.search(request.criteria);
     return { decisions };
   }

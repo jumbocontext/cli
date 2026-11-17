@@ -91,7 +91,7 @@ export class TextRenderer implements IFormatRenderer {
     }
 
     // Banner is always shown in normal/verbose mode
-    lines.forEach(line => console.log(line));
+    lines.forEach((line) => console.log(line));
   }
 
   divider(): void {
@@ -108,7 +108,6 @@ export class TextRenderer implements IFormatRenderer {
     console.log("\n");
     console.log(Colors.dim("─".repeat(width)));
     console.log("\n");
-
   }
 
   /**
@@ -116,7 +115,9 @@ export class TextRenderer implements IFormatRenderer {
    */
   private renderData(data: RenderData, indentLevel: number): void {
     for (const [key, value] of Object.entries(data)) {
-      console.log(Templates.keyValue(key, this.formatValue(value), indentLevel));
+      console.log(
+        Templates.keyValue(key, this.formatValue(value), indentLevel),
+      );
     }
   }
 
@@ -129,7 +130,10 @@ export class TextRenderer implements IFormatRenderer {
     // If just 1-2 keys, show inline
     if (entries.length <= 2) {
       const formatted = entries
-        .map(([key, value]) => `${Colors.accent(key + ":")} ${this.formatValue(value)}`)
+        .map(
+          ([key, value]) =>
+            `${Colors.accent(key + ":")} ${this.formatValue(value)}`,
+        )
         .join(" ");
       console.log(Layout.indent.repeat(indentLevel) + formatted);
       return;
@@ -158,7 +162,7 @@ export class TextRenderer implements IFormatRenderer {
     if (Array.isArray(value)) {
       if (value.length === 0) return Colors.dim("[]");
       if (value.length <= 3) {
-        return value.map(v => this.formatValue(v)).join(", ");
+        return value.map((v) => this.formatValue(v)).join(", ");
       }
       return `${value.length} items`;
     }

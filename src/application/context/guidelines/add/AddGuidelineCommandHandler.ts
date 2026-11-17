@@ -13,10 +13,12 @@ import { Guideline } from "../../../../domain/guidelines/Guideline.js";
 export class AddGuidelineCommandHandler {
   constructor(
     private readonly eventWriter: IGuidelineAddedEventWriter,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
-  async execute(command: AddGuidelineCommand): Promise<{ guidelineId: string }> {
+  async execute(
+    command: AddGuidelineCommand,
+  ): Promise<{ guidelineId: string }> {
     // 1. Create new aggregate
     const guideline = Guideline.create();
     const guidelineId = guideline.snapshot.id;
@@ -27,7 +29,7 @@ export class AddGuidelineCommandHandler {
       command.title,
       command.description,
       command.rationale,
-      command.examples
+      command.examples,
     );
 
     // 3. Persist event to file store

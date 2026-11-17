@@ -12,10 +12,12 @@ export class AddDependencyCommandHandler {
   constructor(
     private readonly eventWriter: IDependencyAddedEventWriter,
     private readonly eventBus: IEventBus,
-    private readonly dependencyReader: IDependencyAddReader
+    private readonly dependencyReader: IDependencyAddReader,
   ) {}
 
-  async execute(command: AddDependencyCommand): Promise<{ dependencyId: string }> {
+  async execute(
+    command: AddDependencyCommand,
+  ): Promise<{ dependencyId: string }> {
     const identity = this.resolveIdentity(command);
 
     const existingDependency = await this.dependencyReader.findByIdentity(
@@ -37,7 +39,7 @@ export class AddDependencyCommandHandler {
       identity.packageName,
       identity.versionConstraint,
       command.endpoint,
-      command.contract
+      command.contract,
     );
 
     // 3. Persist event to file store
@@ -56,7 +58,9 @@ export class AddDependencyCommandHandler {
     versionConstraint: string | null;
   } {
     if (!command.name || !command.ecosystem || !command.packageName) {
-      throw new Error("Dependency identity is required. Provide name/ecosystem/packageName.");
+      throw new Error(
+        "Dependency identity is required. Provide name/ecosystem/packageName.",
+      );
     }
 
     return {

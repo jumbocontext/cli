@@ -50,7 +50,7 @@ export class DecisionShowOutputBuilder {
     this.builder.reset();
     this.builder.addPrompt(
       `${decisionShowStyle.error(TuiGlyphs.cross)} ${decisionShowStyle.error("Decision not found")}\n` +
-      `${decisionShowStyle.muted(`No decision exists with ID: ${decisionId}`)}`
+        `${decisionShowStyle.muted(`No decision exists with ID: ${decisionId}`)}`,
     );
     return this.builder.build();
   }
@@ -60,17 +60,18 @@ export class DecisionShowOutputBuilder {
     const details = error instanceof Error ? error.message : error;
     this.builder.addPrompt(
       `${decisionShowStyle.error(TuiGlyphs.cross)} ${decisionShowStyle.error("Failed to show decision")}\n` +
-      decisionShowStyle.muted(details)
+        decisionShowStyle.muted(details),
     );
     return this.builder.build();
   }
 
   private field(label: string, value: string | number | null): string {
-    const rendered = value === null
-      ? decisionShowStyle.muted("(null)")
-      : value === ""
-        ? decisionShowStyle.muted("(empty)")
-        : decisionShowStyle.primary(String(value));
+    const rendered =
+      value === null
+        ? decisionShowStyle.muted("(null)")
+        : value === ""
+          ? decisionShowStyle.muted("(empty)")
+          : decisionShowStyle.primary(String(value));
 
     return `${decisionShowStyle.label(`${label}:`)} ${rendered}`;
   }
@@ -82,7 +83,10 @@ export class DecisionShowOutputBuilder {
     }
 
     return `${label}\n${values
-      .map((value) => `  ${decisionShowStyle.muted(TuiGlyphs.bullet)} ${decisionShowStyle.primary(value === "" ? "(empty)" : value)}`)
+      .map(
+        (value) =>
+          `  ${decisionShowStyle.muted(TuiGlyphs.bullet)} ${decisionShowStyle.primary(value === "" ? "(empty)" : value)}`,
+      )
       .join("\n")}`;
   }
 }

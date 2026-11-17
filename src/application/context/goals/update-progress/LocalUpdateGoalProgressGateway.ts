@@ -5,10 +5,12 @@ import { UpdateGoalProgressCommandHandler } from "./UpdateGoalProgressCommandHan
 
 export class LocalUpdateGoalProgressGateway implements IUpdateGoalProgressGateway {
   constructor(
-    private readonly commandHandler: UpdateGoalProgressCommandHandler
+    private readonly commandHandler: UpdateGoalProgressCommandHandler,
   ) {}
 
-  async updateGoalProgress(request: UpdateGoalProgressRequest): Promise<UpdateGoalProgressResponse> {
+  async updateGoalProgress(
+    request: UpdateGoalProgressRequest,
+  ): Promise<UpdateGoalProgressResponse> {
     const goalContextView = await this.commandHandler.execute({
       goalId: request.goalId,
       taskDescription: request.taskDescription,

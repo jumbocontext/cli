@@ -5,5 +5,7 @@ import { GoalSubmittedForReviewEvent } from "../../../../domain/goals/review/Goa
  * Used by GoalSubmittedForReviewEventHandler to update the projection store.
  */
 export interface IGoalSubmittedForReviewProjector {
-  applyGoalSubmittedForReview(event: GoalSubmittedForReviewEvent): Promise<void>;
+  applyGoalSubmittedForReview(
+    event: GoalSubmittedForReviewEvent,
+  ): Promise<void>;
 }

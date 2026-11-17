@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { DecisionErrorMessages, DecisionLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  DecisionErrorMessages,
+  DecisionLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class ReasonRequiredRule implements ValidationRule<string> {
   validate(reason: string): ValidationResult {
@@ -20,7 +27,11 @@ export class ReasonMaxLengthRule implements ValidationRule<string> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(DecisionErrorMessages.REASON_TOO_LONG, { max: this.maxLength })],
+        : [
+            formatErrorMessage(DecisionErrorMessages.REASON_TOO_LONG, {
+              max: this.maxLength,
+            }),
+          ],
     };
   }
 }

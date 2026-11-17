@@ -1,4 +1,7 @@
-import { EntityTypeValue, RelationStrengthValue } from "../../../../domain/relations/Constants.js";
+import {
+  EntityTypeValue,
+  RelationStrengthValue,
+} from "../../../../domain/relations/Constants.js";
 import { RelationDirection } from "./RelationDirection.js";
 import { RelationStatusFilter } from "./RelationStatusFilter.js";
 import { RelationNodeReference } from "./RelationNodeReference.js";

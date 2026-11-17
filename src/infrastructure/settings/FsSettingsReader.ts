@@ -9,7 +9,7 @@ import { JsonValue, setJsoncValue } from "./JsoncSettingsEditor.js";
 /**
  * JsoncSettingsReader - File system implementation for reading settings.
  *
- * Reads settings from .jumbo/settings.jsonc file.
+ * Reads settings from the project's convention-derived settings.json file.
  * Creates the file with defaults if it doesn't exist.
  * Supports JSONC format (JSON with comments).
  */
@@ -17,14 +17,11 @@ export class FsSettingsReader implements ISettingsReader {
   private readonly settingsFilePath: string;
 
   constructor(rootDir: string) {
-    this.settingsFilePath = path.join(rootDir, "settings.jsonc");
+    this.settingsFilePath = path.join(rootDir, "settings.json");
   }
 
   async read(): Promise<Settings> {
-    // Check if settings file exists
     if (!(await fs.pathExists(this.settingsFilePath))) {
-      // Create file with defaults
-      await this.createDefaultSettingsFile();
       return DEFAULT_SETTINGS;
     }
 
@@ -38,7 +35,7 @@ export class FsSettingsReader implements ISettingsReader {
 
       if (errors.length > 0) {
         throw new Error(
-          `Invalid JSON in settings file: ${this.formatParseErrors(errors)}`
+          `Invalid JSON in settings file: ${this.formatParseErrors(errors)}`,
         );
       }
 
@@ -47,7 +44,7 @@ export class FsSettingsReader implements ISettingsReader {
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(
-          `Failed to read settings file at ${this.settingsFilePath}: ${error.message}`
+          `Failed to read settings file at ${this.settingsFilePath}: ${error.message}`,
         );
       }
       throw error;
@@ -56,6 +53,8 @@ export class FsSettingsReader implements ISettingsReader {
 
   async write(settings: Settings): Promise<void> {
     const normalizedSettings = this.mergeWithDefaults(settings);
+
+    await fs.ensureDir(path.dirname(this.settingsFilePath));
 
     if (!(await fs.pathExists(this.settingsFilePath))) {
       const content = this.buildSettingsFileContent(normalizedSettings);
@@ -68,12 +67,14 @@ export class FsSettingsReader implements ISettingsReader {
     jsonc.parse(existingContent, errors, { allowTrailingComma: true });
     if (errors.length > 0) {
       throw new Error(
-        `Invalid JSON in settings file: ${this.formatParseErrors(errors)}`
+        `Invalid JSON in settings file: ${this.formatParseErrors(errors)}`,
       );
     }
 
     let updated = existingContent;
-    for (const { path: fieldPath, value } of this.knownValueEntries(normalizedSettings)) {
+    for (const { path: fieldPath, value } of this.knownValueEntries(
+      normalizedSettings,
+    )) {
       updated = setJsoncValue(updated, fieldPath, value);
     }
     await fs.writeFile(this.settingsFilePath, updated, "utf-8");
@@ -85,7 +86,7 @@ export class FsSettingsReader implements ISettingsReader {
    * in the document.
    */
   private knownValueEntries(
-    settings: Settings
+    settings: Settings,
   ): Array<{ path: jsonc.JSONPath; value: JsonValue }> {
     return [
       { path: ["project", "id"], value: settings.project!.id },
@@ -95,8 +96,14 @@ export class FsSettingsReader implements ISettingsReader {
         value: settings.claims.claimDurationMinutes,
       },
       { path: ["telemetry", "enabled"], value: settings.telemetry.enabled },
-      { path: ["telemetry", "anonymousId"], value: settings.telemetry.anonymousId },
-      { path: ["telemetry", "consentGiven"], value: settings.telemetry.consentGiven },
+      {
+        path: ["telemetry", "anonymousId"],
+        value: settings.telemetry.anonymousId,
+      },
+      {
+        path: ["telemetry", "consentGiven"],
+        value: settings.telemetry.consentGiven,
+      },
       {
         path: ["tui", "showLaunchpadWelcome"],
         value: settings.tui!.showLaunchpadWelcome,
@@ -124,13 +131,6 @@ export class FsSettingsReader implements ISettingsReader {
   }
 
   /**
-   * Create settings file with default values and helpful comments
-   */
-  private async createDefaultSettingsFile(): Promise<void> {
-    await this.write(DEFAULT_SETTINGS);
-  }
-
-  /**
    * Merge parsed settings with defaults to handle missing fields
    */
   private mergeWithDefaults(settings: Partial<Settings>): Settings {
@@ -151,9 +151,11 @@ export class FsSettingsReader implements ISettingsReader {
         enabled:
           settings.telemetry?.enabled ?? DEFAULT_SETTINGS.telemetry.enabled,
         anonymousId:
-          settings.telemetry?.anonymousId ?? DEFAULT_SETTINGS.telemetry.anonymousId,
+          settings.telemetry?.anonymousId ??
+          DEFAULT_SETTINGS.telemetry.anonymousId,
         consentGiven:
-          settings.telemetry?.consentGiven ?? DEFAULT_SETTINGS.telemetry.consentGiven,
+          settings.telemetry?.consentGiven ??
+          DEFAULT_SETTINGS.telemetry.consentGiven,
       },
       tui: {
         showLaunchpadWelcome:
@@ -169,57 +171,7 @@ export class FsSettingsReader implements ISettingsReader {
   }
 
   private buildSettingsFileContent(settings: Settings): string {
-    const projectIdValue = settings.project?.id === null
-      ? "null"
-      : `"${settings.project!.id}"`;
-    const anonymousIdValue = settings.telemetry.anonymousId === null
-      ? "null"
-      : `"${settings.telemetry.anonymousId}"`;
-
-    return `{
-  // Stable project identity
-  "project": {
-    // Generated at project initialization and reused for project event streams
-    "id": ${projectIdValue}
-  },
-
-  // Quality Assurance settings for goal completion
-  "qa": {
-    // Default turn limit for QA iterations on goal completion
-    // When this limit is reached, the goal is automatically completed
-    "defaultTurnLimit": ${settings.qa.defaultTurnLimit}
-  },
-
-  // Claim settings for goal ownership and concurrency control
-  "claims": {
-    // Duration in minutes that a goal claim remains valid
-    // After this duration, the claim expires and another worker can claim the goal
-    "claimDurationMinutes": ${settings.claims.claimDurationMinutes}
-  },
-
-  // Telemetry consent and anonymous identity settings
-  "telemetry": {
-    // Whether anonymous usage telemetry is enabled (opt-out model)
-    "enabled": ${settings.telemetry.enabled},
-    // Anonymous identifier used for telemetry events after consent
-    "anonymousId": ${anonymousIdValue},
-    // Whether the user has explicitly made a telemetry consent decision
-    "consentGiven": ${settings.telemetry.consentGiven}
-  },
-
-  // TUI presentation preferences
-  "tui": {
-    // Whether the Cockpit launchpad welcome panel should be shown
-    "showLaunchpadWelcome": ${settings.tui!.showLaunchpadWelcome}
-  },
-
-  // Session workflow preferences
-  "session": {
-    // Maximum number of available backlog goals to include in session start
-    "backlogPreviewSize": ${settings.session!.backlogPreviewSize}
-  }
-}
-`;
+    return `${JSON.stringify({ ...settings, connection: { backend: "local" } }, null, 2)}\n`;
   }
 
   private async readRawSettings(): Promise<Partial<Settings>> {
@@ -231,7 +183,7 @@ export class FsSettingsReader implements ISettingsReader {
 
     if (errors.length > 0) {
       throw new Error(
-        `Invalid JSON in settings file: ${this.formatParseErrors(errors)}`
+        `Invalid JSON in settings file: ${this.formatParseErrors(errors)}`,
       );
     }
 
@@ -245,7 +197,7 @@ export class FsSettingsReader implements ISettingsReader {
     return errors
       .map(
         (err) =>
-          `Error at offset ${err.offset}: ${jsonc.printParseErrorCode(err.error)}`
+          `Error at offset ${err.offset}: ${jsonc.printParseErrorCode(err.error)}`,
       )
       .join(", ");
   }

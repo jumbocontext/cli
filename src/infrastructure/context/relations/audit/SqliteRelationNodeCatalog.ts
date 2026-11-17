@@ -1,7 +1,10 @@
 import { Database } from "better-sqlite3";
 import { IRelationNodeCatalog } from "../../../../application/context/relations/audit/IRelationNodeCatalog.js";
 import { RelationNodeCatalogEntry } from "../../../../application/context/relations/audit/RelationNodeCatalogEntry.js";
-import { EntityType, EntityTypeValue } from "../../../../domain/relations/Constants.js";
+import {
+  EntityType,
+  EntityTypeValue,
+} from "../../../../domain/relations/Constants.js";
 
 interface CatalogRow {
   entityType: string;
@@ -30,7 +33,8 @@ export class SqliteRelationNodeCatalog implements IRelationNodeCatalog {
   constructor(private readonly db: Database) {}
 
   async findAll(): Promise<RelationNodeCatalogEntry[]> {
-    const query = Object.values(SELECT_BY_ENTITY_TYPE).join(" UNION ALL ") +
+    const query =
+      Object.values(SELECT_BY_ENTITY_TYPE).join(" UNION ALL ") +
       " ORDER BY entityType ASC, entityId ASC";
     const rows = this.db.prepare(query).all() as CatalogRow[];
     return rows.map((row) => ({

@@ -9,10 +9,12 @@ export class RenameComponentCommandHandler {
   constructor(
     private readonly eventWriter: IComponentRenamedEventWriter,
     private readonly eventBus: IEventBus,
-    private readonly reader: IComponentRenameReader
+    private readonly reader: IComponentRenameReader,
   ) {}
 
-  async execute(command: RenameComponentCommand): Promise<{ componentId: string }> {
+  async execute(
+    command: RenameComponentCommand,
+  ): Promise<{ componentId: string }> {
     // 1. Check component exists
     const existing = await this.reader.findById(command.componentId);
     if (!existing) {
@@ -21,7 +23,10 @@ export class RenameComponentCommandHandler {
 
     // 2. Rehydrate aggregate from event history
     const history = await this.eventWriter.readStream(command.componentId);
-    const component = Component.rehydrate(command.componentId, history as ComponentEvent[]);
+    const component = Component.rehydrate(
+      command.componentId,
+      history as ComponentEvent[],
+    );
 
     // 3. Domain logic produces event
     const event = component.rename(command.name);

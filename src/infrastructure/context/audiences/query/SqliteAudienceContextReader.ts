@@ -15,7 +15,9 @@ export class SqliteAudienceContextReader implements IAudienceContextReader {
 
   async findAllActive(): Promise<AudienceView[]> {
     const rows = this.db
-      .prepare("SELECT * FROM audience_views WHERE isRemoved = 0 ORDER BY priority ASC, createdAt ASC")
+      .prepare(
+        "SELECT * FROM audience_views WHERE isRemoved = 0 ORDER BY priority ASC, createdAt ASC",
+      )
       .all();
     return rows.map((row) => this.mapRowToView(row as Record<string, unknown>));
   }

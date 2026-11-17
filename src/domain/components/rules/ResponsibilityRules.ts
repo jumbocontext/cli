@@ -1,11 +1,11 @@
 import {
   ValidationRule,
-  ValidationResult
+  ValidationResult,
 } from "../../validation/ValidationRule.js";
 import {
   ComponentErrorMessages,
   ComponentLimits,
-  formatErrorMessage
+  formatErrorMessage,
 } from "../Constants.js";
 
 export class ResponsibilityRequiredRule implements ValidationRule<string> {
@@ -19,7 +19,9 @@ export class ResponsibilityRequiredRule implements ValidationRule<string> {
 }
 
 export class ResponsibilityMaxLengthRule implements ValidationRule<string> {
-  constructor(private maxLength: number = ComponentLimits.RESPONSIBILITY_MAX_LENGTH) {}
+  constructor(
+    private maxLength: number = ComponentLimits.RESPONSIBILITY_MAX_LENGTH,
+  ) {}
 
   validate(responsibility: string): ValidationResult {
     const isValid = responsibility.length <= this.maxLength;
@@ -27,7 +29,11 @@ export class ResponsibilityMaxLengthRule implements ValidationRule<string> {
       isValid,
       errors: isValid
         ? []
-        : [formatErrorMessage(ComponentErrorMessages.RESPONSIBILITY_TOO_LONG, { max: this.maxLength })],
+        : [
+            formatErrorMessage(ComponentErrorMessages.RESPONSIBILITY_TOO_LONG, {
+              max: this.maxLength,
+            }),
+          ],
     };
   }
 }

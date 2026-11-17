@@ -16,7 +16,7 @@ import { AudiencePain } from "../../../../domain/audience-pains/AudiencePain.js"
 export class AddAudiencePainCommandHandler {
   constructor(
     private readonly eventWriter: IAudiencePainAddedEventWriter,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
   async execute(command: AddAudiencePainCommand): Promise<{ painId: string }> {

@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { RelationErrorMessages, RelationLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  RelationErrorMessages,
+  RelationLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class DescriptionRequiredRule implements ValidationRule<string> {
   validate(description: string): ValidationResult {
@@ -16,17 +23,18 @@ export class DescriptionMaxLengthRule implements ValidationRule<string> {
     const isValid = description.length <= RelationLimits.DESCRIPTION_MAX_LENGTH;
     return {
       isValid,
-      errors: isValid ? [] : [
-        formatErrorMessage(
-          RelationErrorMessages.DESCRIPTION_TOO_LONG,
-          { max: RelationLimits.DESCRIPTION_MAX_LENGTH }
-        )
-      ],
+      errors: isValid
+        ? []
+        : [
+            formatErrorMessage(RelationErrorMessages.DESCRIPTION_TOO_LONG, {
+              max: RelationLimits.DESCRIPTION_MAX_LENGTH,
+            }),
+          ],
     };
   }
 }
 
 export const DESCRIPTION_RULES = [
   new DescriptionRequiredRule(),
-  new DescriptionMaxLengthRule()
+  new DescriptionMaxLengthRule(),
 ];

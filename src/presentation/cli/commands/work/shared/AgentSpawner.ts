@@ -7,8 +7,10 @@
 
 import { spawn } from "node:child_process";
 
-export const SUPPORTED_AGENTS = ["claude", "antigravity", "copilot", "codex", "cursor", "vibe"] as const;
-export type AgentId = typeof SUPPORTED_AGENTS[number];
+import { SUPPORTED_AGENTS } from "./SupportedAgents.js";
+
+export { SUPPORTED_AGENTS };
+export type AgentId = (typeof SUPPORTED_AGENTS)[number];
 
 export interface AgentCommand {
   readonly executable: string;
@@ -17,12 +19,12 @@ export interface AgentCommand {
 }
 
 export const AGENT_COMMANDS: Record<AgentId, AgentCommand> = {
-  claude:  { executable: "claude",     promptFlag: "-p" },
-  antigravity: { executable: "agy",    promptFlag: "-p" },
+  claude: { executable: "claude", promptFlag: "-p" },
+  antigravity: { executable: "agy", promptFlag: "-p" },
   copilot: { executable: "gh copilot", promptFlag: "-p" },
-  codex:   { executable: "codex",      args: ["exec"] },
-  cursor:  { executable: "cursor",     promptFlag: "-p" },
-  vibe:    { executable: "vibe",       promptFlag: "-p" },
+  codex: { executable: "codex", args: ["exec"] },
+  cursor: { executable: "cursor", promptFlag: "-p" },
+  vibe: { executable: "vibe", promptFlag: "-p" },
 };
 
 /**
@@ -43,7 +45,10 @@ export function spawnAgent(agentId: AgentId, prompt: string): Promise<number> {
   });
 }
 
-export function buildAgentCommandLine(command: AgentCommand, prompt: string): string {
+export function buildAgentCommandLine(
+  command: AgentCommand,
+  prompt: string,
+): string {
   const escaped = prompt.replace(/"/g, '\\"');
   return [
     command.executable,

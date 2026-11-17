@@ -11,7 +11,7 @@ import { DecisionAddedEvent } from "../../../../domain/decisions/add/DecisionAdd
 export class AddDecisionCommandHandler {
   constructor(
     private readonly eventWriter: IDecisionAddedEventWriter,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
   async execute(command: AddDecisionCommand): Promise<{ decisionId: string }> {
@@ -25,7 +25,7 @@ export class AddDecisionCommandHandler {
       command.context,
       command.rationale,
       command.alternatives,
-      command.consequences
+      command.consequences,
     ) as DecisionAddedEvent;
 
     // 3. Persist event to file store

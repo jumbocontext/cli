@@ -1,8 +1,17 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { ValuePropositionView } from '../../../../../application/context/value-propositions/ValuePropositionView.js';
-import { Colors, BrandColors, Symbols } from '../../../rendering/StyleConfig.js';
-import { heading, contentLine, metaField, wrapContent } from '../../../rendering/OutputLayout.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { ValuePropositionView } from "../../../../../application/context/value-propositions/ValuePropositionView.js";
+import {
+  Colors,
+  BrandColors,
+  Symbols,
+} from "../../../rendering/StyleConfig.js";
+import {
+  heading,
+  contentLine,
+  metaField,
+  wrapContent,
+} from "../../../rendering/OutputLayout.js";
 
 export class ValueListOutputBuilder {
   private builder = new TerminalOutputBuilder();
@@ -23,7 +32,9 @@ export class ValueListOutputBuilder {
         lines.push(metaField("Benefit", Colors.primary(v.benefit), 9));
       }
       if (v.measurableOutcome) {
-        lines.push(metaField("Outcome", Colors.primary(v.measurableOutcome), 9));
+        lines.push(
+          metaField("Outcome", Colors.primary(v.measurableOutcome), 9),
+        );
       }
       lines.push(metaField("ID", Colors.muted(v.valuePropositionId), 9));
     }
@@ -51,7 +62,9 @@ export class ValueListOutputBuilder {
 
   buildFailureError(error: Error | string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Failed to list value propositions")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Failed to list value propositions")}`,
+    );
     this.builder.addData({
       message: error instanceof Error ? error.message : error,
     });

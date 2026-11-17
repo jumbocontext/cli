@@ -21,9 +21,13 @@ function fromSnapshot(
   observedAtMs: number,
 ): readonly DaemonEventRow[] {
   const eventRows = snapshot.events.map((event, eventIndex) =>
-    toDaemonEventRow(snapshot, event, eventIndex, observedAtMs)
+    toDaemonEventRow(snapshot, event, eventIndex, observedAtMs),
   );
-  const lifecycleRow = getLifecycleEventRow(snapshot, eventRows.length, observedAtMs);
+  const lifecycleRow = getLifecycleEventRow(
+    snapshot,
+    eventRows.length,
+    observedAtMs,
+  );
 
   if (lifecycleRow === undefined) {
     return eventRows;
@@ -37,9 +41,7 @@ function getLifecycleEventRow(
   eventIndex: number,
   observedAtMs: number,
 ): DaemonEventRow | undefined {
-  if (
-    snapshot.status === SubprocessStatus.STOPPING
-  ) {
+  if (snapshot.status === SubprocessStatus.STOPPING) {
     return createDaemonEventRow(
       snapshot,
       DaemonEventStatusValues.STOPPING,
@@ -68,11 +70,9 @@ function getLifecycleEventRow(
   }
   if (
     snapshot.status === SubprocessStatus.STOPPED &&
-    (
-      snapshot.stopRequested === true ||
+    (snapshot.stopRequested === true ||
       snapshot.exitCode !== undefined ||
-      snapshot.exitSignal !== undefined
-    )
+      snapshot.exitSignal !== undefined)
   ) {
     return createDaemonEventRow(
       snapshot,
@@ -111,9 +111,10 @@ function toDaemonEventRow(
 ): DaemonEventRow {
   const status = normalizeDaemonEventStatus(event.status);
   const timestampMs = event.timestampMs ?? observedAtMs;
-  const key = event.timestampMs === undefined
-    ? `${snapshot.name}-lifecycle-${status}-${snapshot.pid ?? "none"}-${snapshot.exitCode ?? "none"}-${snapshot.stopRequested ?? false}`
-    : `${snapshot.name}-${eventIndex}-${event.status}-${event.goalId ?? "none"}-${timestampMs}`;
+  const key =
+    event.timestampMs === undefined
+      ? `${snapshot.name}-lifecycle-${status}-${snapshot.pid ?? "none"}-${snapshot.exitCode ?? "none"}-${snapshot.stopRequested ?? false}`
+      : `${snapshot.name}-${eventIndex}-${event.status}-${event.goalId ?? "none"}-${timestampMs}`;
 
   return {
     key,
@@ -127,9 +128,7 @@ function toDaemonEventRow(
 
 function normalizeDaemonEventStatus(status: string): DaemonEventStatus {
   if (
-    Object.values(DaemonEventStatusValues).includes(
-      status as DaemonEventStatus,
-    )
+    Object.values(DaemonEventStatusValues).includes(status as DaemonEventStatus)
   ) {
     return status as DaemonEventStatus;
   }

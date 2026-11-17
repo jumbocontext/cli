@@ -9,12 +9,10 @@ export interface UpdateTelemetryConsentCommandResult {
 }
 
 export class UpdateTelemetryConsentCommandHandler {
-  constructor(
-    private readonly settingsReader: ISettingsReader
-  ) {}
+  constructor(private readonly settingsReader: ISettingsReader) {}
 
   async execute(
-    command: UpdateTelemetryConsentCommand
+    command: UpdateTelemetryConsentCommand,
   ): Promise<UpdateTelemetryConsentCommandResult> {
     const settings = await this.settingsReader.read();
 

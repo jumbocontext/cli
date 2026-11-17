@@ -38,10 +38,10 @@ export const ValuePropositionLimits = {
 // Helper function for message formatting
 export function formatErrorMessage(
   template: string,
-  replacements: Record<string, string | number>
+  replacements: Record<string, string | number>,
 ): string {
   return Object.entries(replacements).reduce(
     (msg, [key, value]) => msg.replace(`{${key}}`, String(value)),
-    template
+    template,
   );
 }

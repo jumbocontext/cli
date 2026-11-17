@@ -9,7 +9,7 @@ import { GoalEventType, GoalStatusType } from "../Constants.js";
 export interface GoalRefinedEvent extends BaseEvent {
   readonly type: typeof GoalEventType.REFINED;
   readonly payload: {
-    readonly status: GoalStatusType;     // Will be 'refined'
-    readonly refinedAt: string;          // ISO 8601 timestamp when refined
+    readonly status: GoalStatusType; // Will be 'refined'
+    readonly refinedAt: string; // ISO 8601 timestamp when refined
   };
 }

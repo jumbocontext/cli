@@ -14,7 +14,7 @@ import { EntityType } from "../../../../domain/relations/Constants.js";
 export class ArchitectureUpdatedEventHandler implements IEventHandler {
   constructor(
     private readonly projector: IArchitectureUpdatedProjector,
-    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar
+    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar,
   ) {}
 
   async handle(event: BaseEvent): Promise<void> {
@@ -23,7 +23,7 @@ export class ArchitectureUpdatedEventHandler implements IEventHandler {
     await this.relationMaintenanceGoalRegistrar.execute(
       EntityType.ARCHITECTURE,
       architectureUpdatedEvent.aggregateId,
-      "architecture was updated"
+      "architecture was updated",
     );
   }
 }

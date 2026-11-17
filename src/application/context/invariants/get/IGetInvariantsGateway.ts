@@ -8,5 +8,7 @@ import { GetAllInvariantsResponse } from "./GetAllInvariantsResponse.js";
 export interface IGetInvariantsGateway {
   getInvariant(request: GetInvariantRequest): Promise<GetInvariantResponse>;
   getInvariants(request: GetInvariantsRequest): Promise<GetInvariantsResponse>;
-  getAllInvariants(request: GetAllInvariantsRequest): Promise<GetAllInvariantsResponse>;
+  getAllInvariants(
+    request: GetAllInvariantsRequest,
+  ): Promise<GetAllInvariantsResponse>;
 }

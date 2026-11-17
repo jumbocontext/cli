@@ -10,7 +10,9 @@ export const DaemonFrameStatusOverlay = {
 } as const;
 
 function isLine(lineIndex: number): boolean {
-  return lineIndex === Math.floor(DaemonFrameDimensions.renderedFrameHeight / 2);
+  return (
+    lineIndex === Math.floor(DaemonFrameDimensions.renderedFrameHeight / 2)
+  );
 }
 
 function getGlyphCellPrefix(

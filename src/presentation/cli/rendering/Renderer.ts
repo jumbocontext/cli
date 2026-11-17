@@ -5,7 +5,15 @@
  * Supports multiple formats (text/json/yaml/ndjson) and verbosity levels.
  */
 
-import { IFormatRenderer, OutputFormat, RendererConfig, RenderData, VerbosityLevel } from "./types.js";
+import {
+  IFormatRenderer,
+  OutputFormat,
+  OUTPUT_FORMAT,
+  OUTPUT_FORMATS,
+  RendererConfig,
+  RenderData,
+  VerbosityLevel,
+} from "./types.js";
 import { TextRenderer } from "./formats/TextRenderer.js";
 import { JsonRenderer } from "./formats/JsonRenderer.js";
 import { YamlRenderer } from "./formats/YamlRenderer.js";
@@ -62,30 +70,34 @@ export class Renderer {
     }
 
     // Auto-detect: TTY = text, pipe = json
-    return process.stdout.isTTY ? "text" : "json";
+    return process.stdout.isTTY ? OUTPUT_FORMAT.text : OUTPUT_FORMAT.json;
   }
 
   private isValidFormat(format: string): boolean {
-    return ["text", "json", "yaml", "ndjson"].includes(format);
+    return (OUTPUT_FORMATS as readonly string[]).includes(format);
   }
 
   /**
    * Create the appropriate format renderer
    */
-  private createRenderer(format: OutputFormat, verbosity: VerbosityLevel, forceHuman: boolean): IFormatRenderer {
+  private createRenderer(
+    format: OutputFormat,
+    verbosity: VerbosityLevel,
+    forceHuman: boolean,
+  ): IFormatRenderer {
     // Onboarding always uses friendly text mode
     if (forceHuman) {
       return new TextRenderer("verbose");
     }
 
     switch (format) {
-      case "text":
+      case OUTPUT_FORMAT.text:
         return new TextRenderer(verbosity);
-      case "json":
+      case OUTPUT_FORMAT.json:
         return new JsonRenderer();
-      case "yaml":
+      case OUTPUT_FORMAT.yaml:
         return new YamlRenderer();
-      case "ndjson":
+      case OUTPUT_FORMAT.ndjson:
         return new NdjsonRenderer();
       default:
         return new TextRenderer(verbosity);

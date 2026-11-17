@@ -4,7 +4,10 @@ import { IGoalPausedEventReader } from "./IGoalPausedEventReader.js";
 import { IGoalReader } from "./IGoalReader.js";
 import { IEventBus } from "../../../messaging/IEventBus.js";
 import { Goal } from "../../../../domain/goals/Goal.js";
-import { GoalErrorMessages, formatErrorMessage } from "../../../../domain/goals/Constants.js";
+import {
+  GoalErrorMessages,
+  formatErrorMessage,
+} from "../../../../domain/goals/Constants.js";
 
 /**
  * Handles pausing of an active goal.
@@ -15,7 +18,7 @@ export class PauseGoalCommandHandler {
     private readonly eventWriter: IGoalPausedEventWriter,
     private readonly eventReader: IGoalPausedEventReader,
     private readonly goalReader: IGoalReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
   async execute(command: PauseGoalCommand): Promise<{ goalId: string }> {
@@ -23,7 +26,9 @@ export class PauseGoalCommandHandler {
     const view = await this.goalReader.findById(command.goalId);
     if (!view) {
       throw new Error(
-        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, { id: command.goalId })
+        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, {
+          id: command.goalId,
+        }),
       );
     }
 

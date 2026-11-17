@@ -1,4 +1,4 @@
-import { EntityRenderer } from './EntityRenderer.js';
+import { EntityRenderer } from "./EntityRenderer.js";
 
 /**
  * Registry for entity renderers.

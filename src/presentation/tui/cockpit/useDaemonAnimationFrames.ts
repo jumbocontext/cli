@@ -30,8 +30,8 @@ export function useDaemonAnimationFrames({
     if (reviewerFrameDurationMs <= 0) return;
 
     const timer = setInterval(() => {
-      setReviewerFrameIndex((previousFrameIndex) =>
-        (previousFrameIndex + 1) % REVIEWER_FRAME_COUNT
+      setReviewerFrameIndex(
+        (previousFrameIndex) => (previousFrameIndex + 1) % REVIEWER_FRAME_COUNT,
       );
     }, reviewerFrameDurationMs);
 
@@ -42,8 +42,8 @@ export function useDaemonAnimationFrames({
     if (REFINER_FRAME_COUNT <= 1 || refinerFrameDurationMs <= 0) return;
 
     const timer = setInterval(() => {
-      setRefinerFrameIndex((previousFrameIndex) =>
-        (previousFrameIndex + 1) % REFINER_FRAME_COUNT
+      setRefinerFrameIndex(
+        (previousFrameIndex) => (previousFrameIndex + 1) % REFINER_FRAME_COUNT,
       );
     }, refinerFrameDurationMs);
 
@@ -54,8 +54,8 @@ export function useDaemonAnimationFrames({
     if (codifierFrameDurationMs <= 0) return;
 
     const timer = setInterval(() => {
-      setCodifierFrameIndex((previousFrameIndex) =>
-        (previousFrameIndex + 1) % CODIFIER_FRAME_COUNT
+      setCodifierFrameIndex(
+        (previousFrameIndex) => (previousFrameIndex + 1) % CODIFIER_FRAME_COUNT,
       );
     }, codifierFrameDurationMs);
 

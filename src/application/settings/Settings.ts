@@ -1,6 +1,6 @@
 /**
  * Settings type definitions for application-wide configuration.
- * Settings are stored in .jumbo/settings.jsonc file.
+ * Project settings live in settings.json beneath the per-user application root's project directory.
  */
 
 export interface QASettings {

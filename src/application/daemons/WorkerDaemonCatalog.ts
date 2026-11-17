@@ -1,6 +1,6 @@
 export const WORKER_DAEMON_NAMES = ["reviewer", "refiner", "codifier"] as const;
 
-export type WorkerDaemonName = typeof WORKER_DAEMON_NAMES[number];
+export type WorkerDaemonName = (typeof WORKER_DAEMON_NAMES)[number];
 
 export interface WorkerDaemonConfig {
   readonly agentId: string;
@@ -8,7 +8,9 @@ export interface WorkerDaemonConfig {
   readonly maxRetries: number;
 }
 
-export type WorkerDaemonConfigs = Readonly<Record<WorkerDaemonName, WorkerDaemonConfig>>;
+export type WorkerDaemonConfigs = Readonly<
+  Record<WorkerDaemonName, WorkerDaemonConfig>
+>;
 
 export const DEFAULT_WORKER_DAEMON_CONFIG: WorkerDaemonConfig = {
   agentId: "codex",

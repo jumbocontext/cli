@@ -7,10 +7,12 @@ import { IComponentUpdateReader } from "./IComponentUpdateReader.js";
 export class LocalUpdateComponentGateway implements IUpdateComponentGateway {
   constructor(
     private readonly commandHandler: UpdateComponentCommandHandler,
-    private readonly reader: IComponentUpdateReader
+    private readonly reader: IComponentUpdateReader,
   ) {}
 
-  async updateComponent(request: UpdateComponentRequest): Promise<UpdateComponentResponse> {
+  async updateComponent(
+    request: UpdateComponentRequest,
+  ): Promise<UpdateComponentResponse> {
     const result = await this.commandHandler.execute({
       componentId: request.componentId,
       description: request.description,

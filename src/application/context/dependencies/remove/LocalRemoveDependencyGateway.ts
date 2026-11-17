@@ -7,10 +7,12 @@ import { IDependencyRemoveReader } from "./IDependencyRemoveReader.js";
 export class LocalRemoveDependencyGateway implements IRemoveDependencyGateway {
   constructor(
     private readonly commandHandler: RemoveDependencyCommandHandler,
-    private readonly reader: IDependencyRemoveReader
+    private readonly reader: IDependencyRemoveReader,
   ) {}
 
-  async removeDependency(request: RemoveDependencyRequest): Promise<RemoveDependencyResponse> {
+  async removeDependency(
+    request: RemoveDependencyRequest,
+  ): Promise<RemoveDependencyResponse> {
     const result = await this.commandHandler.execute({
       dependencyId: request.dependencyId,
       reason: request.reason,

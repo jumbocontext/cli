@@ -18,11 +18,12 @@ export class FileLogger implements ILogger {
    */
   constructor(
     logDir: string,
-    private readonly minLevel: LogLevel = LogLevel.INFO
+    private readonly minLevel: LogLevel = LogLevel.INFO,
   ) {
-    this.logFilePath = path.join(logDir, FileLogger.buildDailyLogFileName(new Date()));
-    this.ensureLogDirectory();
-    this.initializeStream();
+    this.logFilePath = path.join(
+      logDir,
+      FileLogger.buildDailyLogFileName(new Date()),
+    );
   }
 
   static buildDailyLogFileName(date: Date): string {
@@ -32,16 +33,23 @@ export class FileLogger implements ILogger {
     return `${yyyy}${mm}${dd}.log`;
   }
 
-  error(message: string, error?: Error | unknown, context?: Record<string, unknown>): void {
+  error(
+    message: string,
+    error?: Error | unknown,
+    context?: Record<string, unknown>,
+  ): void {
     if (this.shouldLog(LogLevel.ERROR)) {
       const entry = this.formatEntry(LogLevel.ERROR, message, context);
 
       // Add error details if provided
       if (error) {
-        const errorDetails = error instanceof Error
-          ? { message: error.message, stack: error.stack }
-          : { value: String(error) };
-        this.writeEntry(entry + "\n" + JSON.stringify({ error: errorDetails }, null, 2));
+        const errorDetails =
+          error instanceof Error
+            ? { message: error.message, stack: error.stack }
+            : { value: String(error) };
+        this.writeEntry(
+          entry + "\n" + JSON.stringify({ error: errorDetails }, null, 2),
+        );
       } else {
         this.writeEntry(entry);
       }
@@ -93,7 +101,7 @@ export class FileLogger implements ILogger {
   private initializeStream(): void {
     this.writeStream = fs.createWriteStream(this.logFilePath, {
       flags: "a", // append mode
-      encoding: "utf8"
+      encoding: "utf8",
     });
 
     this.writeStream.on("error", (err) => {
@@ -105,7 +113,12 @@ export class FileLogger implements ILogger {
    * Check if a log level should be written
    */
   private shouldLog(level: LogLevel): boolean {
-    const levels = [LogLevel.ERROR, LogLevel.WARN, LogLevel.INFO, LogLevel.DEBUG];
+    const levels = [
+      LogLevel.ERROR,
+      LogLevel.WARN,
+      LogLevel.INFO,
+      LogLevel.DEBUG,
+    ];
     const minIndex = levels.indexOf(this.minLevel);
     const currentIndex = levels.indexOf(level);
     return currentIndex <= minIndex;
@@ -114,7 +127,11 @@ export class FileLogger implements ILogger {
   /**
    * Format a log entry with timestamp, level, message, and context
    */
-  private formatEntry(level: LogLevel, message: string, context?: Record<string, unknown>): string {
+  private formatEntry(
+    level: LogLevel,
+    message: string,
+    context?: Record<string, unknown>,
+  ): string {
     const timestamp = new Date().toISOString();
     const contextStr = context ? " " + JSON.stringify(context) : "";
     return `[${timestamp}] ${level}: ${message}${contextStr}`;
@@ -125,6 +142,7 @@ export class FileLogger implements ILogger {
    */
   private writeEntry(entry: string): void {
     if (!this.writeStream) {
+      this.ensureLogDirectory();
       this.initializeStream();
     }
 

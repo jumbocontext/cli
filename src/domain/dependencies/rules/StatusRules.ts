@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { DependencyErrorMessages, DependencyStatus, DependencyStatusType } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  DependencyErrorMessages,
+  DependencyStatus,
+  DependencyStatusType,
+} from "../Constants.js";
 
 export class StatusValueRule implements ValidationRule<DependencyStatusType> {
   validate(status: DependencyStatusType): ValidationResult {
@@ -12,6 +19,4 @@ export class StatusValueRule implements ValidationRule<DependencyStatusType> {
   }
 }
 
-export const STATUS_RULES = [
-  new StatusValueRule(),
-];
+export const STATUS_RULES = [new StatusValueRule()];

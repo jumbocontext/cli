@@ -5,7 +5,7 @@ import { PlannedFileChange } from "../context/project/init/PlannedFileChange.js"
  */
 export interface ISettingsInitializer {
   /**
-   * Ensure the .jumbo/settings.jsonc file exists with defaults.
+   * Ensure the project's convention-derived settings.json exists with defaults.
    */
   ensureSettingsFileExists(): Promise<void>;
 

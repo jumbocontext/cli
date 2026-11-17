@@ -9,7 +9,7 @@ import { GoalEventType, GoalStatusType } from "../Constants.js";
 export interface GoalBlockedEvent extends BaseEvent {
   readonly type: typeof GoalEventType.BLOCKED;
   readonly payload: {
-    readonly status: GoalStatusType;  // Will be 'blocked'
-    readonly note: string;             // Reason for blocking
+    readonly status: GoalStatusType; // Will be 'blocked'
+    readonly note: string; // Reason for blocking
   };
 }

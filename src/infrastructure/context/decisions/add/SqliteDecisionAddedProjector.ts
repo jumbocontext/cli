@@ -28,13 +28,13 @@ export class SqliteDecisionAddedProjector implements IDecisionAddedProjector {
       event.payload.rationale,
       JSON.stringify(event.payload.alternatives),
       event.payload.consequences,
-      'active',
+      "active",
       null,
       null,
       null,
       event.version,
       event.timestamp,
-      event.timestamp
+      event.timestamp,
     );
   }
 }

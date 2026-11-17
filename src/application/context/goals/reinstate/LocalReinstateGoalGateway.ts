@@ -7,7 +7,9 @@ import { ReinstateGoalResponse } from "./ReinstateGoalResponse.js";
 export class LocalReinstateGoalGateway implements IReinstateGoalGateway {
   constructor(private readonly commandHandler: ReinstateGoalCommandHandler) {}
 
-  async reinstateGoal(request: ReinstateGoalRequest): Promise<ReinstateGoalResponse> {
+  async reinstateGoal(
+    request: ReinstateGoalRequest,
+  ): Promise<ReinstateGoalResponse> {
     await this.commandHandler.execute({ goalId: request.goalId });
     return { status: GoalStatus.TODO };
   }

@@ -4,7 +4,12 @@ import { SearchResponse } from "../../../../application/context/search/SearchRes
 import { TerminalOutput } from "../../output/TerminalOutput.js";
 import { TerminalOutputBuilder } from "../../output/TerminalOutputBuilder.js";
 import { Colors, BrandColors } from "../../rendering/StyleConfig.js";
-import { contentLine, heading, metaField, wrapContent } from "../../rendering/OutputLayout.js";
+import {
+  contentLine,
+  heading,
+  metaField,
+  wrapContent,
+} from "../../rendering/OutputLayout.js";
 
 export type SearchOutputFormat = "default" | "compact";
 
@@ -17,11 +22,17 @@ interface SearchOutputCriteria {
 export class SearchOutputBuilder {
   private readonly builder = new TerminalOutputBuilder();
 
-  build(response: SearchResponse, criteria: SearchOutputCriteria, format: SearchOutputFormat): TerminalOutput {
+  build(
+    response: SearchResponse,
+    criteria: SearchOutputCriteria,
+    format: SearchOutputFormat,
+  ): TerminalOutput {
     this.builder.reset();
 
     if (response.hits.length === 0) {
-      this.builder.addPrompt(Colors.muted(`No memory search results matched "${criteria.query}".`));
+      this.builder.addPrompt(
+        Colors.muted(`No memory search results matched "${criteria.query}".`),
+      );
       return this.builder.build();
     }
 
@@ -31,7 +42,13 @@ export class SearchOutputBuilder {
 
     for (const group of this.resolveGroups(response)) {
       lines.push("");
-      lines.push(contentLine(Colors.bold(`${formatCategory(group.category)} (${group.hits.length})`)));
+      lines.push(
+        contentLine(
+          Colors.bold(
+            `${formatCategory(group.category)} (${group.hits.length})`,
+          ),
+        ),
+      );
 
       for (const hit of group.hits) {
         lines.push(...this.renderHit(hit, format));
@@ -42,7 +59,11 @@ export class SearchOutputBuilder {
     return this.builder.build();
   }
 
-  buildStructuredOutput(response: SearchResponse, criteria: SearchOutputCriteria, format: SearchOutputFormat): TerminalOutput {
+  buildStructuredOutput(
+    response: SearchResponse,
+    criteria: SearchOutputCriteria,
+    format: SearchOutputFormat,
+  ): TerminalOutput {
     this.builder.reset();
 
     this.builder.addData({
@@ -63,12 +84,18 @@ export class SearchOutputBuilder {
   private renderHit(hit: SearchHit, format: SearchOutputFormat): string[] {
     if (format === "compact") {
       return [
-        contentLine(`${Colors.muted(hit.source.id)}  ${BrandColors.accentCyan(hit.title)}  ${Colors.dim(`score ${hit.score}`)}`),
+        contentLine(
+          `${Colors.muted(hit.source.id)}  ${BrandColors.accentCyan(hit.title)}  ${Colors.dim(`score ${hit.score}`)}`,
+        ),
       ];
     }
 
     const lines: string[] = [];
-    lines.push(contentLine(`${BrandColors.accentCyan(hit.title)} ${Colors.dim(`score ${hit.score}`)}`));
+    lines.push(
+      contentLine(
+        `${BrandColors.accentCyan(hit.title)} ${Colors.dim(`score ${hit.score}`)}`,
+      ),
+    );
 
     if (hit.summary) {
       lines.push(...wrapContent(hit.summary));
@@ -78,7 +105,13 @@ export class SearchOutputBuilder {
       lines.push(...wrapContent(hit.snippet));
     }
 
-    lines.push(metaField("Source", Colors.muted(`${hit.source.type}:${hit.source.id}`), 8));
+    lines.push(
+      metaField(
+        "Source",
+        Colors.muted(`${hit.source.type}:${hit.source.id}`),
+        8,
+      ),
+    );
 
     const facets = formatFacets(hit);
     if (facets.length > 0) {
@@ -107,7 +140,10 @@ export class SearchOutputBuilder {
   }
 }
 
-function serializeHit(hit: SearchHit, format: SearchOutputFormat): Record<string, unknown> {
+function serializeHit(
+  hit: SearchHit,
+  format: SearchOutputFormat,
+): Record<string, unknown> {
   const base = {
     source: hit.source,
     category: hit.category,
@@ -135,7 +171,9 @@ function formatCategory(category: string): string {
 }
 
 function formatFacets(hit: SearchHit): string[] {
-  return Object.entries(hit.facets).map(([key, value]) => `${key}: ${formatFacetValue(value)}`);
+  return Object.entries(hit.facets).map(
+    ([key, value]) => `${key}: ${formatFacetValue(value)}`,
+  );
 }
 
 function formatFacetValue(value: SearchHit["facets"][string]): string {

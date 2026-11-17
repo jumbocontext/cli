@@ -23,7 +23,7 @@ import {
 export class UpdateAudienceCommandHandler {
   constructor(
     private readonly eventWriter: IAudienceUpdatedEventWriter,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
   async execute(command: UpdateAudienceCommand): Promise<{ audienceId: UUID }> {
@@ -35,21 +35,21 @@ export class UpdateAudienceCommandHandler {
       throw new Error(
         formatErrorMessage(AudienceErrorMessages.NOT_FOUND_WITH_ID, {
           id: command.audienceId,
-        })
+        }),
       );
     }
 
     // 3. Rehydrate aggregate from event history
     const audience = Audience.rehydrate(
       command.audienceId,
-      history as AudienceEvent[] // Type assertion needed for event store abstraction
+      history as AudienceEvent[], // Type assertion needed for event store abstraction
     );
 
     // 4. Domain logic produces event
     const event = audience.update(
       command.name,
       command.description,
-      command.priority
+      command.priority,
     );
 
     // 5. Persist event to file store

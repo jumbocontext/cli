@@ -7,10 +7,12 @@ import { IValuePropositionUpdateReader } from "../update/IValuePropositionUpdate
 export class LocalAddValuePropositionGateway implements IAddValuePropositionGateway {
   constructor(
     private readonly commandHandler: AddValuePropositionCommandHandler,
-    private readonly viewReader: IValuePropositionUpdateReader
+    private readonly viewReader: IValuePropositionUpdateReader,
   ) {}
 
-  async addValueProposition(request: AddValuePropositionRequest): Promise<AddValuePropositionResponse> {
+  async addValueProposition(
+    request: AddValuePropositionRequest,
+  ): Promise<AddValuePropositionResponse> {
     const result = await this.commandHandler.execute({
       title: request.title,
       description: request.description,

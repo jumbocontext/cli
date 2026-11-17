@@ -12,11 +12,13 @@ export class LocalUpdateArchitectureGateway implements IUpdateArchitectureGatewa
   constructor(
     private readonly eventWriter: IArchitectureUpdatedEventWriter,
     private readonly eventReader: IArchitectureUpdatedEventReader,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
-  async updateArchitecture(request: UpdateArchitectureRequest): Promise<UpdateArchitectureResponse> {
-    const architectureId = 'architecture'; // Single architecture per project
+  async updateArchitecture(
+    request: UpdateArchitectureRequest,
+  ): Promise<UpdateArchitectureResponse> {
+    const architectureId = "architecture"; // Single architecture per project
 
     // 1. Load aggregate from event store
     const history = await this.eventReader.readStream(architectureId);
@@ -30,8 +32,8 @@ export class LocalUpdateArchitectureGateway implements IUpdateArchitectureGatewa
     // 3. Parse data stores from string format
     let dataStores: DataStore[] | undefined;
     if (request.dataStores) {
-      dataStores = request.dataStores.map(ds => {
-        const [name, type, purpose] = ds.split(':');
+      dataStores = request.dataStores.map((ds) => {
+        const [name, type, purpose] = ds.split(":");
         return { name, type, purpose };
       });
     }
@@ -43,7 +45,7 @@ export class LocalUpdateArchitectureGateway implements IUpdateArchitectureGatewa
       patterns: request.patterns,
       principles: request.principles,
       dataStores,
-      stack: request.stack
+      stack: request.stack,
     });
 
     // 5. Persist event to file store

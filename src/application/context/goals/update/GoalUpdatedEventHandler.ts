@@ -14,7 +14,7 @@ import { EntityType } from "../../../../domain/relations/Constants.js";
 export class GoalUpdatedEventHandler implements IEventHandler {
   constructor(
     private readonly projector: IGoalUpdatedProjector,
-    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar
+    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar,
   ) {}
 
   async handle(event: BaseEvent): Promise<void> {
@@ -23,7 +23,7 @@ export class GoalUpdatedEventHandler implements IEventHandler {
     await this.relationMaintenanceGoalRegistrar.execute(
       EntityType.GOAL,
       goalUpdatedEvent.aggregateId,
-      "goal was updated"
+      "goal was updated",
     );
   }
 }

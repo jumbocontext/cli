@@ -1,7 +1,20 @@
 /**
  * Output format types for CLI rendering
  */
-export type OutputFormat = "text" | "json" | "yaml" | "ndjson";
+export const OUTPUT_FORMATS = ["text", "json", "yaml", "ndjson"] as const;
+
+export type OutputFormat = (typeof OUTPUT_FORMATS)[number];
+
+/**
+ * Keyed references to the canonical output-format values, so call sites
+ * never repeat format strings as magic literals.
+ */
+export const OUTPUT_FORMAT = {
+  text: "text",
+  json: "json",
+  yaml: "yaml",
+  ndjson: "ndjson",
+} as const satisfies Record<OutputFormat, string>;
 
 /**
  * Verbosity levels for text output

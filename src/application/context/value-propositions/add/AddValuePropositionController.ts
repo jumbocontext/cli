@@ -3,11 +3,11 @@ import { AddValuePropositionResponse } from "./AddValuePropositionResponse.js";
 import { IAddValuePropositionGateway } from "./IAddValuePropositionGateway.js";
 
 export class AddValuePropositionController {
-  constructor(
-    private readonly gateway: IAddValuePropositionGateway
-  ) {}
+  constructor(private readonly gateway: IAddValuePropositionGateway) {}
 
-  async handle(request: AddValuePropositionRequest): Promise<AddValuePropositionResponse> {
+  async handle(
+    request: AddValuePropositionRequest,
+  ): Promise<AddValuePropositionResponse> {
     return this.gateway.addValueProposition(request);
   }
 }

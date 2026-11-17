@@ -68,7 +68,9 @@ export class SessionStartOutputBuilder {
   /**
    * Build structured JSON output for session start command.
    */
-  buildStructuredOutput(response: SessionStartResponse): Record<string, unknown> {
+  buildStructuredOutput(
+    response: SessionStartResponse,
+  ): Record<string, unknown> {
     const output: Record<string, unknown> = {
       schemaVersion: SESSION_ROUTER_SCHEMA_VERSION,
       packetType: SESSION_ROUTER_PACKET_TYPE,
@@ -116,7 +118,9 @@ export class SessionStartOutputBuilder {
     ].join("\n");
   }
 
-  private renderBacklogPreview(preview: readonly GoalBacklogPreviewItem[]): string {
+  private renderBacklogPreview(
+    preview: readonly GoalBacklogPreviewItem[],
+  ): string {
     return this.yamlFormatter.toYaml({ backlogPreview: preview }).trimEnd();
   }
 
@@ -129,17 +133,17 @@ export class SessionStartOutputBuilder {
       "REQUIRED ACTION: Proactively engage the user with the following approach:",
       "",
       "1. GREET and ACKNOWLEDGE: \"Hi! I can see that you've added Jumbo to this project. ",
-      "   This looks like an existing codebase with valuable context to preserve.\"",
+      '   This looks like an existing codebase with valuable context to preserve."',
       "",
-      "2. OFFER HELP: \"Would you like me to help transfer your existing project knowledge into Jumbo? ",
-      "   I can scan your documentation, code structure, and patterns to capture:\"",
+      '2. OFFER HELP: "Would you like me to help transfer your existing project knowledge into Jumbo? ',
+      '   I can scan your documentation, code structure, and patterns to capture:"',
       "   - Project purpose and target audience (from README, docs)",
       "   - Architectural components and dependencies (from code structure)",
       "   - Development guidelines and coding standards (from patterns)",
       "   - Architectural decisions (from docs, comments, ADRs)",
       "",
       "3. GET PERMISSION: \"I'll ask for your confirmation before adding anything to Jumbo. ",
-      "   Should we start by scanning your project documentation?\"",
+      '   Should we start by scanning your project documentation?"',
       "",
       "IMPORTANT:",
       "- Take initiative: Don't wait passively. Actively offer to help.",

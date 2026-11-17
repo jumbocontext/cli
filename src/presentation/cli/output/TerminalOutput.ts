@@ -1,5 +1,5 @@
-import { Section } from './Section.js';
-import { HookOutput } from './HookOutput.js';
+import { Section } from "./Section.js";
+import { HookOutput } from "./HookOutput.js";
 
 /**
  * Format-agnostic terminal output structure.
@@ -20,20 +20,24 @@ export class TerminalOutput {
    */
   toHumanReadable(): string {
     return this.sections
-      .map(section => {
-        if (section.type === 'prompt') {
+      .map((section) => {
+        if (section.type === "prompt") {
           return section.content as string;
         }
-        if (section.type === 'data' && section.content && typeof section.content === 'object') {
+        if (
+          section.type === "data" &&
+          section.content &&
+          typeof section.content === "object"
+        ) {
           const data = section.content as Record<string, unknown>;
           if (data.message) {
             return String(data.message);
           }
         }
-        return '';
+        return "";
       })
-      .filter(s => s.length > 0)
-      .join('\n\n');
+      .filter((s) => s.length > 0)
+      .join("\n\n");
   }
 
   /**
@@ -42,8 +46,8 @@ export class TerminalOutput {
    */
   toJSON(): HookOutput {
     return {
-      decision: 'allow',
-      promptSections: this.sections.map(section => ({
+      decision: "allow",
+      promptSections: this.sections.map((section) => ({
         type: section.type,
         content: section.content,
         annotation: section.metadata?.annotation?.text,

@@ -7,19 +7,23 @@ import type {
   SubprocessSnapshot,
 } from "../daemon-subprocesses/ISubprocessManager.js";
 
-export function useDaemonStatusPolling(
-  subprocessManager: ISubprocessManager,
-): {
+export function useDaemonStatusPolling(subprocessManager: ISubprocessManager): {
   readonly daemonStatuses: readonly SubprocessSnapshot[];
   readonly daemonEventRows: readonly DaemonEventRow[];
-  readonly setDaemonStatuses: React.Dispatch<React.SetStateAction<readonly SubprocessSnapshot[]>>;
-  readonly setDaemonEventRows: React.Dispatch<React.SetStateAction<readonly DaemonEventRow[]>>;
+  readonly setDaemonStatuses: React.Dispatch<
+    React.SetStateAction<readonly SubprocessSnapshot[]>
+  >;
+  readonly setDaemonEventRows: React.Dispatch<
+    React.SetStateAction<readonly DaemonEventRow[]>
+  >;
 } {
-  const [daemonStatuses, setDaemonStatuses] = useState<readonly SubprocessSnapshot[]>(
-    subprocessManager.getAllStatuses(),
-  );
-  const [daemonEventRows, setDaemonEventRows] = useState<readonly DaemonEventRow[]>(() =>
-    CockpitDaemonEvents.getRows(subprocessManager.getAllStatuses(), Date.now())
+  const [daemonStatuses, setDaemonStatuses] = useState<
+    readonly SubprocessSnapshot[]
+  >(subprocessManager.getAllStatuses());
+  const [daemonEventRows, setDaemonEventRows] = useState<
+    readonly DaemonEventRow[]
+  >(() =>
+    CockpitDaemonEvents.getRows(subprocessManager.getAllStatuses(), Date.now()),
   );
 
   useEffect(() => {
@@ -30,7 +34,7 @@ export function useDaemonStatusPolling(
         CockpitDaemonEvents.appendRows(
           currentRows,
           CockpitDaemonEvents.getRows(snapshots, Date.now()),
-        )
+        ),
       );
     }, 500);
 

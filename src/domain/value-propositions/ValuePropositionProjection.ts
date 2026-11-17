@@ -29,7 +29,7 @@ export class ValuePropositionProjection {
    */
   static apply(
     state: ValuePropositionState,
-    event: ValuePropositionEvent
+    event: ValuePropositionEvent,
   ): void {
     switch (event.type) {
       case ValuePropositionEventType.ADDED: {
@@ -66,7 +66,7 @@ export class ValuePropositionProjection {
    */
   static rehydrate(
     id: ValuePropositionId,
-    history: ValuePropositionEvent[]
+    history: ValuePropositionEvent[],
   ): ValuePropositionState {
     const state: ValuePropositionState = {
       id,

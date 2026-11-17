@@ -1,6 +1,4 @@
-import {
-  WorkerId,
-} from "../../../domain/workers/WorkerId.js";
+import { WorkerId } from "../../../domain/workers/WorkerId.js";
 
 export type { WorkerId } from "../../../domain/workers/WorkerId.js";
 

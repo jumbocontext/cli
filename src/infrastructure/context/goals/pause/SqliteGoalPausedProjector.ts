@@ -36,7 +36,7 @@ export class SqliteGoalPausedProjector
       event.payload.note || null,
       event.version,
       event.timestamp,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 

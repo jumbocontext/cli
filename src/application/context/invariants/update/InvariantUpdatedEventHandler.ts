@@ -14,7 +14,7 @@ import { EntityType } from "../../../../domain/relations/Constants.js";
 export class InvariantUpdatedEventHandler implements IEventHandler {
   constructor(
     private readonly projector: IInvariantUpdatedProjector,
-    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar
+    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar,
   ) {}
 
   async handle(event: BaseEvent): Promise<void> {
@@ -23,7 +23,7 @@ export class InvariantUpdatedEventHandler implements IEventHandler {
     await this.relationMaintenanceGoalRegistrar.execute(
       EntityType.INVARIANT,
       invariantUpdatedEvent.aggregateId,
-      "invariant was updated"
+      "invariant was updated",
     );
   }
 }

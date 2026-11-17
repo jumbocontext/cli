@@ -3,9 +3,7 @@ import type {
   IWorkerDaemonProcessController,
   WorkerDaemonTerminationResult,
 } from "../../../application/daemons/IWorkerDaemonProcessController.js";
-import {
-  WORKER_DAEMON_NAMES,
-} from "../../../application/daemons/WorkerDaemonCatalog.js";
+import { WORKER_DAEMON_NAMES } from "../../../application/daemons/WorkerDaemonCatalog.js";
 import type { ISubprocessManager } from "./ISubprocessManager.js";
 import type { ManagedSubprocess } from "./ManagedSubprocess.js";
 import type { DaemonConfig } from "./DaemonConfig.js";
@@ -43,7 +41,10 @@ export class SubprocessManager implements ISubprocessManager {
     );
   }
 
-  async spawn(name: DaemonName, config: Partial<DaemonConfig> = {}): Promise<SubprocessSnapshot> {
+  async spawn(
+    name: DaemonName,
+    config: Partial<DaemonConfig> = {},
+  ): Promise<SubprocessSnapshot> {
     const existing = this.processes.get(name);
     if (
       existing?.status === SubprocessStatus.RUNNING ||
@@ -57,7 +58,10 @@ export class SubprocessManager implements ISubprocessManager {
       daemon: name,
       config: resolvedConfig,
     });
-    const child = this.processController.spawnDaemonProcess(name, resolvedConfig);
+    const child = this.processController.spawnDaemonProcess(
+      name,
+      resolvedConfig,
+    );
 
     const managed: ManagedSubprocess = {
       name,
@@ -82,7 +86,9 @@ export class SubprocessManager implements ISubprocessManager {
       const text = this.outputRingBuffer.limitChunk(chunk.toString());
       const lines = this.outputRingBuffer.appendLines(managed.stdout, text);
       this.logger.info(SubprocessCopy.stdoutLog, { daemon: name, text });
-      const events = lines.map((line) => this.outputEventParser.parseOutputLine(name, line));
+      const events = lines.map((line) =>
+        this.outputEventParser.parseOutputLine(name, line),
+      );
       for (const event of events) {
         this.lifecycleEventRecorder.recordDaemonEvent(managed, event);
       }
@@ -128,11 +134,15 @@ export class SubprocessManager implements ISubprocessManager {
         managed.status = SubprocessStatus.STOPPED;
         this.lifecycleEventRecorder.recordTerminalEvent(managed, errorMessage);
       }
-      this.logger.error(SubprocessCopy.errorLog, this.lifecycleEventRecorder.boundErrorForLog(error), {
-        daemon: name,
-        stopRequested: managed.stopRequested,
-        status: managed.status,
-      });
+      this.logger.error(
+        SubprocessCopy.errorLog,
+        this.lifecycleEventRecorder.boundErrorForLog(error),
+        {
+          daemon: name,
+          stopRequested: managed.stopRequested,
+          status: managed.status,
+        },
+      );
     });
 
     return this.snapshotMapper.fromManagedSubprocess(managed);
@@ -140,7 +150,10 @@ export class SubprocessManager implements ISubprocessManager {
 
   async terminate(name: DaemonName): Promise<SubprocessSnapshot> {
     const managed = this.processes.get(name);
-    if (managed?.status === SubprocessStatus.STOPPING && managed.termination !== undefined) {
+    if (
+      managed?.status === SubprocessStatus.STOPPING &&
+      managed.termination !== undefined
+    ) {
       return managed.termination;
     }
     if (managed === undefined || managed.status !== SubprocessStatus.RUNNING) {
@@ -152,7 +165,9 @@ export class SubprocessManager implements ISubprocessManager {
   }
 
   async terminateAll(): Promise<void> {
-    await Promise.all(Array.from(this.processes.keys()).map((name) => this.terminate(name)));
+    await Promise.all(
+      Array.from(this.processes.keys()).map((name) => this.terminate(name)),
+    );
   }
 
   getStatus(name: DaemonName): SubprocessSnapshot {
@@ -172,9 +187,10 @@ export class SubprocessManager implements ISubprocessManager {
     managed: ManagedSubprocess,
   ): Promise<SubprocessSnapshot> {
     const name = managed.name;
-    const strategy = managed.child.pid === undefined
-      ? { kind: "no-pid" as const }
-      : this.processController.getTerminationStrategy(managed.child);
+    const strategy =
+      managed.child.pid === undefined
+        ? { kind: "no-pid" as const }
+        : this.processController.getTerminationStrategy(managed.child);
     try {
       managed.stopRequested = true;
       managed.status = SubprocessStatus.STOPPING;
@@ -184,19 +200,27 @@ export class SubprocessManager implements ISubprocessManager {
         pid: managed.child.pid,
         strategy,
       });
-      const result = await this.processController.terminateDaemonProcess(managed.child);
+      const result = await this.processController.terminateDaemonProcess(
+        managed.child,
+      );
       this.applyTerminationResult(managed, result);
     } catch (error) {
       managed.stopRequested = false;
       managed.status = SubprocessStatus.FAILED;
-      const errorMessage = this.outputEventParser.boundTextField(error instanceof Error ? error.message : String(error));
+      const errorMessage = this.outputEventParser.boundTextField(
+        error instanceof Error ? error.message : String(error),
+      );
       this.outputRingBuffer.appendLines(managed.stderr, errorMessage);
       this.lifecycleEventRecorder.recordFailed(managed, errorMessage);
-      this.logger.error(SubprocessCopy.terminationFailedLog, this.lifecycleEventRecorder.boundErrorForLog(error), {
-        daemon: name,
-        pid: managed.child.pid,
-        stopRequested: managed.stopRequested,
-      });
+      this.logger.error(
+        SubprocessCopy.terminationFailedLog,
+        this.lifecycleEventRecorder.boundErrorForLog(error),
+        {
+          daemon: name,
+          pid: managed.child.pid,
+          stopRequested: managed.stopRequested,
+        },
+      );
     } finally {
       managed.termination = undefined;
     }
@@ -233,7 +257,10 @@ export class SubprocessManager implements ISubprocessManager {
       this.lifecycleEventRecorder.recordStopped(managed);
     }
 
-    if (result.status === "closed" && managed.status === SubprocessStatus.STOPPING) {
+    if (
+      result.status === "closed" &&
+      managed.status === SubprocessStatus.STOPPING
+    ) {
       managed.exitCode = result.exitCode;
       managed.exitSignal = result.exitSignal;
       managed.status = SubprocessStatus.STOPPED;
@@ -250,7 +277,10 @@ export class SubprocessManager implements ISubprocessManager {
 
   private recordTerminationTimeout(
     managed: ManagedSubprocess,
-    result: Extract<WorkerDaemonTerminationResult, { readonly status: "timeout" }>,
+    result: Extract<
+      WorkerDaemonTerminationResult,
+      { readonly status: "timeout" }
+    >,
   ): void {
     this.stopHeartbeat(managed);
     managed.terminationTimedOut = true;
@@ -260,14 +290,18 @@ export class SubprocessManager implements ISubprocessManager {
     );
     this.outputRingBuffer.appendLines(managed.stderr, errorMessage);
     this.lifecycleEventRecorder.recordFailed(managed, errorMessage);
-    this.logger.error(SubprocessCopy.terminationTimedOutLog, new Error(errorMessage), {
-      daemon: managed.name,
-      pid: managed.child.pid,
-      stopRequested: managed.stopRequested,
-      timeoutMs: result.timeoutMs,
-      strategy: result.strategy,
-      escalation: result.escalation,
-    });
+    this.logger.error(
+      SubprocessCopy.terminationTimedOutLog,
+      new Error(errorMessage),
+      {
+        daemon: managed.name,
+        pid: managed.child.pid,
+        stopRequested: managed.stopRequested,
+        timeoutMs: result.timeoutMs,
+        strategy: result.strategy,
+        escalation: result.escalation,
+      },
+    );
   }
 
   private startHeartbeat(managed: ManagedSubprocess): void {
@@ -300,7 +334,10 @@ export class SubprocessManager implements ISubprocessManager {
       });
     }, DAEMON_HEARTBEAT_INTERVAL_MS);
 
-    if (typeof managed.heartbeatTimer === "object" && "unref" in managed.heartbeatTimer) {
+    if (
+      typeof managed.heartbeatTimer === "object" &&
+      "unref" in managed.heartbeatTimer
+    ) {
       managed.heartbeatTimer.unref();
     }
   }
@@ -319,7 +356,10 @@ export class SubprocessManager implements ISubprocessManager {
     latestEvent: ManagedSubprocess["events"][number] | undefined,
     now: number,
   ): number {
-    if (latestEvent?.elapsedMs !== undefined && latestEvent.timestampMs !== undefined) {
+    if (
+      latestEvent?.elapsedMs !== undefined &&
+      latestEvent.timestampMs !== undefined
+    ) {
       return latestEvent.elapsedMs + Math.max(0, now - latestEvent.timestampMs);
     }
 

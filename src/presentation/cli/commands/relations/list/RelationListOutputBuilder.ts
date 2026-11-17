@@ -1,9 +1,18 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { RelationView } from '../../../../../application/context/relations/RelationView.js';
-import { Colors, BrandColors, Symbols } from '../../../rendering/StyleConfig.js';
-import { heading, contentLine, metaField, wrapContent } from '../../../rendering/OutputLayout.js';
-import { GetRelationsRequest } from '../../../../../application/context/relations/get/GetRelationsRequest.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { RelationView } from "../../../../../application/context/relations/RelationView.js";
+import {
+  Colors,
+  BrandColors,
+  Symbols,
+} from "../../../rendering/StyleConfig.js";
+import {
+  heading,
+  contentLine,
+  metaField,
+  wrapContent,
+} from "../../../rendering/OutputLayout.js";
+import { GetRelationsRequest } from "../../../../../application/context/relations/get/GetRelationsRequest.js";
 
 export class RelationListOutputBuilder {
   private builder = new TerminalOutputBuilder();
@@ -13,7 +22,9 @@ export class RelationListOutputBuilder {
     if (relations.length === 0) {
       const filterLabel = filter ? ` involving ${filter}` : "";
       this.builder.addPrompt(
-        Colors.muted(`No relations found${filterLabel}. Use 'jumbo relation add' to add one.`)
+        Colors.muted(
+          `No relations found${filterLabel}. Use 'jumbo relation add' to add one.`,
+        ),
       );
       return this.builder.build();
     }
@@ -41,7 +52,10 @@ export class RelationListOutputBuilder {
     return this.builder.build();
   }
 
-  buildStructuredOutput(relations: RelationView[], filter: GetRelationsRequest): TerminalOutput {
+  buildStructuredOutput(
+    relations: RelationView[],
+    filter: GetRelationsRequest,
+  ): TerminalOutput {
     this.builder.reset();
     this.builder.addData({
       count: relations.length,
@@ -73,7 +87,9 @@ export class RelationListOutputBuilder {
 
   buildFailureError(error: Error | string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Failed to list relations")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Failed to list relations")}`,
+    );
     this.builder.addData({
       error: "Failed to list relations",
       message: error instanceof Error ? error.message : error,

@@ -108,10 +108,7 @@ export class CliUpdateController {
     return result;
   }
 
-  private trackCheck(
-    startedAt: number,
-    result: CliUpdateCheckResult,
-  ): void {
+  private trackCheck(startedAt: number, result: CliUpdateCheckResult): void {
     this.telemetryClient?.track(CLI_UPDATE_CHECK_COMPLETED_EVENT, {
       status: result.status,
       localVersion: result.localVersion,

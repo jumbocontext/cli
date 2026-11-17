@@ -1,6 +1,6 @@
-import { Section } from './Section.js';
+import { Section } from "./Section.js";
 
 export interface DataSection extends Section {
-  type: 'data';
+  type: "data";
   content: unknown;
 }

@@ -10,12 +10,19 @@ import { IComponentDeprecatedProjector } from "../../../../application/context/c
 import { IComponentDeprecateReader } from "../../../../application/context/components/deprecate/IComponentDeprecateReader.js";
 import { ComponentDeprecatedEvent } from "../../../../domain/components/EventIndex.js";
 import { ComponentView } from "../../../../application/context/components/ComponentView.js";
-import { ComponentTypeValue, ComponentStatusValue } from "../../../../domain/components/Constants.js";
+import {
+  ComponentTypeValue,
+  ComponentStatusValue,
+} from "../../../../domain/components/Constants.js";
 
-export class SqliteComponentDeprecatedProjector implements IComponentDeprecatedProjector, IComponentDeprecateReader {
+export class SqliteComponentDeprecatedProjector
+  implements IComponentDeprecatedProjector, IComponentDeprecateReader
+{
   constructor(private db: Database) {}
 
-  async applyComponentDeprecated(event: ComponentDeprecatedEvent): Promise<void> {
+  async applyComponentDeprecated(
+    event: ComponentDeprecatedEvent,
+  ): Promise<void> {
     const stmt = this.db.prepare(`
       UPDATE component_views
       SET status = ?,
@@ -30,12 +37,14 @@ export class SqliteComponentDeprecatedProjector implements IComponentDeprecatedP
       event.payload.reason,
       event.timestamp,
       event.version,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 
   async findById(id: string): Promise<ComponentView | null> {
-    const row = this.db.prepare('SELECT * FROM component_views WHERE componentId = ?').get(id);
+    const row = this.db
+      .prepare("SELECT * FROM component_views WHERE componentId = ?")
+      .get(id);
     return row ? this.mapRowToView(row as Record<string, unknown>) : null;
   }
 

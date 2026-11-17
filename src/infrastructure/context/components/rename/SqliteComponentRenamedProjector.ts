@@ -10,9 +10,14 @@ import { IComponentRenamedProjector } from "../../../../application/context/comp
 import { IComponentRenameReader } from "../../../../application/context/components/rename/IComponentRenameReader.js";
 import { ComponentRenamedEvent } from "../../../../domain/components/EventIndex.js";
 import { ComponentView } from "../../../../application/context/components/ComponentView.js";
-import { ComponentTypeValue, ComponentStatusValue } from "../../../../domain/components/Constants.js";
+import {
+  ComponentTypeValue,
+  ComponentStatusValue,
+} from "../../../../domain/components/Constants.js";
 
-export class SqliteComponentRenamedProjector implements IComponentRenamedProjector, IComponentRenameReader {
+export class SqliteComponentRenamedProjector
+  implements IComponentRenamedProjector, IComponentRenameReader
+{
   constructor(private db: Database) {}
 
   async applyComponentRenamed(event: ComponentRenamedEvent): Promise<void> {
@@ -22,11 +27,18 @@ export class SqliteComponentRenamedProjector implements IComponentRenamedProject
       WHERE componentId = ?
     `);
 
-    stmt.run(event.payload.name, event.version, event.timestamp, event.aggregateId);
+    stmt.run(
+      event.payload.name,
+      event.version,
+      event.timestamp,
+      event.aggregateId,
+    );
   }
 
   async findById(id: string): Promise<ComponentView | null> {
-    const row = this.db.prepare('SELECT * FROM component_views WHERE componentId = ?').get(id);
+    const row = this.db
+      .prepare("SELECT * FROM component_views WHERE componentId = ?")
+      .get(id);
     return row ? this.mapRowToView(row as Record<string, unknown>) : null;
   }
 

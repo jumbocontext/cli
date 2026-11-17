@@ -63,7 +63,7 @@ export interface IAgentFileProtocol {
    */
   ensureAgentConfigurations(
     projectRoot: string,
-    selectedAgentIds?: readonly AgentId[]
+    selectedAgentIds?: readonly AgentId[],
   ): Promise<void>;
 
   /**
@@ -103,7 +103,7 @@ export interface IAgentFileProtocol {
    */
   repairAgentConfigurations(
     projectRoot: string,
-    selectedAgentIds?: readonly AgentId[]
+    selectedAgentIds?: readonly AgentId[],
   ): Promise<void>;
 
   /**
@@ -125,6 +125,6 @@ export interface IAgentFileProtocol {
    */
   getPlannedFileChanges(
     projectRoot: string,
-    selectedAgentIds?: readonly AgentId[]
+    selectedAgentIds?: readonly AgentId[],
   ): Promise<PlannedFileChange[]>;
 }

@@ -7,10 +7,12 @@ import { IValuePropositionUpdateReader } from "./IValuePropositionUpdateReader.j
 export class LocalUpdateValuePropositionGateway implements IUpdateValuePropositionGateway {
   constructor(
     private readonly commandHandler: UpdateValuePropositionCommandHandler,
-    private readonly viewReader: IValuePropositionUpdateReader
+    private readonly viewReader: IValuePropositionUpdateReader,
   ) {}
 
-  async updateValueProposition(request: UpdateValuePropositionRequest): Promise<UpdateValuePropositionResponse> {
+  async updateValueProposition(
+    request: UpdateValuePropositionRequest,
+  ): Promise<UpdateValuePropositionResponse> {
     const result = await this.commandHandler.execute({
       id: request.id,
       title: request.title,
@@ -19,7 +21,9 @@ export class LocalUpdateValuePropositionGateway implements IUpdateValuePropositi
       measurableOutcome: request.measurableOutcome,
     });
 
-    const updatedView = await this.viewReader.findById(result.valuePropositionId);
+    const updatedView = await this.viewReader.findById(
+      result.valuePropositionId,
+    );
 
     return {
       valuePropositionId: result.valuePropositionId,

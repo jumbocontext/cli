@@ -3,6 +3,6 @@ export interface DefineArchitectureRequest {
   readonly organization: string;
   readonly patterns?: string[];
   readonly principles?: string[];
-  readonly dataStores?: string[];  // Format: "name:type:purpose"
+  readonly dataStores?: string[]; // Format: "name:type:purpose"
   readonly stack?: string[];
 }

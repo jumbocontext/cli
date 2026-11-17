@@ -8,10 +8,14 @@ import { ReactivateRelationCommandHandler } from "./ReactivateRelationCommandHan
 export class RelationReactivationCascade {
   constructor(
     private readonly relationViewReader: IRelationViewReader,
-    private readonly reactivateRelationCommandHandler: ReactivateRelationCommandHandler
+    private readonly reactivateRelationCommandHandler: ReactivateRelationCommandHandler,
   ) {}
 
-  async execute(entityType: EntityTypeValue, entityId: string, reason: string): Promise<number> {
+  async execute(
+    entityType: EntityTypeValue,
+    entityId: string,
+    reason: string,
+  ): Promise<number> {
     const deactivatedRelations = await this.relationViewReader.findAll({
       entityType,
       entityId,
@@ -23,8 +27,8 @@ export class RelationReactivationCascade {
         this.reactivateRelationCommandHandler.execute({
           relationId: relation.relationId,
           reason,
-        })
-      )
+        }),
+      ),
     );
 
     return deactivatedRelations.length;

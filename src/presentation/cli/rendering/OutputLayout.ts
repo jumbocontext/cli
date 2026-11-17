@@ -14,17 +14,17 @@
  *   x=90  right boundary (DIVIDER_WIDTH)
  */
 
-import { Colors, BrandColors, Symbols, wordWrap } from './StyleConfig.js';
+import { Colors, BrandColors, Symbols, wordWrap } from "./StyleConfig.js";
 
 // ── Layout grid constants ──
 
-export const EDGE = "  ";                // 2 spaces
-export const HEADING_PAD = "   ";        // bar(1) + space(1) + 1 extra
-export const CONTENT_PAD = "     ";      // 5 spaces from EDGE → content column
-export const INDENT_PAD = "         ";   // 9 spaces from EDGE → indent column
+export const EDGE = "  "; // 2 spaces
+export const HEADING_PAD = "   "; // bar(1) + space(1) + 1 extra
+export const CONTENT_PAD = "     "; // 5 spaces from EDGE → content column
+export const INDENT_PAD = "         "; // 9 spaces from EDGE → indent column
 export const DIVIDER_WIDTH = 90;
-export const WRAP_CONTENT = 83;          // max chars at content column (90 - 7 leading)
-export const WRAP_INDENT = 81;           // max chars at indent column (90 - 9 leading)
+export const WRAP_CONTENT = 83; // max chars at content column (90 - 7 leading)
+export const WRAP_INDENT = 81; // max chars at indent column (90 - 9 leading)
 
 // ── Palette-aware helpers ──
 
@@ -44,7 +44,11 @@ export function heading(title: string): string {
 }
 
 /** Key-value metadata field at the content column. */
-export function metaField(label: string, value: string, labelWidth = 9): string {
+export function metaField(
+  label: string,
+  value: string,
+  labelWidth = 9,
+): string {
   const padded = (label + ":").padEnd(labelWidth);
   return `${EDGE}${CONTENT_PAD}${Colors.muted(padded)}${value}`;
 }
@@ -61,8 +65,8 @@ export function indentLine(text: string): string {
 
 /** Word-wrap text at the content column width, styled with Colors.primary. */
 export function wrapContent(text: string): string[] {
-  return wordWrap(text, WRAP_CONTENT, 0).map(line =>
-    `${EDGE}${CONTENT_PAD}${Colors.primary(line.trimStart())}`
+  return wordWrap(text, WRAP_CONTENT, 0).map(
+    (line) => `${EDGE}${CONTENT_PAD}${Colors.primary(line.trimStart())}`,
   );
 }
 
@@ -73,7 +77,9 @@ export function wrapBulletContinuation(text: string): string[] {
   for (let i = 0; i < lines.length; i++) {
     const trimmed = lines[i].trimStart();
     if (i === 0) {
-      result.push(`${EDGE}${CONTENT_PAD}${Colors.dim("·")} ${Colors.primary(trimmed)}`);
+      result.push(
+        `${EDGE}${CONTENT_PAD}${Colors.dim("·")} ${Colors.primary(trimmed)}`,
+      );
     } else {
       result.push(`${EDGE}${INDENT_PAD}${Colors.primary(trimmed)}`);
     }

@@ -9,12 +9,14 @@ import { SearchDependenciesRequest } from "./SearchDependenciesRequest.js";
 import { SearchDependenciesResponse } from "./SearchDependenciesResponse.js";
 
 export class LocalSearchDependenciesGateway implements ISearchDependenciesGateway {
-  constructor(
-    private readonly dependencyViewReader: IDependencyViewReader
-  ) {}
+  constructor(private readonly dependencyViewReader: IDependencyViewReader) {}
 
-  async searchDependencies(request: SearchDependenciesRequest): Promise<SearchDependenciesResponse> {
-    const dependencies = await this.dependencyViewReader.search(request.criteria);
+  async searchDependencies(
+    request: SearchDependenciesRequest,
+  ): Promise<SearchDependenciesResponse> {
+    const dependencies = await this.dependencyViewReader.search(
+      request.criteria,
+    );
     return { dependencies };
   }
 }

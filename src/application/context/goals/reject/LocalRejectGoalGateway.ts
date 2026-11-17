@@ -4,9 +4,7 @@ import { RejectGoalResponse } from "./RejectGoalResponse.js";
 import { RejectGoalCommandHandler } from "./RejectGoalCommandHandler.js";
 
 export class LocalRejectGoalGateway implements IRejectGoalGateway {
-  constructor(
-    private readonly commandHandler: RejectGoalCommandHandler
-  ) {}
+  constructor(private readonly commandHandler: RejectGoalCommandHandler) {}
 
   async rejectGoal(request: RejectGoalRequest): Promise<RejectGoalResponse> {
     const contextualView = await this.commandHandler.execute({

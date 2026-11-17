@@ -14,6 +14,8 @@ export class GoalSubmittedForReviewEventHandler implements IEventHandler {
 
   async handle(event: BaseEvent): Promise<void> {
     const goalSubmittedForReviewEvent = event as GoalSubmittedForReviewEvent;
-    await this.projector.applyGoalSubmittedForReview(goalSubmittedForReviewEvent);
+    await this.projector.applyGoalSubmittedForReview(
+      goalSubmittedForReviewEvent,
+    );
   }
 }

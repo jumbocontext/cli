@@ -10,9 +10,14 @@ import { IComponentRemovedProjector } from "../../../../application/context/comp
 import { IComponentRemoveReader } from "../../../../application/context/components/remove/IComponentRemoveReader.js";
 import { ComponentRemovedEvent } from "../../../../domain/components/EventIndex.js";
 import { ComponentView } from "../../../../application/context/components/ComponentView.js";
-import { ComponentTypeValue, ComponentStatusValue } from "../../../../domain/components/Constants.js";
+import {
+  ComponentTypeValue,
+  ComponentStatusValue,
+} from "../../../../domain/components/Constants.js";
 
-export class SqliteComponentRemovedProjector implements IComponentRemovedProjector, IComponentRemoveReader {
+export class SqliteComponentRemovedProjector
+  implements IComponentRemovedProjector, IComponentRemoveReader
+{
   constructor(private db: Database) {}
 
   async applyComponentRemoved(event: ComponentRemovedEvent): Promise<void> {
@@ -28,12 +33,14 @@ export class SqliteComponentRemovedProjector implements IComponentRemovedProject
       event.payload.status,
       event.timestamp,
       event.version,
-      event.aggregateId
+      event.aggregateId,
     );
   }
 
   async findById(id: string): Promise<ComponentView | null> {
-    const row = this.db.prepare('SELECT * FROM component_views WHERE componentId = ?').get(id);
+    const row = this.db
+      .prepare("SELECT * FROM component_views WHERE componentId = ?")
+      .get(id);
     return row ? this.mapRowToView(row as Record<string, unknown>) : null;
   }
 

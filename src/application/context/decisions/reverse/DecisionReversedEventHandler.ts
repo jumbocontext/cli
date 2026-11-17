@@ -12,7 +12,7 @@ import { EntityType } from "../../../../domain/relations/Constants.js";
 export class DecisionReversedEventHandler implements IEventHandler {
   constructor(
     private readonly projector: IDecisionReversedProjector,
-    private readonly relationDeactivationCascade: RelationDeactivationCascade
+    private readonly relationDeactivationCascade: RelationDeactivationCascade,
   ) {}
 
   async handle(event: BaseEvent): Promise<void> {
@@ -21,7 +21,7 @@ export class DecisionReversedEventHandler implements IEventHandler {
     await this.relationDeactivationCascade.execute(
       EntityType.DECISION,
       decisionReversedEvent.aggregateId,
-      `Automatically deactivated because decision ${decisionReversedEvent.aggregateId} was reversed: ${decisionReversedEvent.payload.reason}`
+      `Automatically deactivated because decision ${decisionReversedEvent.aggregateId} was reversed: ${decisionReversedEvent.payload.reason}`,
     );
   }
 }

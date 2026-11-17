@@ -7,8 +7,12 @@ import type { RemoveDecisionCommandHandler } from "./RemoveDecisionCommandHandle
 export class LocalRemoveDecisionGateway implements IRemoveDecisionGateway {
   constructor(private readonly commandHandler: RemoveDecisionCommandHandler) {}
 
-  async removeDecision(request: RemoveDecisionRequest): Promise<RemoveDecisionResponse> {
-    const result = await this.commandHandler.execute({ decisionId: request.decisionId });
+  async removeDecision(
+    request: RemoveDecisionRequest,
+  ): Promise<RemoveDecisionResponse> {
+    const result = await this.commandHandler.execute({
+      decisionId: request.decisionId,
+    });
     return { decisionId: result.decisionId, status: DecisionStatus.REMOVED };
   }
 }

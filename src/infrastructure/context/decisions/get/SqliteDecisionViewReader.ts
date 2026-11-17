@@ -6,7 +6,10 @@
  */
 
 import { Database } from "better-sqlite3";
-import { IDecisionViewReader, DecisionStatusFilter } from "../../../../application/context/decisions/get/IDecisionViewReader.js";
+import {
+  IDecisionViewReader,
+  DecisionStatusFilter,
+} from "../../../../application/context/decisions/get/IDecisionViewReader.js";
 import { DecisionView } from "../../../../application/context/decisions/DecisionView.js";
 import { DecisionSearchCriteria } from "../../../../application/context/decisions/search/DecisionSearchCriteria.js";
 import { DecisionRecord } from "../DecisionRecord.js";
@@ -29,7 +32,9 @@ export class SqliteDecisionViewReader implements IDecisionViewReader {
     query += " ORDER BY createdAt DESC";
 
     const rows = this.db.prepare(query).all(...params);
-    return rows.map((row) => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   async findByIds(ids: string[]): Promise<DecisionView[]> {
@@ -38,7 +43,9 @@ export class SqliteDecisionViewReader implements IDecisionViewReader {
     const placeholders = ids.map(() => "?").join(",");
     const query = `SELECT * FROM decision_views WHERE decisionId IN (${placeholders}) ORDER BY createdAt DESC`;
     const rows = this.db.prepare(query).all(...ids);
-    return rows.map((row) => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   async search(criteria: DecisionSearchCriteria): Promise<DecisionView[]> {
@@ -68,9 +75,17 @@ export class SqliteDecisionViewReader implements IDecisionViewReader {
             "COALESCE(reversalReason, '') LIKE ?",
             "COALESCE(supersededBy, '') LIKE ?",
           ].join(" OR ") +
-          ")"
+          ")",
       );
-      params.push(pattern, pattern, pattern, pattern, pattern, pattern, pattern);
+      params.push(
+        pattern,
+        pattern,
+        pattern,
+        pattern,
+        pattern,
+        pattern,
+        pattern,
+      );
     }
 
     let query = "SELECT * FROM decision_views";
@@ -80,7 +95,9 @@ export class SqliteDecisionViewReader implements IDecisionViewReader {
     query += " ORDER BY createdAt DESC";
 
     const rows = this.db.prepare(query).all(...params);
-    return rows.map((row) => this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)));
+    return rows.map((row) =>
+      this.mapper.toView(this.mapRowToRecord(row as Record<string, unknown>)),
+    );
   }
 
   /**

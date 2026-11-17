@@ -6,10 +6,7 @@ import type { DaemonName } from "./DaemonName.js";
 const EVENT_TEXT_FIELD_MAX_LENGTH = 2_048;
 
 export class DaemonOutputEventParser {
-  parseOutputLine(
-    daemon: DaemonName,
-    line: string,
-  ): DaemonEventSnapshot {
+  parseOutputLine(daemon: DaemonName, line: string): DaemonEventSnapshot {
     const parsedEvent = this.parseStructuredEvent(line);
 
     if (parsedEvent !== null) {
@@ -52,7 +49,10 @@ export class DaemonOutputEventParser {
   private parseStructuredEvent(line: string): DaemonEventSnapshot | null {
     try {
       const parsed = JSON.parse(line) as DaemonEventSnapshot;
-      if (typeof parsed.daemon !== "string" || typeof parsed.status !== "string") {
+      if (
+        typeof parsed.daemon !== "string" ||
+        typeof parsed.status !== "string"
+      ) {
         return null;
       }
       return {

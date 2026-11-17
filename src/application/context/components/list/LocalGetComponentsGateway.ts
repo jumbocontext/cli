@@ -4,11 +4,11 @@ import { GetComponentsResponse } from "./GetComponentsResponse.js";
 import { IComponentViewReader } from "../get/IComponentViewReader.js";
 
 export class LocalGetComponentsGateway implements IGetComponentsGateway {
-  constructor(
-    private readonly componentViewReader: IComponentViewReader
-  ) {}
+  constructor(private readonly componentViewReader: IComponentViewReader) {}
 
-  async getComponents(request: GetComponentsRequest): Promise<GetComponentsResponse> {
+  async getComponents(
+    request: GetComponentsRequest,
+  ): Promise<GetComponentsResponse> {
     const components = await this.componentViewReader.findAll(request.status);
     return { components };
   }

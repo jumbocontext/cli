@@ -1,5 +1,12 @@
-import { ValidationRule, ValidationResult } from "../../validation/ValidationRule.js";
-import { DependencyErrorMessages, DependencyLimits, formatErrorMessage } from "../Constants.js";
+import {
+  ValidationRule,
+  ValidationResult,
+} from "../../validation/ValidationRule.js";
+import {
+  DependencyErrorMessages,
+  DependencyLimits,
+  formatErrorMessage,
+} from "../Constants.js";
 
 export class NameRequiredRule implements ValidationRule<string> {
   validate(name: string): ValidationResult {
@@ -18,12 +25,15 @@ export class NameMaxLengthRule implements ValidationRule<string> {
     const isValid = name.length <= this.maxLength;
     return {
       isValid,
-      errors: isValid ? [] : [formatErrorMessage(DependencyErrorMessages.NAME_TOO_LONG, { max: this.maxLength })],
+      errors: isValid
+        ? []
+        : [
+            formatErrorMessage(DependencyErrorMessages.NAME_TOO_LONG, {
+              max: this.maxLength,
+            }),
+          ],
     };
   }
 }
 
-export const NAME_RULES = [
-  new NameRequiredRule(),
-  new NameMaxLengthRule(),
-];
+export const NAME_RULES = [new NameRequiredRule(), new NameMaxLengthRule()];

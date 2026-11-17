@@ -9,7 +9,10 @@
  * before passing it to this policy for evaluation.
  */
 
-import { SATISFIED_PREREQUISITE_STATUSES, GoalStatusType } from "../Constants.js";
+import {
+  SATISFIED_PREREQUISITE_STATUSES,
+  GoalStatusType,
+} from "../Constants.js";
 
 export interface PrerequisiteStatus {
   readonly goalId: string;

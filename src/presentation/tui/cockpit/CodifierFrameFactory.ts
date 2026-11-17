@@ -25,11 +25,13 @@ function getFrame(index: number): string[] {
     return ["error"];
   }
 
-  const random = createSeededRandom(createSeed(
-    index + DaemonFrameDimensions.codifierFrameCount,
-    DaemonFrameDimensions.panelContentWidth
-      * DaemonFrameDimensions.codifierGridHeight,
-  ));
+  const random = createSeededRandom(
+    createSeed(
+      index + DaemonFrameDimensions.codifierFrameCount,
+      DaemonFrameDimensions.panelContentWidth *
+        DaemonFrameDimensions.codifierGridHeight,
+    ),
+  );
 
   return Array.from(
     { length: DaemonFrameDimensions.codifierGridHeight },
@@ -39,12 +41,14 @@ function getFrame(index: number): string[] {
       while (groups.size < CODIFIER_ROW_REPEAT_COUNT) {
         groups.add(
           Array.from({ length: CODIFIER_GROUP_LENGTH }, () =>
-            pickRandomValue(CODIFIER_ALPHANUMERIC_GLYPHS, random)
+            pickRandomValue(CODIFIER_ALPHANUMERIC_GLYPHS, random),
           ).join(""),
         );
       }
 
-      return Array.from(groups).map((group) => `${group}.`).join("");
+      return Array.from(groups)
+        .map((group) => `${group}.`)
+        .join("");
     },
   );
 }

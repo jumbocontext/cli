@@ -11,10 +11,14 @@ import { IRelationMaintenanceGoalRegistrar } from "./IRelationMaintenanceGoalReg
 export class RelationMaintenanceGoalRegistrar implements IRelationMaintenanceGoalRegistrar {
   constructor(
     private readonly relationViewReader: IRelationViewReader,
-    private readonly addGoalCommandHandler: AddGoalCommandHandler
+    private readonly addGoalCommandHandler: AddGoalCommandHandler,
   ) {}
 
-  async execute(entityType: EntityTypeValue, entityId: string, changeDescription: string): Promise<string | null> {
+  async execute(
+    entityType: EntityTypeValue,
+    entityId: string,
+    changeDescription: string,
+  ): Promise<string | null> {
     try {
       const activeRelations = await this.relationViewReader.findAll({
         entityType,
@@ -26,12 +30,11 @@ export class RelationMaintenanceGoalRegistrar implements IRelationMaintenanceGoa
         return null;
       }
 
-      const relatedEntities = activeRelations.map(
-        (r) => {
-          const isFrom = r.fromEntityType === entityType && r.fromEntityId === entityId;
-          return `${isFrom ? r.toEntityType : r.fromEntityType}:${isFrom ? r.toEntityId : r.fromEntityId}`;
-        }
-      );
+      const relatedEntities = activeRelations.map((r) => {
+        const isFrom =
+          r.fromEntityType === entityType && r.fromEntityId === entityId;
+        return `${isFrom ? r.toEntityType : r.fromEntityType}:${isFrom ? r.toEntityId : r.fromEntityId}`;
+      });
 
       const { goalId } = await this.addGoalCommandHandler.execute({
         title: `Update relations for ${entityType} ${entityId}`,

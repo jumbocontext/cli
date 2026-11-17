@@ -1,4 +1,7 @@
-import { EntityTypeValue, RelationStrengthValue } from "../../../../domain/relations/Constants.js";
+import {
+  EntityTypeValue,
+  RelationStrengthValue,
+} from "../../../../domain/relations/Constants.js";
 
 /**
  * AddRelationRequest

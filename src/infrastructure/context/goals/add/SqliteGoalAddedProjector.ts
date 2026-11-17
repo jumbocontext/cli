@@ -39,9 +39,11 @@ export class SqliteGoalAddedProjector implements IGoalAddedProjector {
       null, // claimExpiresAt
       event.payload.nextGoalId ?? null,
       JSON.stringify([]), // progress - initialized as empty array
-      event.payload.prerequisiteGoals ? JSON.stringify(event.payload.prerequisiteGoals) : null,
+      event.payload.prerequisiteGoals
+        ? JSON.stringify(event.payload.prerequisiteGoals)
+        : null,
       event.payload.branch ?? null,
-      event.payload.worktree ?? null
+      event.payload.worktree ?? null,
     );
   }
 }

@@ -224,7 +224,9 @@ Theoretically, any IDE with an integrated coding agent that supports hooks or AG
 <details>
 <summary>Where is data stored?</summary>
 
-Locally, in `.jumbo/` in your project. Nothing leaves your machine unless you want it to.
+Locally, beneath one per-user application root: `~/.jumbo/` on Linux, `~/Library/Application Support/jumbo` on macOS, and `<user-home>\\.jumbo\\` (for example `C:\\Users\\jjw\\.jumbo\\`) on Windows. XDG and AppData variables do not override the Linux/Windows root. Each project has a directory under `projects/`, named from its full root-workspace path, containing settings, events, logs and `jumbo.db`.
+
+Existing project-local `.jumbo/` installations require explicit `jumbo migrate`. See the [migration guide](docs/migration.md).
 </details>
 
 <details>
@@ -248,7 +250,7 @@ Jumbo goes beyond static markdown files. It's an immutable event stream—captur
 <details>
 <summary>Can I share context across a team?</summary>
 
-Jumbo adds the `.jumbo/` folder to your `.gitignore` by default. Jumbo employs the event sourcing pattern under the hood, and it is likely to result in conflicts if shared between the team.
+Project storage is per OS user, outside the repository. Jumbo retains `.jumbo/` ignore protections for private legacy artifacts. Its event streams and database should not be shared through Git; independently developed histories are not automatically merged.
 
 Love Jumbo and want to use it in your team? A cloud version is coming soon. Sign up to get notified when it's launched [here](https://jumbocontext.com/herd).
 </details>

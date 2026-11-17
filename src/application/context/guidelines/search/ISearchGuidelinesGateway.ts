@@ -7,5 +7,7 @@ import { SearchGuidelinesRequest } from "./SearchGuidelinesRequest.js";
 import { SearchGuidelinesResponse } from "./SearchGuidelinesResponse.js";
 
 export interface ISearchGuidelinesGateway {
-  searchGuidelines(request: SearchGuidelinesRequest): Promise<SearchGuidelinesResponse>;
+  searchGuidelines(
+    request: SearchGuidelinesRequest,
+  ): Promise<SearchGuidelinesResponse>;
 }

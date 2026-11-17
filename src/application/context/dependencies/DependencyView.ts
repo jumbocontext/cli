@@ -19,6 +19,6 @@ export interface DependencyView {
   version: number;
   createdAt: string;
   updatedAt: string;
-  removedAt: string | null;       // When it was removed
-  removalReason: string | null;   // Why it was removed
+  removedAt: string | null; // When it was removed
+  removalReason: string | null; // Why it was removed
 }

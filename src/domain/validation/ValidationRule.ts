@@ -82,7 +82,7 @@ export class ValidationRuleSet {
    */
   static async ensureAsync<T>(
     value: T,
-    rules: ValidationRule<T>[]
+    rules: ValidationRule<T>[],
   ): Promise<void> {
     const result = await this.validateAsync(value, rules);
     if (!result.isValid) {
@@ -101,7 +101,7 @@ export class ValidationRuleSet {
    */
   static async validateAsync<T>(
     value: T,
-    rules: ValidationRule<T>[]
+    rules: ValidationRule<T>[],
   ): Promise<ValidationResult> {
     const errors: string[] = [];
 

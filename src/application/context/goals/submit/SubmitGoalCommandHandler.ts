@@ -4,7 +4,10 @@ import { IGoalSubmittedEventReader } from "./IGoalSubmittedEventReader.js";
 import { IGoalSubmitReader } from "./IGoalSubmitReader.js";
 import { IEventBus } from "../../../messaging/IEventBus.js";
 import { Goal } from "../../../../domain/goals/Goal.js";
-import { GoalErrorMessages, formatErrorMessage } from "../../../../domain/goals/Constants.js";
+import {
+  GoalErrorMessages,
+  formatErrorMessage,
+} from "../../../../domain/goals/Constants.js";
 import { GoalClaimPolicy } from "../claims/GoalClaimPolicy.js";
 import { IWorkerIdentityReader } from "../../../host/workers/IWorkerIdentityReader.js";
 import { GoalContextQueryHandler } from "../get/GoalContextQueryHandler.js";
@@ -24,7 +27,7 @@ export class SubmitGoalCommandHandler {
     private readonly eventBus: IEventBus,
     private readonly claimPolicy: GoalClaimPolicy,
     private readonly workerIdentityReader: IWorkerIdentityReader,
-    private readonly goalContextQueryHandler: GoalContextQueryHandler
+    private readonly goalContextQueryHandler: GoalContextQueryHandler,
   ) {}
 
   async execute(command: SubmitGoalCommand): Promise<ContextualGoalView> {
@@ -32,7 +35,9 @@ export class SubmitGoalCommandHandler {
     const view = await this.goalReader.findById(command.goalId);
     if (!view) {
       throw new Error(
-        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, { id: command.goalId })
+        formatErrorMessage(GoalErrorMessages.GOAL_NOT_FOUND, {
+          id: command.goalId,
+        }),
       );
     }
 
@@ -43,7 +48,7 @@ export class SubmitGoalCommandHandler {
       throw new Error(
         formatErrorMessage(GoalErrorMessages.GOAL_CLAIMED_BY_ANOTHER_WORKER, {
           expiresAt: claimValidation.existingClaim.claimExpiresAt,
-        })
+        }),
       );
     }
 

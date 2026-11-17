@@ -6,5 +6,6 @@ interface StateReaderContextValue {
   readonly tickMs: number;
 }
 
-export const StateReaderContext =
-  createContext<StateReaderContextValue | null>(null);
+export const StateReaderContext = createContext<StateReaderContextValue | null>(
+  null,
+);

@@ -19,7 +19,7 @@ export class SessionContextQueryHandler {
     private readonly sessionViewReader: ISessionViewReader,
     private readonly goalStatusReader: IGoalStatusReader,
     private readonly decisionViewReader: IDecisionViewReader,
-    private readonly projectContextReader?: IProjectContextReader
+    private readonly projectContextReader?: IProjectContextReader,
   ) {}
 
   /**
@@ -59,12 +59,19 @@ export class SessionContextQueryHandler {
       this.projectContextReader?.getProject() ?? Promise.resolve(null),
     ]);
 
-    const activeGoals = doingGoals.concat(blockedGoals, inReviewGoals, qualifiedGoals);
+    const activeGoals = doingGoals.concat(
+      blockedGoals,
+      inReviewGoals,
+      qualifiedGoals,
+    );
     const plannedGoals = todoGoals.concat(refinedGoals);
 
     // Limit to 10 most recent decisions, sorted by creation date (newest first)
     const recentDecisions = activeDecisions
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      )
       .slice(0, 3);
 
     return {

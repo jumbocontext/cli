@@ -14,13 +14,14 @@
  *   - Empty array if no dependencies exist
  */
 
-import { IDependencyViewReader, DependencyListFilter } from "./IDependencyViewReader.js";
+import {
+  IDependencyViewReader,
+  DependencyListFilter,
+} from "./IDependencyViewReader.js";
 import { DependencyView } from "../DependencyView.js";
 
 export class GetDependenciesQueryHandler {
-  constructor(
-    private readonly dependencyViewReader: IDependencyViewReader
-  ) {}
+  constructor(private readonly dependencyViewReader: IDependencyViewReader) {}
 
   /**
    * Execute query to retrieve dependencies.

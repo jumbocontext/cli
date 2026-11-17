@@ -10,12 +10,10 @@ import { Session } from "../../../../domain/sessions/Session.js";
 export class StartSessionCommandHandler {
   constructor(
     private readonly eventWriter: ISessionStartedEventWriter,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
-  async execute(
-    command: StartSessionCommand
-  ): Promise<{ sessionId: string }> {
+  async execute(command: StartSessionCommand): Promise<{ sessionId: string }> {
     // Create new aggregate
     const session = Session.create();
     const sessionId = session.snapshot.id;

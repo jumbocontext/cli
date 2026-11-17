@@ -5,7 +5,12 @@
  * displayed alongside the latin text with a continuous gradient shimmer.
  */
 
-import { rgb, getSmoothedColor, SPINNER_COLORS, COLOR_CYCLE_FRAMES } from "./GradientPalette.js";
+import {
+  rgb,
+  getSmoothedColor,
+  SPINNER_COLORS,
+  COLOR_CYCLE_FRAMES,
+} from "./GradientPalette.js";
 import type { RGB } from "./GradientPalette.js";
 
 const RESET = "\x1b[0m";
@@ -14,10 +19,33 @@ const SHOW_CURSOR = "\x1b[?25h";
 
 /** Mapping of latin letters to braille equivalents */
 export const BRAILLE_MAP: Record<string, string> = {
-  a: "⠁", b: "⠃", c: "⠉", d: "⠙", e: "⠑", f: "⠋", g: "⠛", h: "⠓",
-  i: "⠊", j: "⠚", k: "⠅", l: "⠇", m: "⠍", n: "⠝", o: "⠕", p: "⠏",
-  q: "⠟", r: "⠗", s: "⠎", t: "⠞", u: "⠥", v: "⠧", w: "⠺", x: "⠭",
-  y: "⠽", z: "⠵", " ": "⠀",
+  a: "⠁",
+  b: "⠃",
+  c: "⠉",
+  d: "⠙",
+  e: "⠑",
+  f: "⠋",
+  g: "⠛",
+  h: "⠓",
+  i: "⠊",
+  j: "⠚",
+  k: "⠅",
+  l: "⠇",
+  m: "⠍",
+  n: "⠝",
+  o: "⠕",
+  p: "⠏",
+  q: "⠟",
+  r: "⠗",
+  s: "⠎",
+  t: "⠞",
+  u: "⠥",
+  v: "⠧",
+  w: "⠺",
+  x: "⠭",
+  y: "⠽",
+  z: "⠵",
+  " ": "⠀",
 };
 
 export interface BrailleSpinnerConfig {
@@ -40,7 +68,9 @@ export interface BrailleSpinnerConfig {
  *
  * Returns a handle with `stop()` to clear the animation and restore cursor.
  */
-export function startBrailleSpinner(config: BrailleSpinnerConfig): { stop: () => void } {
+export function startBrailleSpinner(config: BrailleSpinnerConfig): {
+  stop: () => void;
+} {
   const {
     label,
     frameHold = 8,

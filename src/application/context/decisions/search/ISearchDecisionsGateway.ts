@@ -7,5 +7,7 @@ import { SearchDecisionsRequest } from "./SearchDecisionsRequest.js";
 import { SearchDecisionsResponse } from "./SearchDecisionsResponse.js";
 
 export interface ISearchDecisionsGateway {
-  searchDecisions(request: SearchDecisionsRequest): Promise<SearchDecisionsResponse>;
+  searchDecisions(
+    request: SearchDecisionsRequest,
+  ): Promise<SearchDecisionsResponse>;
 }

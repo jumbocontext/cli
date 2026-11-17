@@ -23,32 +23,72 @@ export class RelationAuditPolicy {
     const currentNodes = catalogEntries
       .filter((entry) => entry.isCurrent)
       .sort(this.compareNodes);
-    const currentKeys = new Set(currentNodes.map((entry) => this.nodeKey(entry.entityType, entry.entityId)));
-    const orderedRelations = [...relations].sort((left, right) => left.relationId.localeCompare(right.relationId));
-    const activeRelations = orderedRelations.filter((relation) => relation.status === "active");
+    const currentKeys = new Set(
+      currentNodes.map((entry) =>
+        this.nodeKey(entry.entityType, entry.entityId),
+      ),
+    );
+    const orderedRelations = [...relations].sort((left, right) =>
+      left.relationId.localeCompare(right.relationId),
+    );
+    const activeRelations = orderedRelations.filter(
+      (relation) => relation.status === "active",
+    );
 
     const danglingItems = activeRelations
       .map((relation) => {
-        const from = { entityType: relation.fromEntityType, entityId: relation.fromEntityId };
-        const to = { entityType: relation.toEntityType, entityId: relation.toEntityId };
+        const from = {
+          entityType: relation.fromEntityType,
+          entityId: relation.fromEntityId,
+        };
+        const to = {
+          entityType: relation.toEntityType,
+          entityId: relation.toEntityId,
+        };
         const missingEndpoints = [from, to].filter(
-          (endpoint) => !currentKeys.has(this.nodeKey(endpoint.entityType, endpoint.entityId)),
+          (endpoint) =>
+            !currentKeys.has(
+              this.nodeKey(endpoint.entityType, endpoint.entityId),
+            ),
         );
         return { relationId: relation.relationId, from, to, missingEndpoints };
       })
       .filter((finding) => finding.missingEndpoints.length > 0)
-      .filter((finding) => this.relationMatchesFilter(finding.from.entityType, finding.to.entityType, request.entityType));
+      .filter((finding) =>
+        this.relationMatchesFilter(
+          finding.from.entityType,
+          finding.to.entityType,
+          request.entityType,
+        ),
+      );
 
     const relationsByNode = new Map<string, RelationView[]>();
     for (const relation of orderedRelations) {
-      this.appendRelation(relationsByNode, relation.fromEntityType, relation.fromEntityId, relation);
-      this.appendRelation(relationsByNode, relation.toEntityType, relation.toEntityId, relation);
+      this.appendRelation(
+        relationsByNode,
+        relation.fromEntityType,
+        relation.fromEntityId,
+        relation,
+      );
+      this.appendRelation(
+        relationsByNode,
+        relation.toEntityType,
+        relation.toEntityId,
+        relation,
+      );
     }
 
-    const filteredNodes = currentNodes.filter((node) => !request.entityType || node.entityType === request.entityType);
+    const filteredNodes = currentNodes.filter(
+      (node) => !request.entityType || node.entityType === request.entityType,
+    );
     const isolatedItems = filteredNodes
-      .filter((node) => !(relationsByNode.get(this.nodeKey(node.entityType, node.entityId)) ?? [])
-        .some((relation) => relation.status === "active"))
+      .filter(
+        (node) =>
+          !(
+            relationsByNode.get(this.nodeKey(node.entityType, node.entityId)) ??
+            []
+          ).some((relation) => relation.status === "active"),
+      )
       .map((node) => ({
         entityType: node.entityType,
         entityId: node.entityId,
@@ -56,15 +96,24 @@ export class RelationAuditPolicy {
       }));
 
     const inactiveOnlyItems = filteredNodes
-      .map((node) => ({ node, relations: relationsByNode.get(this.nodeKey(node.entityType, node.entityId)) ?? [] }))
-      .filter(({ relations: nodeRelations }) =>
-        nodeRelations.length > 0 && nodeRelations.every((relation) => relation.status !== "active"),
+      .map((node) => ({
+        node,
+        relations:
+          relationsByNode.get(this.nodeKey(node.entityType, node.entityId)) ??
+          [],
+      }))
+      .filter(
+        ({ relations: nodeRelations }) =>
+          nodeRelations.length > 0 &&
+          nodeRelations.every((relation) => relation.status !== "active"),
       )
       .map(({ node, relations: nodeRelations }) => ({
         entityType: node.entityType,
         entityId: node.entityId,
         lifecycleState: node.lifecycleState,
-        relationIds: nodeRelations.map((relation) => relation.relationId).sort(),
+        relationIds: nodeRelations
+          .map((relation) => relation.relationId)
+          .sort(),
       }));
 
     const nodesById = new Map<string, Set<EntityTypeValue>>();
@@ -74,31 +123,57 @@ export class RelationAuditPolicy {
       nodesById.set(node.entityId, types);
     }
     const ambiguousIdItems = [...nodesById.entries()]
-      .map(([entityId, types]) => ({ entityId, entityTypes: [...types].sort() }))
+      .map(([entityId, types]) => ({
+        entityId,
+        entityTypes: [...types].sort(),
+      }))
       .filter((finding) => finding.entityTypes.length > 1)
-      .filter((finding) => !request.entityType || finding.entityTypes.includes(request.entityType))
+      .filter(
+        (finding) =>
+          !request.entityType ||
+          finding.entityTypes.includes(request.entityType),
+      )
       .sort((left, right) => left.entityId.localeCompare(right.entityId));
 
     const summaryNodes = filteredNodes;
     const summaryRelations = orderedRelations.filter((relation) =>
-      this.relationMatchesFilter(relation.fromEntityType, relation.toEntityType, request.entityType),
+      this.relationMatchesFilter(
+        relation.fromEntityType,
+        relation.toEntityType,
+        request.entityType,
+      ),
     );
     const summary = requestedChecks.includes(RelationAuditCheck.SUMMARY)
       ? {
           nodes: {
             count: summaryNodes.length,
-            byEntityType: this.countBy(summaryNodes.map((node) => node.entityType)),
+            byEntityType: this.countBy(
+              summaryNodes.map((node) => node.entityType),
+            ),
           },
           relations: {
             count: summaryRelations.length,
-            byRelationType: this.countBy(summaryRelations.map((relation) => relation.relationType)),
-            byStrength: this.countBy(summaryRelations.map((relation) => relation.strength ?? "unspecified")),
-            byStatus: this.countBy(summaryRelations.map((relation) => relation.status)),
+            byRelationType: this.countBy(
+              summaryRelations.map((relation) => relation.relationType),
+            ),
+            byStrength: this.countBy(
+              summaryRelations.map(
+                (relation) => relation.strength ?? "unspecified",
+              ),
+            ),
+            byStatus: this.countBy(
+              summaryRelations.map((relation) => relation.status),
+            ),
           },
         }
       : {
           nodes: { count: 0, byEntityType: {} },
-          relations: { count: 0, byRelationType: {}, byStrength: {}, byStatus: {} },
+          relations: {
+            count: 0,
+            byRelationType: {},
+            byStrength: {},
+            byStatus: {},
+          },
         };
 
     return {
@@ -122,16 +197,21 @@ export class RelationAuditPolicy {
     };
   }
 
-  private normalizeChecks(checks: readonly RelationAuditCheckValue[] | undefined): RelationAuditCheckValue[] {
+  private normalizeChecks(
+    checks: readonly RelationAuditCheckValue[] | undefined,
+  ): RelationAuditCheckValue[] {
     if (!checks || checks.length === 0) return [...ALL_CHECKS];
     const invalid = checks.find((check) => !ALL_CHECKS.includes(check));
-    if (invalid) throw new Error(`Audit check must be one of: ${ALL_CHECKS.join(", ")}.`);
+    if (invalid)
+      throw new Error(`Audit check must be one of: ${ALL_CHECKS.join(", ")}.`);
     return ALL_CHECKS.filter((check) => checks.includes(check));
   }
 
   private validateEntityType(entityType: EntityTypeValue | undefined): void {
     if (entityType && !Object.values(EntityType).includes(entityType)) {
-      throw new Error(`Entity type must be one of: ${Object.values(EntityType).join(", ")}.`);
+      throw new Error(
+        `Entity type must be one of: ${Object.values(EntityType).join(", ")}.`,
+      );
     }
   }
 
@@ -143,7 +223,8 @@ export class RelationAuditPolicy {
   ): void {
     const key = this.nodeKey(entityType, entityId);
     const current = target.get(key) ?? [];
-    if (!current.some((item) => item.relationId === relation.relationId)) current.push(relation);
+    if (!current.some((item) => item.relationId === relation.relationId))
+      current.push(relation);
     target.set(key, current);
   }
 
@@ -156,17 +237,25 @@ export class RelationAuditPolicy {
   }
 
   private countBy(values: readonly string[]): Record<string, number> {
-    return [...values].sort().reduce<Record<string, number>>((counts, value) => {
-      counts[value] = (counts[value] ?? 0) + 1;
-      return counts;
-    }, {});
+    return [...values]
+      .sort()
+      .reduce<Record<string, number>>((counts, value) => {
+        counts[value] = (counts[value] ?? 0) + 1;
+        return counts;
+      }, {});
   }
 
   private nodeKey(entityType: EntityTypeValue, entityId: string): string {
     return `${entityType}\u0000${entityId}`;
   }
 
-  private compareNodes(left: RelationNodeCatalogEntry, right: RelationNodeCatalogEntry): number {
-    return left.entityType.localeCompare(right.entityType) || left.entityId.localeCompare(right.entityId);
+  private compareNodes(
+    left: RelationNodeCatalogEntry,
+    right: RelationNodeCatalogEntry,
+  ): number {
+    return (
+      left.entityType.localeCompare(right.entityType) ||
+      left.entityId.localeCompare(right.entityId)
+    );
   }
 }

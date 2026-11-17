@@ -6,5 +6,5 @@
 
 export interface RemoveGuidelineCommand {
   readonly guidelineId: string;
-  readonly reason?: string;  // Optional reason for removal
+  readonly reason?: string; // Optional reason for removal
 }

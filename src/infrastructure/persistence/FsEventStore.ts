@@ -2,7 +2,10 @@ import fs from "fs-extra";
 import os from "os";
 import path from "path";
 import { ILogger } from "../../application/logging/ILogger.js";
-import { IEventStore, AppendResult } from "../../application/persistence/IEventStore.js";
+import {
+  IEventStore,
+  AppendResult,
+} from "../../application/persistence/IEventStore.js";
 import { BaseEvent } from "../../domain/BaseEvent.js";
 
 /**
@@ -18,7 +21,7 @@ export class FsEventStore implements IEventStore {
 
   constructor(
     private readonly rootDir: string,
-    private readonly logger: ILogger
+    private readonly logger: ILogger,
   ) {}
 
   async append(e: BaseEvent): Promise<AppendResult> {
@@ -34,14 +37,19 @@ export class FsEventStore implements IEventStore {
 
     // Atomic write: write to temp file then rename to prevent corruption
     // from concurrent processes or interrupted writes.
-    const tmpPath = path.join(os.tmpdir(), `jumbo-event-${Date.now()}-${Math.random().toString(36).slice(2)}.tmp`);
+    const tmpPath = path.join(
+      os.tmpdir(),
+      `jumbo-event-${Date.now()}-${Math.random().toString(36).slice(2)}.tmp`,
+    );
     await fs.writeFile(tmpPath, JSON.stringify(storedEvent, null, 2));
     await fs.move(tmpPath, filepath, { overwrite: true });
 
     return { nextSeq };
   }
 
-  async readStream<T extends BaseEvent = BaseEvent>(streamId: string): Promise<T[]> {
+  async readStream<T extends BaseEvent = BaseEvent>(
+    streamId: string,
+  ): Promise<T[]> {
     const streamDir = this.streamDir(streamId);
 
     if (!(await fs.pathExists(streamDir))) {
@@ -56,7 +64,9 @@ export class FsEventStore implements IEventStore {
       try {
         const content = await fs.readFile(filepath, "utf-8");
         if (!content.trim()) {
-          this.logger.warn(`${this.tag} Skipping empty event file`, { filepath });
+          this.logger.warn(`${this.tag} Skipping empty event file`, {
+            filepath,
+          });
           continue;
         }
         const storedEvent: StoredEvent = JSON.parse(content);
@@ -66,7 +76,11 @@ export class FsEventStore implements IEventStore {
         const { seq: _seq, ...domainEvent } = storedEvent;
         events.push(domainEvent as T);
       } catch (error) {
-        this.logger.error(`${this.tag} Skipping corrupt event file`, error instanceof Error ? error : undefined, { filepath });
+        this.logger.error(
+          `${this.tag} Skipping corrupt event file`,
+          error instanceof Error ? error : undefined,
+          { filepath },
+        );
         continue;
       }
     }
@@ -78,12 +92,16 @@ export class FsEventStore implements IEventStore {
     const eventsRoot = path.join(this.rootDir, "events");
 
     if (!(await fs.pathExists(eventsRoot))) {
-      this.logger.debug(`${this.tag} No events directory found`, { eventsRoot });
+      this.logger.debug(`${this.tag} No events directory found`, {
+        eventsRoot,
+      });
       return [];
     }
 
     const aggregateDirs = await fs.readdir(eventsRoot);
-    this.logger.debug(`${this.tag} Loading events from all streams`, { streamCount: aggregateDirs.length });
+    this.logger.debug(`${this.tag} Loading events from all streams`, {
+      streamCount: aggregateDirs.length,
+    });
     const allEvents: BaseEvent[] = [];
 
     for (const aggregateId of aggregateDirs) {
@@ -91,7 +109,9 @@ export class FsEventStore implements IEventStore {
       allEvents.push(...streamEvents);
     }
 
-    this.logger.info(`${this.tag} Loaded all events`, { totalEvents: allEvents.length });
+    this.logger.info(`${this.tag} Loaded all events`, {
+      totalEvents: allEvents.length,
+    });
     // readStream already strips seq, so these are pure domain events
     return allEvents.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
   }

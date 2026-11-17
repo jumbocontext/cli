@@ -14,16 +14,18 @@ import { EntityType } from "../../../../domain/relations/Constants.js";
 export class ValuePropositionUpdatedEventHandler implements IEventHandler {
   constructor(
     private readonly projector: IValuePropositionUpdatedProjector,
-    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar
+    private readonly relationMaintenanceGoalRegistrar: IRelationMaintenanceGoalRegistrar,
   ) {}
 
   async handle(event: BaseEvent): Promise<void> {
     const valuePropositionUpdatedEvent = event as ValuePropositionUpdatedEvent;
-    await this.projector.applyValuePropositionUpdated(valuePropositionUpdatedEvent);
+    await this.projector.applyValuePropositionUpdated(
+      valuePropositionUpdatedEvent,
+    );
     await this.relationMaintenanceGoalRegistrar.execute(
       EntityType.VALUE,
       valuePropositionUpdatedEvent.aggregateId,
-      "value proposition was updated"
+      "value proposition was updated",
     );
   }
 }

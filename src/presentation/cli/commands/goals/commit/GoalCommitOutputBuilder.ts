@@ -1,7 +1,12 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { Colors, Symbols } from '../../../rendering/StyleConfig.js';
-import { EDGE, heading, contentLine, metaField } from '../../../rendering/OutputLayout.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { Colors, Symbols } from "../../../rendering/StyleConfig.js";
+import {
+  EDGE,
+  heading,
+  contentLine,
+  metaField,
+} from "../../../rendering/OutputLayout.js";
 
 /**
  * Specialized builder for goal.commit command output.
@@ -21,12 +26,20 @@ export class GoalCommitOutputBuilder {
    * Build output for successful goal commit.
    * Renders success message with next step to start the goal.
    */
-  buildSuccess(goalId: string, status: string, continueFlag: boolean = false): TerminalOutput {
+  buildSuccess(
+    goalId: string,
+    status: string,
+    continueFlag: boolean = false,
+  ): TerminalOutput {
     this.builder.reset();
     const lines: string[] = [];
     lines.push("");
     lines.push(heading("Goal Committed"));
-    lines.push(contentLine(`${Symbols.check} ${Colors.success("Goal refinement committed")}`));
+    lines.push(
+      contentLine(
+        `${Symbols.check} ${Colors.success("Goal refinement committed")}`,
+      ),
+    );
     lines.push("");
     lines.push(metaField("Id", Colors.muted(goalId)));
     lines.push(metaField("Status", Colors.primary(status)));
@@ -36,11 +49,12 @@ export class GoalCommitOutputBuilder {
     if (continueFlag) {
       this.builder.addPrompt(
         "\n@LLM: Goal refinement is committed and ready to start.\n" +
-        `Run: jumbo goal start --id ${goalId}`
+          `Run: jumbo goal start --id ${goalId}`,
       );
     } else {
       this.builder.addPrompt(
-        "\n" + `${EDGE}${Colors.primary("➤")} ${Colors.primary(`To start: jumbo goal start --id ${goalId}`)}`
+        "\n" +
+          `${EDGE}${Colors.primary("➤")} ${Colors.primary(`To start: jumbo goal start --id ${goalId}`)}`,
       );
     }
 
@@ -53,7 +67,9 @@ export class GoalCommitOutputBuilder {
    */
   buildGoalNotFoundError(goalId: string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Goal not found")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Goal not found")}`,
+    );
     this.builder.addData({ message: `No goal exists with ID: ${goalId}` });
     return this.builder.build();
   }
@@ -64,9 +80,11 @@ export class GoalCommitOutputBuilder {
    */
   buildFailureError(error: Error | string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Failed to commit goal")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Failed to commit goal")}`,
+    );
     this.builder.addData({
-      message: error instanceof Error ? error.message : error
+      message: error instanceof Error ? error.message : error,
     });
     return this.builder.build();
   }

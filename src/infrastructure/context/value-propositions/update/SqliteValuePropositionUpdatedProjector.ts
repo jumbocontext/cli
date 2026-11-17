@@ -16,7 +16,9 @@ export class SqliteValuePropositionUpdatedProjector
 {
   constructor(private db: Database) {}
 
-  async applyValuePropositionUpdated(event: ValuePropositionUpdatedEvent): Promise<void> {
+  async applyValuePropositionUpdated(
+    event: ValuePropositionUpdatedEvent,
+  ): Promise<void> {
     // Build dynamic UPDATE statement based on provided fields
     const updates: string[] = [];
     const values: unknown[] = [];
@@ -55,7 +57,9 @@ export class SqliteValuePropositionUpdatedProjector
 
   async findById(id: string): Promise<ValuePropositionView | null> {
     const row = this.db
-      .prepare("SELECT * FROM value_proposition_views WHERE valuePropositionId = ?")
+      .prepare(
+        "SELECT * FROM value_proposition_views WHERE valuePropositionId = ?",
+      )
       .get(id);
     return row ? this.mapRowToView(row as Record<string, unknown>) : null;
   }

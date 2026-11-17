@@ -7,5 +7,7 @@ import { SearchInvariantsRequest } from "./SearchInvariantsRequest.js";
 import { SearchInvariantsResponse } from "./SearchInvariantsResponse.js";
 
 export interface ISearchInvariantsGateway {
-  searchInvariants(request: SearchInvariantsRequest): Promise<SearchInvariantsResponse>;
+  searchInvariants(
+    request: SearchInvariantsRequest,
+  ): Promise<SearchInvariantsResponse>;
 }

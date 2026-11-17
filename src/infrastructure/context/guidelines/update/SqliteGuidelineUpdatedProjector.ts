@@ -10,7 +10,9 @@ import { GuidelineView } from "../../../../application/context/guidelines/Guidel
 import { UUID } from "../../../../domain/BaseEvent.js";
 import { GuidelineCategoryValue } from "../../../../domain/guidelines/Constants.js";
 
-export class SqliteGuidelineUpdatedProjector implements IGuidelineUpdatedProjector, IGuidelineUpdateReader {
+export class SqliteGuidelineUpdatedProjector
+  implements IGuidelineUpdatedProjector, IGuidelineUpdateReader
+{
   constructor(private db: Database) {}
 
   async applyGuidelineUpdated(event: GuidelineUpdatedEvent): Promise<void> {
@@ -53,7 +55,10 @@ export class SqliteGuidelineUpdatedProjector implements IGuidelineUpdatedProject
     stmt.run(...params);
   }
 
-  async findById(id: UUID, includeRemoved: boolean = false): Promise<GuidelineView | null> {
+  async findById(
+    id: UUID,
+    includeRemoved: boolean = false,
+  ): Promise<GuidelineView | null> {
     const query = includeRemoved
       ? "SELECT * FROM guideline_views WHERE guidelineId = ?"
       : "SELECT * FROM guideline_views WHERE guidelineId = ? AND isRemoved = 0";

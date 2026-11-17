@@ -23,21 +23,19 @@ export class RemoveAudienceCommandHandler {
   constructor(
     private readonly eventWriter: IAudienceRemovedEventWriter,
     private readonly eventBus: IEventBus,
-    private readonly reader: IAudienceRemoveReader
+    private readonly reader: IAudienceRemoveReader,
   ) {}
 
   async execute(
-    command: RemoveAudienceCommand
+    command: RemoveAudienceCommand,
   ): Promise<{ audienceId: string }> {
     // 1. Check preconditions - audience must exist
-    const existingView = await this.reader.findById(
-      command.audienceId
-    );
+    const existingView = await this.reader.findById(command.audienceId);
     if (!existingView) {
       throw new Error(
         formatErrorMessage(AudienceErrorMessages.NOT_FOUND_WITH_ID, {
           id: command.audienceId,
-        })
+        }),
       );
     }
 
@@ -45,7 +43,7 @@ export class RemoveAudienceCommandHandler {
     const history = await this.eventWriter.readStream(command.audienceId);
     const audience = Audience.rehydrate(
       command.audienceId,
-      history as AudienceEvent[]
+      history as AudienceEvent[],
     );
 
     // 3. Domain logic produces event (validates not already removed)

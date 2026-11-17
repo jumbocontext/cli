@@ -1,8 +1,17 @@
-import { TerminalOutputBuilder } from '../../../output/TerminalOutputBuilder.js';
-import { TerminalOutput } from '../../../output/TerminalOutput.js';
-import { DependencyView } from '../../../../../application/context/dependencies/DependencyView.js';
-import { Colors, BrandColors, Symbols } from '../../../rendering/StyleConfig.js';
-import { heading, contentLine, metaField, wrapContent } from '../../../rendering/OutputLayout.js';
+import { TerminalOutputBuilder } from "../../../output/TerminalOutputBuilder.js";
+import { TerminalOutput } from "../../../output/TerminalOutput.js";
+import { DependencyView } from "../../../../../application/context/dependencies/DependencyView.js";
+import {
+  Colors,
+  BrandColors,
+  Symbols,
+} from "../../../rendering/StyleConfig.js";
+import {
+  heading,
+  contentLine,
+  metaField,
+  wrapContent,
+} from "../../../rendering/OutputLayout.js";
 
 export class DependencyListOutputBuilder {
   private builder = new TerminalOutputBuilder();
@@ -19,7 +28,11 @@ export class DependencyListOutputBuilder {
       const d = dependencies[i];
       if (i > 0) lines.push("");
       const version = d.versionConstraint ? `@${d.versionConstraint}` : "";
-      lines.push(contentLine(BrandColors.accentCyan(`${d.ecosystem}:${d.packageName}${version}`)));
+      lines.push(
+        contentLine(
+          BrandColors.accentCyan(`${d.ecosystem}:${d.packageName}${version}`),
+        ),
+      );
       if (d.name) {
         lines.push(metaField("Name", Colors.primary(d.name), 10));
       }
@@ -36,7 +49,10 @@ export class DependencyListOutputBuilder {
     return this.builder.build();
   }
 
-  buildStructuredOutput(dependencies: DependencyView[], filter: string): TerminalOutput {
+  buildStructuredOutput(
+    dependencies: DependencyView[],
+    filter: string,
+  ): TerminalOutput {
     this.builder.reset();
     this.builder.addData({
       count: dependencies.length,
@@ -59,7 +75,9 @@ export class DependencyListOutputBuilder {
 
   buildFailureError(error: Error | string): TerminalOutput {
     this.builder.reset();
-    this.builder.addPrompt(`${Symbols.cross} ${Colors.error("Failed to list dependencies")}`);
+    this.builder.addPrompt(
+      `${Symbols.cross} ${Colors.error("Failed to list dependencies")}`,
+    );
     this.builder.addData({
       message: error instanceof Error ? error.message : error,
     });

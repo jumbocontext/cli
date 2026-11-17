@@ -8,21 +8,27 @@ import { GetAllInvariantsResponse } from "./GetAllInvariantsResponse.js";
 import { IInvariantViewReader } from "./IInvariantViewReader.js";
 
 export class LocalGetInvariantsGateway implements IGetInvariantsGateway {
-  constructor(
-    private readonly invariantViewReader: IInvariantViewReader
-  ) {}
+  constructor(private readonly invariantViewReader: IInvariantViewReader) {}
 
-  async getInvariant(request: GetInvariantRequest): Promise<GetInvariantResponse> {
-    const invariant = await this.invariantViewReader.findById(request.invariantId);
+  async getInvariant(
+    request: GetInvariantRequest,
+  ): Promise<GetInvariantResponse> {
+    const invariant = await this.invariantViewReader.findById(
+      request.invariantId,
+    );
     return { invariant };
   }
 
-  async getInvariants(request: GetInvariantsRequest): Promise<GetInvariantsResponse> {
+  async getInvariants(
+    request: GetInvariantsRequest,
+  ): Promise<GetInvariantsResponse> {
     const invariants = await this.invariantViewReader.findByIds(request.ids);
     return { invariants };
   }
 
-  async getAllInvariants(_request: GetAllInvariantsRequest): Promise<GetAllInvariantsResponse> {
+  async getAllInvariants(
+    _request: GetAllInvariantsRequest,
+  ): Promise<GetAllInvariantsResponse> {
     const invariants = await this.invariantViewReader.findAll();
     return { invariants };
   }

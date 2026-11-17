@@ -192,7 +192,6 @@ import type { ValuePropositionRemovedEvent } from "../../domain/value-propositio
 import type { ValuePropositionUpdatedEvent } from "../../domain/value-propositions/update/ValuePropositionUpdatedEvent.js";
 import type { WorkerIdentifiedEvent } from "../../domain/workers/identify/WorkerIdentifiedEvent.js";
 
-
 /**
  * Type-safe event subscription helper.
  * Narrows BaseEvent to the specific event type at the call site,
@@ -211,7 +210,6 @@ function on<E extends BaseEvent>(
 }
 
 export class ProjectionBusFactory {
-
   /**
    * Creates an event bus with projection-only handlers for the given database.
    */
@@ -221,8 +219,12 @@ export class ProjectionBusFactory {
     // Session projections
     const sessionStartedProjector = new SqliteSessionStartedProjector(db);
     const sessionEndedProjector = new SqliteSessionEndedProjector(db);
-    on<SessionStartedEvent>(bus, SessionEventType.STARTED, (e) => sessionStartedProjector.applySessionStarted(e));
-    on<SessionEndedEvent>(bus, SessionEventType.ENDED, (e) => sessionEndedProjector.applySessionEnded(e));
+    on<SessionStartedEvent>(bus, SessionEventType.STARTED, (e) =>
+      sessionStartedProjector.applySessionStarted(e),
+    );
+    on<SessionEndedEvent>(bus, SessionEventType.ENDED, (e) =>
+      sessionEndedProjector.applySessionEnded(e),
+    );
 
     // Goal projections
     const goalAddedProjector = new SqliteGoalAddedProjector(db);
@@ -238,157 +240,322 @@ export class ProjectionBusFactory {
     const goalRefinedProjector = new SqliteGoalRefinedProjector(db);
     const goalResetProjector = new SqliteGoalResetProjector(db);
     const goalRemovedProjector = new SqliteGoalRemovedProjector(db);
-    const goalProgressUpdatedProjector = new SqliteGoalProgressUpdatedProjector(db);
-    const goalSubmittedForReviewProjector = new SqliteGoalSubmittedForReviewProjector(db);
+    const goalProgressUpdatedProjector = new SqliteGoalProgressUpdatedProjector(
+      db,
+    );
+    const goalSubmittedForReviewProjector =
+      new SqliteGoalSubmittedForReviewProjector(db);
     const goalQualifiedProjector = new SqliteGoalQualifiedProjector(db);
     const goalCommittedProjector = new SqliteGoalCommittedProjector(db);
     const goalRejectedProjector = new SqliteGoalRejectedProjector(db);
     const goalSubmittedProjector = new SqliteGoalSubmittedProjector(db);
-    const goalCodifyingStartedProjector = new SqliteGoalCodifyingStartedProjector(db);
+    const goalCodifyingStartedProjector =
+      new SqliteGoalCodifyingStartedProjector(db);
     const goalClosedProjector = new SqliteGoalClosedProjector(db);
     const goalApprovedProjector = new SqliteGoalApprovedProjector(db);
-    const goalStatusMigratedProjector = new SqliteGoalStatusMigratedProjector(db);
-    on<GoalAddedEvent>(bus, GoalEventType.ADDED, (e) => goalAddedProjector.applyGoalAdded(e));
-    on<GoalStartedEvent>(bus, GoalEventType.STARTED, (e) => goalStartedProjector.applyGoalStarted(e));
-    on<GoalUpdatedEvent>(bus, GoalEventType.UPDATED, (e) => goalUpdatedProjector.applyGoalUpdated(e));
-    on<GoalBlockedEvent>(bus, GoalEventType.BLOCKED, (e) => goalBlockedProjector.applyGoalBlocked(e));
-    on<GoalUnblockedEvent>(bus, GoalEventType.UNBLOCKED, (e) => goalUnblockedProjector.applyGoalUnblocked(e));
-    on<GoalPausedEvent>(bus, GoalEventType.PAUSED, (e) => goalPausedProjector.applyGoalPaused(e));
-    on<GoalPostponedEvent>(bus, GoalEventType.POSTPONED, (e) => goalPostponedProjector.applyGoalPostponed(e));
-    on<GoalReinstatedEvent>(bus, GoalEventType.REINSTATED, (e) => goalReinstatedProjector.applyGoalReinstated(e));
-    on<GoalResumedEvent>(bus, GoalEventType.RESUMED, (e) => goalResumedProjector.applyGoalResumed(e));
-    on<GoalCompletedEvent>(bus, GoalEventType.COMPLETED, (e) => goalCompletedProjector.applyGoalCompleted(e));
-    on<GoalRefinedEvent>(bus, GoalEventType.REFINED, (e) => goalRefinedProjector.applyGoalRefined(e));
-    on<GoalResetEvent>(bus, GoalEventType.RESET, (e) => goalResetProjector.applyGoalReset(e));
-    on<GoalRemovedEvent>(bus, GoalEventType.REMOVED, (e) => goalRemovedProjector.applyGoalRemoved(e));
-    on<GoalProgressUpdatedEvent>(bus, GoalEventType.PROGRESS_UPDATED, (e) => goalProgressUpdatedProjector.applyGoalProgressUpdated(e));
-    on<GoalSubmittedForReviewEvent>(bus, GoalEventType.SUBMITTED_FOR_REVIEW, (e) => goalSubmittedForReviewProjector.applyGoalSubmittedForReview(e));
-    on<GoalQualifiedEvent>(bus, GoalEventType.QUALIFIED, (e) => goalQualifiedProjector.applyGoalQualified(e));
-    on<GoalRefinementStartedEvent>(bus, GoalEventType.REFINEMENT_STARTED, (e) => goalRefinedProjector.applyGoalRefinementStarted(e));
-    on<GoalCommittedEvent>(bus, GoalEventType.COMMITTED, (e) => goalCommittedProjector.applyGoalCommitted(e));
-    on<GoalRejectedEvent>(bus, GoalEventType.REJECTED, (e) => goalRejectedProjector.applyGoalRejected(e));
-    on<GoalSubmittedEvent>(bus, GoalEventType.SUBMITTED, (e) => goalSubmittedProjector.applyGoalSubmitted(e));
-    on<GoalCodifyingStartedEvent>(bus, GoalEventType.CODIFYING_STARTED, (e) => goalCodifyingStartedProjector.applyGoalCodifyingStarted(e));
-    on<GoalClosedEvent>(bus, GoalEventType.CLOSED, (e) => goalClosedProjector.applyGoalClosed(e));
-    on<GoalApprovedEvent>(bus, GoalEventType.APPROVED, (e) => goalApprovedProjector.applyGoalApproved(e));
-    on<GoalStatusMigratedEvent>(bus, GoalEventType.STATUS_MIGRATED, (e) => goalStatusMigratedProjector.applyGoalStatusMigrated(e));
+    const goalStatusMigratedProjector = new SqliteGoalStatusMigratedProjector(
+      db,
+    );
+    on<GoalAddedEvent>(bus, GoalEventType.ADDED, (e) =>
+      goalAddedProjector.applyGoalAdded(e),
+    );
+    on<GoalStartedEvent>(bus, GoalEventType.STARTED, (e) =>
+      goalStartedProjector.applyGoalStarted(e),
+    );
+    on<GoalUpdatedEvent>(bus, GoalEventType.UPDATED, (e) =>
+      goalUpdatedProjector.applyGoalUpdated(e),
+    );
+    on<GoalBlockedEvent>(bus, GoalEventType.BLOCKED, (e) =>
+      goalBlockedProjector.applyGoalBlocked(e),
+    );
+    on<GoalUnblockedEvent>(bus, GoalEventType.UNBLOCKED, (e) =>
+      goalUnblockedProjector.applyGoalUnblocked(e),
+    );
+    on<GoalPausedEvent>(bus, GoalEventType.PAUSED, (e) =>
+      goalPausedProjector.applyGoalPaused(e),
+    );
+    on<GoalPostponedEvent>(bus, GoalEventType.POSTPONED, (e) =>
+      goalPostponedProjector.applyGoalPostponed(e),
+    );
+    on<GoalReinstatedEvent>(bus, GoalEventType.REINSTATED, (e) =>
+      goalReinstatedProjector.applyGoalReinstated(e),
+    );
+    on<GoalResumedEvent>(bus, GoalEventType.RESUMED, (e) =>
+      goalResumedProjector.applyGoalResumed(e),
+    );
+    on<GoalCompletedEvent>(bus, GoalEventType.COMPLETED, (e) =>
+      goalCompletedProjector.applyGoalCompleted(e),
+    );
+    on<GoalRefinedEvent>(bus, GoalEventType.REFINED, (e) =>
+      goalRefinedProjector.applyGoalRefined(e),
+    );
+    on<GoalResetEvent>(bus, GoalEventType.RESET, (e) =>
+      goalResetProjector.applyGoalReset(e),
+    );
+    on<GoalRemovedEvent>(bus, GoalEventType.REMOVED, (e) =>
+      goalRemovedProjector.applyGoalRemoved(e),
+    );
+    on<GoalProgressUpdatedEvent>(bus, GoalEventType.PROGRESS_UPDATED, (e) =>
+      goalProgressUpdatedProjector.applyGoalProgressUpdated(e),
+    );
+    on<GoalSubmittedForReviewEvent>(
+      bus,
+      GoalEventType.SUBMITTED_FOR_REVIEW,
+      (e) => goalSubmittedForReviewProjector.applyGoalSubmittedForReview(e),
+    );
+    on<GoalQualifiedEvent>(bus, GoalEventType.QUALIFIED, (e) =>
+      goalQualifiedProjector.applyGoalQualified(e),
+    );
+    on<GoalRefinementStartedEvent>(bus, GoalEventType.REFINEMENT_STARTED, (e) =>
+      goalRefinedProjector.applyGoalRefinementStarted(e),
+    );
+    on<GoalCommittedEvent>(bus, GoalEventType.COMMITTED, (e) =>
+      goalCommittedProjector.applyGoalCommitted(e),
+    );
+    on<GoalRejectedEvent>(bus, GoalEventType.REJECTED, (e) =>
+      goalRejectedProjector.applyGoalRejected(e),
+    );
+    on<GoalSubmittedEvent>(bus, GoalEventType.SUBMITTED, (e) =>
+      goalSubmittedProjector.applyGoalSubmitted(e),
+    );
+    on<GoalCodifyingStartedEvent>(bus, GoalEventType.CODIFYING_STARTED, (e) =>
+      goalCodifyingStartedProjector.applyGoalCodifyingStarted(e),
+    );
+    on<GoalClosedEvent>(bus, GoalEventType.CLOSED, (e) =>
+      goalClosedProjector.applyGoalClosed(e),
+    );
+    on<GoalApprovedEvent>(bus, GoalEventType.APPROVED, (e) =>
+      goalApprovedProjector.applyGoalApproved(e),
+    );
+    on<GoalStatusMigratedEvent>(bus, GoalEventType.STATUS_MIGRATED, (e) =>
+      goalStatusMigratedProjector.applyGoalStatusMigrated(e),
+    );
 
     // Architecture projections
-    const architectureDefinedProjector = new SqliteArchitectureDefinedProjector(db);
-    const architectureUpdatedProjector = new SqliteArchitectureUpdatedProjector(db);
-    const architectureDeprecatedProjector = new SqliteArchitectureDeprecatedProjector(db);
-    on<ArchitectureDefinedEvent>(bus, ArchitectureEventType.DEFINED, (e) => architectureDefinedProjector.applyArchitectureDefined(e));
-    on<ArchitectureUpdatedEvent>(bus, ArchitectureEventType.UPDATED, (e) => architectureUpdatedProjector.applyArchitectureUpdated(e));
-    on<ArchitectureDeprecatedEvent>(bus, ArchitectureEventType.DEPRECATED, (e) => architectureDeprecatedProjector.applyArchitectureDeprecated(e));
+    const architectureDefinedProjector = new SqliteArchitectureDefinedProjector(
+      db,
+    );
+    const architectureUpdatedProjector = new SqliteArchitectureUpdatedProjector(
+      db,
+    );
+    const architectureDeprecatedProjector =
+      new SqliteArchitectureDeprecatedProjector(db);
+    on<ArchitectureDefinedEvent>(bus, ArchitectureEventType.DEFINED, (e) =>
+      architectureDefinedProjector.applyArchitectureDefined(e),
+    );
+    on<ArchitectureUpdatedEvent>(bus, ArchitectureEventType.UPDATED, (e) =>
+      architectureUpdatedProjector.applyArchitectureUpdated(e),
+    );
+    on<ArchitectureDeprecatedEvent>(
+      bus,
+      ArchitectureEventType.DEPRECATED,
+      (e) => architectureDeprecatedProjector.applyArchitectureDeprecated(e),
+    );
 
     // Component projections (projection-only — no cascades)
     const componentAddedProjector = new SqliteComponentAddedProjector(db);
     const componentUpdatedProjector = new SqliteComponentUpdatedProjector(db);
-    const componentDeprecatedProjector = new SqliteComponentDeprecatedProjector(db);
-    const componentUndeprecatedProjector = new SqliteComponentUndeprecatedProjector(db);
+    const componentDeprecatedProjector = new SqliteComponentDeprecatedProjector(
+      db,
+    );
+    const componentUndeprecatedProjector =
+      new SqliteComponentUndeprecatedProjector(db);
     const componentRemovedProjector = new SqliteComponentRemovedProjector(db);
     const componentRenamedProjector = new SqliteComponentRenamedProjector(db);
-    on<ComponentAddedEvent>(bus, ComponentEventType.ADDED, (e) => componentAddedProjector.applyComponentAdded(e));
-    on<ComponentUpdatedEvent>(bus, ComponentEventType.UPDATED, (e) => componentUpdatedProjector.applyComponentUpdated(e));
-    on<ComponentDeprecatedEvent>(bus, ComponentEventType.DEPRECATED, (e) => componentDeprecatedProjector.applyComponentDeprecated(e));
-    on<ComponentUndeprecatedEvent>(bus, ComponentEventType.UNDEPRECATED, (e) => componentUndeprecatedProjector.applyComponentUndeprecated(e));
-    on<ComponentRemovedEvent>(bus, ComponentEventType.REMOVED, (e) => componentRemovedProjector.applyComponentRemoved(e));
-    on<ComponentRenamedEvent>(bus, ComponentEventType.RENAMED, (e) => componentRenamedProjector.applyComponentRenamed(e));
+    on<ComponentAddedEvent>(bus, ComponentEventType.ADDED, (e) =>
+      componentAddedProjector.applyComponentAdded(e),
+    );
+    on<ComponentUpdatedEvent>(bus, ComponentEventType.UPDATED, (e) =>
+      componentUpdatedProjector.applyComponentUpdated(e),
+    );
+    on<ComponentDeprecatedEvent>(bus, ComponentEventType.DEPRECATED, (e) =>
+      componentDeprecatedProjector.applyComponentDeprecated(e),
+    );
+    on<ComponentUndeprecatedEvent>(bus, ComponentEventType.UNDEPRECATED, (e) =>
+      componentUndeprecatedProjector.applyComponentUndeprecated(e),
+    );
+    on<ComponentRemovedEvent>(bus, ComponentEventType.REMOVED, (e) =>
+      componentRemovedProjector.applyComponentRemoved(e),
+    );
+    on<ComponentRenamedEvent>(bus, ComponentEventType.RENAMED, (e) =>
+      componentRenamedProjector.applyComponentRenamed(e),
+    );
 
     // Dependency projections
     const dependencyAddedProjector = new SqliteDependencyAddedProjector(db);
     const dependencyUpdatedProjector = new SqliteDependencyUpdatedProjector(db);
     const dependencyRemovedProjector = new SqliteDependencyRemovedProjector(db);
-    on<DependencyAddedEvent>(bus, DependencyEventType.ADDED, (e) => dependencyAddedProjector.applyDependencyAdded(e));
-    on<DependencyUpdatedEvent>(bus, DependencyEventType.UPDATED, (e) => dependencyUpdatedProjector.applyDependencyUpdated(e));
-    on<DependencyRemovedEvent>(bus, DependencyEventType.REMOVED, (e) => dependencyRemovedProjector.applyDependencyRemoved(e));
+    on<DependencyAddedEvent>(bus, DependencyEventType.ADDED, (e) =>
+      dependencyAddedProjector.applyDependencyAdded(e),
+    );
+    on<DependencyUpdatedEvent>(bus, DependencyEventType.UPDATED, (e) =>
+      dependencyUpdatedProjector.applyDependencyUpdated(e),
+    );
+    on<DependencyRemovedEvent>(bus, DependencyEventType.REMOVED, (e) =>
+      dependencyRemovedProjector.applyDependencyRemoved(e),
+    );
 
     // Decision projections (projection-only — no cascades)
     const decisionRemovedProjector = new SqliteDecisionRemovedProjector(db);
-    on<DecisionRemovedEvent>(bus, DecisionEventType.REMOVED, (e) => decisionRemovedProjector.applyDecisionRemoved(e));
+    on<DecisionRemovedEvent>(bus, DecisionEventType.REMOVED, (e) =>
+      decisionRemovedProjector.applyDecisionRemoved(e),
+    );
     const decisionAddedProjector = new SqliteDecisionAddedProjector(db);
     const decisionUpdatedProjector = new SqliteDecisionUpdatedProjector(db);
     const decisionReversedProjector = new SqliteDecisionReversedProjector(db);
     const decisionRestoredProjector = new SqliteDecisionRestoredProjector(db);
-    const decisionSupersededProjector = new SqliteDecisionSupersededProjector(db);
-    on<DecisionAddedEvent>(bus, DecisionEventType.ADDED, (e) => decisionAddedProjector.applyDecisionAdded(e));
-    on<DecisionUpdatedEvent>(bus, DecisionEventType.UPDATED, (e) => decisionUpdatedProjector.applyDecisionUpdated(e));
-    on<DecisionReversedEvent>(bus, DecisionEventType.REVERSED, (e) => decisionReversedProjector.applyDecisionReversed(e));
-    on<DecisionRestoredEvent>(bus, DecisionEventType.RESTORED, (e) => decisionRestoredProjector.applyDecisionRestored(e));
-    on<DecisionSupersededEvent>(bus, DecisionEventType.SUPERSEDED, (e) => decisionSupersededProjector.applyDecisionSuperseded(e));
+    const decisionSupersededProjector = new SqliteDecisionSupersededProjector(
+      db,
+    );
+    on<DecisionAddedEvent>(bus, DecisionEventType.ADDED, (e) =>
+      decisionAddedProjector.applyDecisionAdded(e),
+    );
+    on<DecisionUpdatedEvent>(bus, DecisionEventType.UPDATED, (e) =>
+      decisionUpdatedProjector.applyDecisionUpdated(e),
+    );
+    on<DecisionReversedEvent>(bus, DecisionEventType.REVERSED, (e) =>
+      decisionReversedProjector.applyDecisionReversed(e),
+    );
+    on<DecisionRestoredEvent>(bus, DecisionEventType.RESTORED, (e) =>
+      decisionRestoredProjector.applyDecisionRestored(e),
+    );
+    on<DecisionSupersededEvent>(bus, DecisionEventType.SUPERSEDED, (e) =>
+      decisionSupersededProjector.applyDecisionSuperseded(e),
+    );
 
     // Guideline projections
     const guidelineAddedProjector = new SqliteGuidelineAddedProjector(db);
     const guidelineUpdatedProjector = new SqliteGuidelineUpdatedProjector(db);
     const guidelineRemovedProjector = new SqliteGuidelineRemovedProjector(db);
-    on<GuidelineAddedEvent>(bus, GuidelineEventType.ADDED, (e) => guidelineAddedProjector.applyGuidelineAdded(e));
-    on<GuidelineUpdatedEvent>(bus, GuidelineEventType.UPDATED, (e) => guidelineUpdatedProjector.applyGuidelineUpdated(e));
-    on<GuidelineRemovedEvent>(bus, GuidelineEventType.REMOVED, (e) => guidelineRemovedProjector.applyGuidelineRemoved(e));
+    on<GuidelineAddedEvent>(bus, GuidelineEventType.ADDED, (e) =>
+      guidelineAddedProjector.applyGuidelineAdded(e),
+    );
+    on<GuidelineUpdatedEvent>(bus, GuidelineEventType.UPDATED, (e) =>
+      guidelineUpdatedProjector.applyGuidelineUpdated(e),
+    );
+    on<GuidelineRemovedEvent>(bus, GuidelineEventType.REMOVED, (e) =>
+      guidelineRemovedProjector.applyGuidelineRemoved(e),
+    );
 
     // Invariant projections
     const invariantAddedProjector = new SqliteInvariantAddedProjector(db);
     const invariantUpdatedProjector = new SqliteInvariantUpdatedProjector(db);
     const invariantRemovedProjector = new SqliteInvariantRemovedProjector(db);
-    on<InvariantAddedEvent>(bus, InvariantEventType.ADDED, (e) => invariantAddedProjector.applyInvariantAdded(e));
-    on<InvariantUpdatedEvent>(bus, InvariantEventType.UPDATED, (e) => invariantUpdatedProjector.applyInvariantUpdated(e));
-    on<InvariantRemovedEvent>(bus, InvariantEventType.REMOVED, (e) => invariantRemovedProjector.applyInvariantRemoved(e));
+    on<InvariantAddedEvent>(bus, InvariantEventType.ADDED, (e) =>
+      invariantAddedProjector.applyInvariantAdded(e),
+    );
+    on<InvariantUpdatedEvent>(bus, InvariantEventType.UPDATED, (e) =>
+      invariantUpdatedProjector.applyInvariantUpdated(e),
+    );
+    on<InvariantRemovedEvent>(bus, InvariantEventType.REMOVED, (e) =>
+      invariantRemovedProjector.applyInvariantRemoved(e),
+    );
 
     // Global search index projections
     const searchIndexStore = new SqliteSearchIndexStore(db);
-    const searchDocumentProjectorRegistry = new SearchDocumentProjectorRegistry();
+    const searchDocumentProjectorRegistry =
+      new SearchDocumentProjectorRegistry();
     const searchIndexEventHandler = new SearchIndexEventHandler(
       searchDocumentProjectorRegistry.createMemoryProjectors(),
       searchIndexStore,
-      searchIndexStore
+      searchIndexStore,
     );
     this.subscribeSearchIndexEvents(bus, searchIndexEventHandler);
 
     // Project projections
-    const projectInitializedProjector = new SqliteProjectInitializedProjector(db);
+    const projectInitializedProjector = new SqliteProjectInitializedProjector(
+      db,
+    );
     const projectUpdatedProjector = new SqliteProjectUpdatedProjector(db);
-    on<ProjectInitializedEvent>(bus, ProjectEventType.INITIALIZED, (e) => projectInitializedProjector.applyProjectInitialized(e));
-    on<ProjectUpdatedEvent>(bus, ProjectEventType.UPDATED, (e) => projectUpdatedProjector.applyProjectUpdated(e));
+    on<ProjectInitializedEvent>(bus, ProjectEventType.INITIALIZED, (e) =>
+      projectInitializedProjector.applyProjectInitialized(e),
+    );
+    on<ProjectUpdatedEvent>(bus, ProjectEventType.UPDATED, (e) =>
+      projectUpdatedProjector.applyProjectUpdated(e),
+    );
 
     // Audience pain projections
     const audiencePainAddedProjector = new SqliteAudiencePainAddedProjector(db);
-    const audiencePainUpdatedProjector = new SqliteAudiencePainUpdatedProjector(db);
-    on<AudiencePainAddedEvent>(bus, AudiencePainEventType.ADDED, (e) => audiencePainAddedProjector.applyAudiencePainAdded(e));
-    on<AudiencePainUpdatedEvent>(bus, AudiencePainEventType.UPDATED, (e) => audiencePainUpdatedProjector.applyAudiencePainUpdated(e));
+    const audiencePainUpdatedProjector = new SqliteAudiencePainUpdatedProjector(
+      db,
+    );
+    on<AudiencePainAddedEvent>(bus, AudiencePainEventType.ADDED, (e) =>
+      audiencePainAddedProjector.applyAudiencePainAdded(e),
+    );
+    on<AudiencePainUpdatedEvent>(bus, AudiencePainEventType.UPDATED, (e) =>
+      audiencePainUpdatedProjector.applyAudiencePainUpdated(e),
+    );
 
     // Audience projections
     const audienceAddedProjector = new SqliteAudienceAddedProjector(db);
     const audienceUpdatedProjector = new SqliteAudienceUpdatedProjector(db);
     const audienceRemovedProjector = new SqliteAudienceRemovedProjector(db);
-    on<AudienceAddedEvent>(bus, AudienceEventType.ADDED, (e) => audienceAddedProjector.applyAudienceAdded(e));
-    on<AudienceUpdatedEvent>(bus, AudienceEventType.UPDATED, (e) => audienceUpdatedProjector.applyAudienceUpdated(e));
-    on<AudienceRemovedEvent>(bus, AudienceEventType.REMOVED, (e) => audienceRemovedProjector.applyAudienceRemoved(e));
+    on<AudienceAddedEvent>(bus, AudienceEventType.ADDED, (e) =>
+      audienceAddedProjector.applyAudienceAdded(e),
+    );
+    on<AudienceUpdatedEvent>(bus, AudienceEventType.UPDATED, (e) =>
+      audienceUpdatedProjector.applyAudienceUpdated(e),
+    );
+    on<AudienceRemovedEvent>(bus, AudienceEventType.REMOVED, (e) =>
+      audienceRemovedProjector.applyAudienceRemoved(e),
+    );
 
     // Value proposition projections
-    const valuePropositionAddedProjector = new SqliteValuePropositionAddedProjector(db);
-    const valuePropositionUpdatedProjector = new SqliteValuePropositionUpdatedProjector(db);
-    const valuePropositionRemovedProjector = new SqliteValuePropositionRemovedProjector(db);
-    on<ValuePropositionAddedEvent>(bus, ValuePropositionEventType.ADDED, (e) => valuePropositionAddedProjector.applyValuePropositionAdded(e));
-    on<ValuePropositionUpdatedEvent>(bus, ValuePropositionEventType.UPDATED, (e) => valuePropositionUpdatedProjector.applyValuePropositionUpdated(e));
-    on<ValuePropositionRemovedEvent>(bus, ValuePropositionEventType.REMOVED, (e) => valuePropositionRemovedProjector.applyValuePropositionRemoved(e));
+    const valuePropositionAddedProjector =
+      new SqliteValuePropositionAddedProjector(db);
+    const valuePropositionUpdatedProjector =
+      new SqliteValuePropositionUpdatedProjector(db);
+    const valuePropositionRemovedProjector =
+      new SqliteValuePropositionRemovedProjector(db);
+    on<ValuePropositionAddedEvent>(bus, ValuePropositionEventType.ADDED, (e) =>
+      valuePropositionAddedProjector.applyValuePropositionAdded(e),
+    );
+    on<ValuePropositionUpdatedEvent>(
+      bus,
+      ValuePropositionEventType.UPDATED,
+      (e) => valuePropositionUpdatedProjector.applyValuePropositionUpdated(e),
+    );
+    on<ValuePropositionRemovedEvent>(
+      bus,
+      ValuePropositionEventType.REMOVED,
+      (e) => valuePropositionRemovedProjector.applyValuePropositionRemoved(e),
+    );
 
     // Relation projections
     const relationAddedProjector = new SqliteRelationAddedProjector(db);
-    const relationDeactivatedProjector = new SqliteRelationDeactivatedProjector(db);
-    const relationReactivatedProjector = new SqliteRelationReactivatedProjector(db);
+    const relationDeactivatedProjector = new SqliteRelationDeactivatedProjector(
+      db,
+    );
+    const relationReactivatedProjector = new SqliteRelationReactivatedProjector(
+      db,
+    );
     const relationRemovedProjector = new SqliteRelationRemovedProjector(db);
-    on<RelationAddedEvent>(bus, RelationEventType.ADDED, (e) => relationAddedProjector.applyRelationAdded(e));
-    on<RelationDeactivatedEvent>(bus, RelationEventType.DEACTIVATED, (e) => relationDeactivatedProjector.applyRelationDeactivated(e));
-    on<RelationReactivatedEvent>(bus, RelationEventType.REACTIVATED, (e) => relationReactivatedProjector.applyRelationReactivated(e));
-    on<RelationRemovedEvent>(bus, RelationEventType.REMOVED, (e) => relationRemovedProjector.applyRelationRemoved(e));
+    on<RelationAddedEvent>(bus, RelationEventType.ADDED, (e) =>
+      relationAddedProjector.applyRelationAdded(e),
+    );
+    on<RelationDeactivatedEvent>(bus, RelationEventType.DEACTIVATED, (e) =>
+      relationDeactivatedProjector.applyRelationDeactivated(e),
+    );
+    on<RelationReactivatedEvent>(bus, RelationEventType.REACTIVATED, (e) =>
+      relationReactivatedProjector.applyRelationReactivated(e),
+    );
+    on<RelationRemovedEvent>(bus, RelationEventType.REMOVED, (e) =>
+      relationRemovedProjector.applyRelationRemoved(e),
+    );
 
     // Worker identity projections
     const workerIdentifiedProjector = new SqliteWorkerIdentifiedProjector(db);
-    on<WorkerIdentifiedEvent>(bus, WorkerEventType.IDENTIFIED, (e) => workerIdentifiedProjector.applyWorkerIdentified(e));
+    on<WorkerIdentifiedEvent>(bus, WorkerEventType.IDENTIFIED, (e) =>
+      workerIdentifiedProjector.applyWorkerIdentified(e),
+    );
 
     return bus;
   }
 
-  private subscribeSearchIndexEvents(bus: InProcessEventBus, handler: SearchIndexEventHandler): void {
+  private subscribeSearchIndexEvents(
+    bus: InProcessEventBus,
+    handler: SearchIndexEventHandler,
+  ): void {
     for (const eventType of handler.eventTypes) {
       bus.subscribe(eventType, handler);
     }
