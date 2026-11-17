@@ -142,7 +142,7 @@ describe("CachedContextProject", () => {
 
   it("get_sourceBoundary_doesNotReferenceProjectServices", async () => {
     // Arrange
-    const source = await fs.readFile("src/infrastructure/host/ContextProjectPath.ts", "utf8");
+    const source = await fs.readFile("src/infrastructure/host/ContextProject.ts", "utf8");
     // Act
     const importsServices = /LegacyInstallationDetector|LegacyInstallationMigrator|LocalProjectDatabase/.test(source);
     // Assert
@@ -152,18 +152,19 @@ describe("CachedContextProject", () => {
   it("get_cwdChangesAfterFirstAccess_retainsFirstResolvedPath", () => {
     // Arrange
     const source = `
+      const { CachedContextProject } = __compiledModule;
       // Arrange
       const original = process.cwd();
       // Act
-      const first = ContextProject.path;
+      const first = CachedContextProject.get().path;
       process.chdir(path.dirname(original));
-      const second = ContextProject.path;
+      const second = CachedContextProject.get().path;
       // Assert
       assert.equal(first, original);
       assert.equal(second, first);
     `;
     // Act
-    const run = () => compiledProcess("infrastructure/host/ContextProjectPath.js", source);
+    const run = () => compiledProcess("infrastructure/host/ContextProject.js", source);
     // Assert
     expect(run).not.toThrow();
   });

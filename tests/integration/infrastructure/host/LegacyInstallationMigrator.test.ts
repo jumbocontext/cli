@@ -7,7 +7,7 @@ import { execFileSync } from "node:child_process";
 import type { ApplicationRoot } from "../../../../src/application/host/ApplicationRoot.js";
 import { applicationRoot, applicationRootInHome } from "../../../fixtures/application-root.js";
 import { LegacyInstallationMigrator } from "../../../../src/migration/LegacyInstallationMigrator.js";
-import { CachedContextProject } from "../../../../src/infrastructure/host/ContextProject.js";
+import { CachedContextProject, ContextProject } from "../../../../src/infrastructure/host/ContextProject.js";
 
 let temp: string;
 let cwd: string;
@@ -27,7 +27,7 @@ beforeEach(async () => {
   database.exec("CREATE TABLE fixture (id TEXT)");
   database.close();
   jest.spyOn(process, "cwd").mockReturnValue(cwd);
-  jest.spyOn(ContextProjectPath, "get").mockReturnValue(cwd);
+  jest.spyOn(CachedContextProject, "get").mockReturnValue(new ContextProject());
 });
 afterEach(async () => { jest.restoreAllMocks(); await fs.remove(temp); });
 
@@ -61,7 +61,7 @@ describe("legacy migration", () => {
       expect(await fs.readFile(path.join(root.getProjectLogsDirectory(cwd), "history.log"), "utf8")).toBe("old log");
       expect(await fs.pathExists(path.join(target, "settings.jsonc"))).toBe(false);
       expect(await fs.readFile(path.join(source, "settings.jsonc"), "utf8")).toBe(settingsBefore);
-      expect(location).toBe(root.getProjectDirectory(ContextProjectPath.get()));
+      expect(location).toBe(root.getProjectDirectory(CachedContextProject.get().path));
     } finally { db.close(); }
   });
 
@@ -81,7 +81,7 @@ describe("legacy migration", () => {
     jest.mocked(process.cwd).mockReturnValue(cwd);
     await migrator.migrate();
     jest.mocked(process.cwd).mockReturnValue(linked);
-    expect((await fs.readJson(root.getProjectSettings(ContextProjectPath.get()))).project.id).toBe("preserved-id");
+    expect((await fs.readJson(root.getProjectSettings(CachedContextProject.get().path))).project.id).toBe("preserved-id");
     expect(await fs.pathExists(root.getProjectDirectory(linked))).toBe(false);
   });
 
@@ -93,7 +93,7 @@ describe("legacy migration", () => {
     // Assert
     expect(location).toBe(root.getProjectDirectory(cwd));
     expect((await fs.readJson(root.getProjectSettings(cwd))).project.id).toBe("preserved-id");
-    expect(ContextProjectPath.get()).toBe(cwd);
+    expect(CachedContextProject.get().path).toBe(cwd);
     expect(await fs.pathExists(path.join(cwd, ".git"))).toBe(false);
   });
 
@@ -220,7 +220,7 @@ describe("legacy migration", () => {
     const homeRoot = applicationRootInHome(temp);
     await fs.ensureDir(homeRoot.path);
     jest.mocked(process.cwd).mockReturnValue(temp);
-    jest.mocked(ContextProjectPath.get).mockReturnValue(temp);
+    jest.mocked(CachedContextProject.get).mockReturnValue(new ContextProject());
     // Act
     const result = new LegacyInstallationMigrator().migrate();
     // Assert

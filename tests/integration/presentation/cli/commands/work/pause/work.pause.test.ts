@@ -11,7 +11,7 @@ import { Codex01534HookContract } from "./fixtures/Codex01534HookContract.js";
 import { applicationEnvironment, applicationRoot } from "../../../../../../fixtures/application-root.js";
 
 const projectRoot = fileURLToPath(new URL("../../../../../../../", import.meta.url));
-const compiledCli = path.join(projectRoot, "dist", "cli.js");
+const compiledCli = path.join(projectRoot, "dist", "app.js");
 
 describe("work.pause Codex 0.153.4 output contract (compiled CLI)", () => {
   let fixtureRoot: string;
@@ -166,7 +166,7 @@ describe("work.pause Codex 0.153.4 output contract (compiled CLI)", () => {
       const { workPause } = await import(${JSON.stringify(pauseModule)});
       const { Renderer } = await import(${JSON.stringify(rendererModule)});
       Renderer.configure({ format: "text", verbosity: "quiet" });
-      await workPause({}, {
+      await workPause({
         pauseWorkController: { handle: async () => { throw new Error("Fixture storage unavailable"); } },
         logger: { debug() {}, info() {}, error() {}, async flush() {} }
       });

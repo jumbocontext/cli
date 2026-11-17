@@ -10,6 +10,9 @@ import type { ApplicationLauncherDependencies } from "./application-shell/Applic
 import type { AppActionControllers } from "./application-shell/App.js";
 import type { StateReaderControllers } from "./state-reading/StateReaderControllers.js";
 import { SubprocessManager } from "./daemon-subprocesses/SubprocessManager.js";
+import { MigrationGate, MigrationGateResult } from "../../migration/MigrationGate.js";
+import { renderMigrationRequired } from "../../migration/renderMigrationRequired.js";
+import { FAILURE_EXIT_CODE } from "../cli/Constants.js";
 
 /**
  * Every service the terminal user interface consumes, and nothing more:
@@ -101,6 +104,13 @@ export class Initializer {
   ) {}
 
   async launch(version: string): Promise<void> {
+    const migrationGate = new MigrationGate();
+    const gateResult = await migrationGate.assertLaunchAllowed();
+    if(gateResult.kind === "migration-required") {
+      renderMigrationRequired(gateResult.projectRoot);
+      process.exitCode = FAILURE_EXIT_CODE;
+      return;
+    }
     const composition = await this.createDependencies();
     try {
       await new ApplicationLauncher(
