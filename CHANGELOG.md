@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.27.0] - 2026-10-16
+
 ### Added
 
 - **Guideline show command**: Added `jumbo guideline show --id <id>` to display the complete guideline record by ID, with text and JSON output formats.
